@@ -88,13 +88,16 @@ public class DdlExecutor {
             catalog.cancelAlter((CancelAlterTableStmt) ddlStmt);
         } else if (ddlStmt instanceof LoadStmt) {
             LoadStmt loadStmt = (LoadStmt) ddlStmt;
-            EtlJobType jobType;
+            EtlJobType jobType = null;
             if (loadStmt.getBrokerDesc() != null) {
                 jobType = EtlJobType.BROKER;
-            } else {
-                jobType = EtlJobType.HADOOP;
             }
-            catalog.getLoadInstance().addLoadJob(loadStmt, jobType, System.currentTimeMillis());
+            if(jobType != EtlJobType.BROKER){
+                catalog.getStreamingLoadInstance().addStreamingLoadJob(loadStmt,System.currentTimeMillis());
+            }else {
+                catalog.getLoadInstance().addLoadJob(loadStmt, jobType, System.currentTimeMillis());
+            }
+
         } else if (ddlStmt instanceof CancelLoadStmt) {
             catalog.getLoadInstance().cancelLoadJob((CancelLoadStmt) ddlStmt);
         } else if (ddlStmt instanceof DeleteStmt) {

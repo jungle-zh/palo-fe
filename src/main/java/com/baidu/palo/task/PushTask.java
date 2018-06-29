@@ -57,11 +57,38 @@ public class PushTask extends AgentTask {
     private TPriority priority;
     private boolean isSyncDelete;
     private long asyncDeleteJobId;
+    private long taskId;
 
+
+
+
+    public PushTask(TResourceInfo resourceInfo, long backendId, long dbId, long tableId, long partitionId,
+                    long indexId, long tabletId, long replicaId, int schemaHash, long version, long versionHash,
+                    String filePath, long fileSize, int timeoutSecond, long loadJobId, TPushType pushType,
+                    List<Predicate> conditions, boolean needDecompress, TPriority priority ,TTaskType taskType ,long task_id) {
+        super(resourceInfo, backendId, taskType, dbId, tableId, partitionId, indexId, tabletId);
+        this.replicaId = replicaId;
+        this.schemaHash = schemaHash;
+        this.version = version;
+        this.versionHash = versionHash;
+        this.filePath = filePath;
+        this.fileSize = fileSize;
+        this.timeoutSecond = timeoutSecond;
+        this.loadJobId = loadJobId;
+        this.pushType = pushType;
+        this.conditions = conditions;
+        this.latch = null;
+        this.needDecompress = needDecompress;
+        this.priority = priority;
+        this.isSyncDelete = true;
+        this.asyncDeleteJobId = -1;
+        this.taskId = task_id;
+
+    }
     public PushTask(TResourceInfo resourceInfo, long backendId, long dbId, long tableId, long partitionId,
                     long indexId, long tabletId, long replicaId, int schemaHash, long version, long versionHash, 
                     String filePath, long fileSize, int timeoutSecond, long loadJobId, TPushType pushType,
-                    List<Predicate> conditions, boolean needDecompress, TPriority priority) {
+                    List<Predicate> conditions, boolean needDecompress, TPriority priority ) {
         super(resourceInfo, backendId, TTaskType.PUSH, dbId, tableId, partitionId, indexId, tabletId);
         this.replicaId = replicaId;
         this.schemaHash = schemaHash;
@@ -90,6 +117,8 @@ public class PushTask extends AgentTask {
                     request.setHttp_file_size(fileSize);
                 }
                 request.setNeed_decompress(needDecompress);
+                request.setTask_id(taskId);
+                request.setJob_id(loadJobId);
                 break;
             case DELETE:
                 List<TCondition> tConditions = new ArrayList<TCondition>();

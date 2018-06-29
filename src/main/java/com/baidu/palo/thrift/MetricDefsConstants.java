@@ -40,1792 +40,1792 @@ public class MetricDefsConstants {
   static {
     TMetricDef tmp8 = new TMetricDef();
     List<String> tmp9 = new ArrayList<String>();
-    tmp9.add("PALO BE");
+    tmp9.add("RESOURCE_POOL");
 
     tmp8.setContexts(tmp9);
-    tmp8.setDescription("The number of cgroups currently registered with the Cgroups Manager");
-    tmp8.setKey("cgroups_mgr.active_cgroups");
+    tmp8.setDescription("Resource Pool $0 Aggregate Mem Reserved");
+    tmp8.setKey("admission_controller.agg_mem_reserved.$0");
     tmp8.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp8.setLabel("Cgroups Manager Active Cgroups");
-    tmp8.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp8.setLabel("Resource Pool $0 Aggregate Mem Reserved");
+    tmp8.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("cgroups_mgr.active_cgroups", tmp8);
+    TMetricDefs.put("admission_controller.agg_mem_reserved.$0", tmp8);
     TMetricDef tmp10 = new TMetricDef();
     List<String> tmp11 = new ArrayList<String>();
-    tmp11.add("PALO BE");
+    tmp11.add("RESOURCE_POOL");
 
     tmp10.setContexts(tmp11);
-    tmp10.setDescription("The number of active Beeswax API connections to this Impala Daemon.");
-    tmp10.setKey("impala.thrift_server.beeswax_frontend.connections_in_use");
+    tmp10.setDescription("Resource Pool $0 Aggregate Queue Size");
+    tmp10.setKey("admission_controller.agg_num_queued.$0");
     tmp10.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp10.setLabel("Beeswax API Active Connections");
+    tmp10.setLabel("Resource Pool $0 Aggregate Queue Size");
     tmp10.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("impala.thrift_server.beeswax_frontend.connections_in_use", tmp10);
+    TMetricDefs.put("admission_controller.agg_num_queued.$0", tmp10);
     TMetricDef tmp12 = new TMetricDef();
     List<String> tmp13 = new ArrayList<String>();
-    tmp13.add("CATALOGSERVER");
-    tmp13.add("PALO BE");
+    tmp13.add("RESOURCE_POOL");
 
     tmp12.setContexts(tmp13);
-    tmp12.setDescription("Jvm $0 Peak Init Usage Bytes");
-    tmp12.setKey("jvm.$0.peak_init_usage_bytes");
+    tmp12.setDescription("Resource Pool $0 Aggregate Num Running");
+    tmp12.setKey("admission_controller.agg_num_running.$0");
     tmp12.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp12.setLabel("Jvm $0 Peak Init Usage Bytes");
-    tmp12.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp12.setLabel("Resource Pool $0 Aggregate Num Running");
+    tmp12.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("jvm.$0.peak_init_usage_bytes", tmp12);
+    TMetricDefs.put("admission_controller.agg_num_running.$0", tmp12);
     TMetricDef tmp14 = new TMetricDef();
     List<String> tmp15 = new ArrayList<String>();
-    tmp15.add("CATALOGSERVER");
-    tmp15.add("PALO BE");
+    tmp15.add("RESOURCE_POOL");
 
     tmp14.setContexts(tmp15);
-    tmp14.setDescription("Jvm $0 Peak Max Usage Bytes");
-    tmp14.setKey("jvm.$0.peak_max_usage_bytes");
+    tmp14.setDescription("Resource Pool $0 Mem Reserved by the backend coordinator");
+    tmp14.setKey("admission_controller.local_backend_mem_reserved.$0");
     tmp14.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp14.setLabel("Jvm $0 Peak Max Usage Bytes");
-    tmp14.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp14.setLabel("Resource Pool $0 Coordinator Backend Mem Reserved");
+    tmp14.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("jvm.$0.peak_max_usage_bytes", tmp14);
+    TMetricDefs.put("admission_controller.local_backend_mem_reserved.$0", tmp14);
     TMetricDef tmp16 = new TMetricDef();
     List<String> tmp17 = new ArrayList<String>();
-    tmp17.add("PALO BE");
+    tmp17.add("RESOURCE_POOL");
 
     tmp16.setContexts(tmp17);
-    tmp16.setDescription("The amount of memory freed by the last memory tracker garbage collection.");
-    tmp16.setKey("mem_tracker.process.bytes_freed_by_last_gc");
+    tmp16.setDescription("Resource Pool $0 Coordinator Backend Mem Usage");
+    tmp16.setKey("admission_controller.local_backend_mem_usage.$0");
     tmp16.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp16.setLabel("MemTracker Bytes Freed By Last Garbage Collection");
-    tmp16.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp16.setLabel("Resource Pool $0 Coordinator Backend Mem Usage");
+    tmp16.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("mem_tracker.process.bytes_freed_by_last_gc", tmp16);
+    TMetricDefs.put("admission_controller.local_backend_mem_usage.$0", tmp16);
     TMetricDef tmp18 = new TMetricDef();
+    tmp18.setKey("admission_controller.local_mem_admitted.$0");
+    tmp18.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp18.setLabel("Resource Pool $0 Local Mem Admitted");
     List<String> tmp19 = new ArrayList<String>();
-    tmp19.add("PALO BE");
+    tmp19.add("RESOURCE_POOL");
 
     tmp18.setContexts(tmp19);
-    tmp18.setDescription("The amount of memory by which the process was over its memory limit the last time the memory limit was encountered.");
-    tmp18.setKey("mem_tracker.process.bytes_over_limit");
-    tmp18.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp18.setLabel("MemTracker Bytes Over Limit");
-    tmp18.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp18.setDescription("Resource Pool $0 Local Mem Admitted");
+    tmp18.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("mem_tracker.process.bytes_over_limit", tmp18);
+    TMetricDefs.put("admission_controller.local_mem_admitted.$0", tmp18);
     TMetricDef tmp20 = new TMetricDef();
     List<String> tmp21 = new ArrayList<String>();
-    tmp21.add("PALO BE");
+    tmp21.add("RESOURCE_POOL");
 
     tmp20.setContexts(tmp21);
-    tmp20.setDescription("The process memory tracker limit.");
-    tmp20.setKey("mem_tracker.process.limit");
+    tmp20.setDescription("Resource Pool $0 Coordinator Backend Num Running");
+    tmp20.setKey("admission_controller.local_num_admitted_running.$0");
     tmp20.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp20.setLabel("Process Tracker Limit");
-    tmp20.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp20.setLabel("Resource Pool $0 Coordinator Backend Num Running");
+    tmp20.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("mem_tracker.process.limit", tmp20);
+    TMetricDefs.put("admission_controller.local_num_admitted_running.$0", tmp20);
     TMetricDef tmp22 = new TMetricDef();
     List<String> tmp23 = new ArrayList<String>();
-    tmp23.add("PALO BE");
+    tmp23.add("RESOURCE_POOL");
 
     tmp22.setContexts(tmp23);
-    tmp22.setDescription("The total number of garbage collections performed by the memory tracker over the life of the process.");
-    tmp22.setKey("mem_tracker.process.num_gcs");
-    tmp22.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp22.setLabel("MemTracker Garbage Collections");
-    tmp22.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp22.setDescription("Resource Pool $0 Queue Size on the coordinator");
+    tmp22.setKey("admission_controller.local_num_queued.$0");
+    tmp22.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp22.setLabel("Resource Pool $0 Coordinator Backend Queue Size");
+    tmp22.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("mem_tracker.process.num_gcs", tmp22);
+    TMetricDefs.put("admission_controller.local_num_queued.$0", tmp22);
     TMetricDef tmp24 = new TMetricDef();
     List<String> tmp25 = new ArrayList<String>();
-    tmp25.add("PALO BE");
+    tmp25.add("RESOURCE_POOL");
 
     tmp24.setContexts(tmp25);
-    tmp24.setDescription("Total number of senders that have been blocked waiting for receiving fragment to initialize.");
-    tmp24.setKey("total_senders_blocked_on_recvr_creation");
-    tmp24.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp24.setLabel("Total senders waiting for receiving fragment to initialize");
+    tmp24.setDescription("Resource Pool $0 Configured Max Mem Resources");
+    tmp24.setKey("admission_controller.pool_max_mem_resources.$0");
+    tmp24.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp24.setLabel("Resource Pool $0 Configured Max Mem Resources");
     tmp24.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("total_senders_blocked_on_recvr_creation", tmp24);
+    TMetricDefs.put("admission_controller.pool_max_mem_resources.$0", tmp24);
     TMetricDef tmp26 = new TMetricDef();
     List<String> tmp27 = new ArrayList<String>();
-    tmp27.add("PALO BE");
+    tmp27.add("RESOURCE_POOL");
 
     tmp26.setContexts(tmp27);
-    tmp26.setDescription("Number of HDFS file handles that are currently in use by readers.");
-    tmp26.setKey("palo_be.io_mgr.num_file_handles_outstanding");
+    tmp26.setDescription("Resource Pool $0 Configured Max Queued");
+    tmp26.setKey("admission_controller.pool_max_queued.$0");
     tmp26.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp26.setLabel("Number of outstanding HDFS file handles");
+    tmp26.setLabel("Resource Pool $0 Configured Max Queued");
     tmp26.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.io_mgr.num_file_handles_outstanding", tmp26);
+    TMetricDefs.put("admission_controller.pool_max_queued.$0", tmp26);
     TMetricDef tmp28 = new TMetricDef();
     List<String> tmp29 = new ArrayList<String>();
-    tmp29.add("PALO BE");
+    tmp29.add("RESOURCE_POOL");
 
     tmp28.setContexts(tmp29);
-    tmp28.setDescription("The current size of the memory pool shared by all queries");
-    tmp28.setKey("palo_be.mem_pool.total_bytes");
+    tmp28.setDescription("Resource Pool $0 Configured Max Requests");
+    tmp28.setKey("admission_controller.pool_max_requests.$0");
     tmp28.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp28.setLabel("Memory Pool Size");
-    tmp28.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp28.setLabel("Resource Pool $0 Configured Max Requests");
+    tmp28.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.mem_pool.total_bytes", tmp28);
+    TMetricDefs.put("admission_controller.pool_max_requests.$0", tmp28);
     TMetricDef tmp30 = new TMetricDef();
     List<String> tmp31 = new ArrayList<String>();
-    tmp31.add("PALO BE");
+    tmp31.add("RESOURCE_POOL");
 
     tmp30.setContexts(tmp31);
-    tmp30.setDescription("The number of HDFS files currently open for writing.");
-    tmp30.setKey("palo_be.num_files_open_for_insert");
-    tmp30.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp30.setLabel("Files Open For Insert");
-    tmp30.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp30.setDescription("Resource Pool $0 Time in Queue");
+    tmp30.setKey("admission_controller.time_in_queue_ms.$0");
+    tmp30.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp30.setLabel("Resource Pool $0 Time in Queue");
+    tmp30.setUnits(com.baidu.palo.thrift.TUnit.TIME_MS);
 
-    TMetricDefs.put("palo_be.num_files_open_for_insert", tmp30);
+    TMetricDefs.put("admission_controller.time_in_queue_ms.$0", tmp30);
     TMetricDef tmp32 = new TMetricDef();
     List<String> tmp33 = new ArrayList<String>();
-    tmp33.add("PALO BE");
+    tmp33.add("RESOURCE_POOL");
 
     tmp32.setContexts(tmp33);
-    tmp32.setDescription("The total number of query fragments processed over the life of the process.");
-    tmp32.setKey("palo_be.num_fragments");
+    tmp32.setDescription("Total number of requests admitted to pool $0");
+    tmp32.setKey("admission_controller.total_admitted.$0");
     tmp32.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp32.setLabel("Query Fragments");
+    tmp32.setLabel("Resource Pool $0 Total Admitted");
     tmp32.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("palo_be.num_fragments", tmp32);
+    TMetricDefs.put("admission_controller.total_admitted.$0", tmp32);
     TMetricDef tmp34 = new TMetricDef();
     List<String> tmp35 = new ArrayList<String>();
-    tmp35.add("PALO BE");
+    tmp35.add("RESOURCE_POOL");
 
     tmp34.setContexts(tmp35);
-    tmp34.setDescription("The number of query fragments currently executing.");
-    tmp34.setKey("palo_be.num_fragments_in_flight");
-    tmp34.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp34.setLabel("Query Fragments");
+    tmp34.setDescription("Total number of requests dequeued in pool $0");
+    tmp34.setKey("admission_controller.total_dequeued.$0");
+    tmp34.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp34.setLabel("Resource Pool $0 Total Dequeued");
     tmp34.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("palo_be.num_fragments_in_flight", tmp34);
+    TMetricDefs.put("admission_controller.total_dequeued.$0", tmp34);
     TMetricDef tmp36 = new TMetricDef();
     List<String> tmp37 = new ArrayList<String>();
-    tmp37.add("PALO BE");
+    tmp37.add("RESOURCE_POOL");
 
     tmp36.setContexts(tmp37);
-    tmp36.setDescription("The number of open Beeswax sessions.");
-    tmp36.setKey("palo_be.num_open_beeswax_sessions");
-    tmp36.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp36.setLabel("Beeswax Sessions");
-    tmp36.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp36.setDescription("Total number of requests queued in pool $0");
+    tmp36.setKey("admission_controller.total_queued.$0");
+    tmp36.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp36.setLabel("Resource Pool $0 Total Queued");
+    tmp36.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("palo_be.num_open_beeswax_sessions", tmp36);
+    TMetricDefs.put("admission_controller.total_queued.$0", tmp36);
     TMetricDef tmp38 = new TMetricDef();
     List<String> tmp39 = new ArrayList<String>();
-    tmp39.add("PALO BE");
+    tmp39.add("RESOURCE_POOL");
 
     tmp38.setContexts(tmp39);
-    tmp38.setDescription("The number of open HiveServer2 sessions.");
-    tmp38.setKey("palo_be.num_open_hiveserver2_sessions");
-    tmp38.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp38.setLabel("HiveServer2 Sessions");
-    tmp38.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp38.setDescription("Total number of requests rejected in pool $0");
+    tmp38.setKey("admission_controller.total_rejected.$0");
+    tmp38.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp38.setLabel("Resource Pool $0 Total Rejected");
+    tmp38.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("palo_be.num_open_hiveserver2_sessions", tmp38);
+    TMetricDefs.put("admission_controller.total_rejected.$0", tmp38);
     TMetricDef tmp40 = new TMetricDef();
     List<String> tmp41 = new ArrayList<String>();
-    tmp41.add("PALO BE");
+    tmp41.add("RESOURCE_POOL");
 
     tmp40.setContexts(tmp41);
-    tmp40.setDescription("The total number of queries processed over the life of the process");
-    tmp40.setKey("palo_be.num_queries");
+    tmp40.setDescription("Total number of requests that have completed and released resources in pool $0");
+    tmp40.setKey("admission_controller.total_released.$0");
     tmp40.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp40.setLabel("Queries");
+    tmp40.setLabel("Resource Pool $0 Total Released");
     tmp40.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("palo_be.num_queries", tmp40);
+    TMetricDefs.put("admission_controller.total_released.$0", tmp40);
     TMetricDef tmp42 = new TMetricDef();
     List<String> tmp43 = new ArrayList<String>();
-    tmp43.add("PALO BE");
+    tmp43.add("RESOURCE_POOL");
 
     tmp42.setContexts(tmp43);
-    tmp42.setDescription("Number of queries expired due to inactivity.");
-    tmp42.setKey("palo_be.num_queries_expired");
+    tmp42.setDescription("Total number of requests timed out waiting while queued in pool $0");
+    tmp42.setKey("admission_controller.total_timed_out.$0");
     tmp42.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp42.setLabel("Queries Expired");
+    tmp42.setLabel("Resource Pool $0 Total Timed Out");
     tmp42.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("palo_be.num_queries_expired", tmp42);
+    TMetricDefs.put("admission_controller.total_timed_out.$0", tmp42);
     TMetricDef tmp44 = new TMetricDef();
     List<String> tmp45 = new ArrayList<String>();
     tmp45.add("PALO BE");
 
     tmp44.setContexts(tmp45);
-    tmp44.setDescription("Number of queries for which any operator spilled.");
-    tmp44.setKey("palo_be.num_queries_spilled");
-    tmp44.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp44.setLabel("Palo Be Num Queries Spilled");
-    tmp44.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp44.setDescription("Maximum allowed bytes allocated by the buffer pool.");
+    tmp44.setKey("buffer_pool.limit");
+    tmp44.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp44.setLabel("Buffer Pool Allocated Memory Limit.");
+    tmp44.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("palo_be.num_queries_spilled", tmp44);
+    TMetricDefs.put("buffer_pool.limit", tmp44);
     TMetricDef tmp46 = new TMetricDef();
     List<String> tmp47 = new ArrayList<String>();
     tmp47.add("PALO BE");
 
     tmp46.setContexts(tmp47);
-    tmp46.setDescription("Number of sessions expired due to inactivity.");
-    tmp46.setKey("palo_be.num_sessions_expired");
-    tmp46.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp46.setLabel("Sessions Expired");
-    tmp46.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp46.setDescription("Total memory currently reserved for buffers.");
+    tmp46.setKey("buffer_pool.reserved");
+    tmp46.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp46.setLabel("Buffer Pool Total Reserved Memory.");
+    tmp46.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("palo_be.num_sessions_expired", tmp46);
+    TMetricDefs.put("buffer_pool.reserved", tmp46);
     TMetricDef tmp48 = new TMetricDef();
     List<String> tmp49 = new ArrayList<String>();
     tmp49.add("PALO BE");
 
     tmp48.setContexts(tmp49);
-    tmp48.setDescription("Distribution of query latencies");
-    tmp48.setKey("palo_be.query_durations_ms");
-    tmp48.setKind(com.baidu.palo.thrift.TMetricKind.HISTOGRAM);
-    tmp48.setLabel("Query latency distribution");
-    tmp48.setUnits(com.baidu.palo.thrift.TUnit.TIME_MS);
+    tmp48.setDescription("Total buffer memory currently allocated by the buffer pool.");
+    tmp48.setKey("buffer_pool.system_allocated");
+    tmp48.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp48.setLabel("Buffer Pool Total Allocated Memory.");
+    tmp48.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("palo_be.query_durations_ms", tmp48);
+    TMetricDefs.put("buffer_pool.system_allocated", tmp48);
     TMetricDef tmp50 = new TMetricDef();
     List<String> tmp51 = new ArrayList<String>();
-    tmp51.add("PALO BE");
+    tmp51.add("CATALOGSERVER");
 
     tmp50.setContexts(tmp51);
-    tmp50.setDescription("Indicates if the Palo Be is ready.");
-    tmp50.setKey("palo_be.ready");
-    tmp50.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
-    tmp50.setLabel("Palo Be Ready");
-    tmp50.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp50.setDescription("Catalog Server Topic Processing Time");
+    tmp50.setKey("catalog_server.topic_processing_time_s");
+    tmp50.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
+    tmp50.setLabel("Catalog Server Topic Processing Time");
+    tmp50.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
 
-    TMetricDefs.put("palo_be.ready", tmp50);
+    TMetricDefs.put("catalog_server.topic_processing_time_s", tmp50);
     TMetricDef tmp52 = new TMetricDef();
     List<String> tmp53 = new ArrayList<String>();
     tmp53.add("PALO BE");
 
     tmp52.setContexts(tmp53);
-    tmp52.setDescription("Total number of bytes consumed for rows cached to support HS2 FETCH_FIRST.");
-    tmp52.setKey("palo_be.resultset_cache.total_bytes");
+    tmp52.setDescription("The number of databases in the catalog.");
+    tmp52.setKey("catalog.num_databases");
     tmp52.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp52.setLabel("Palo Be Resultset Cache Total Bytes");
+    tmp52.setLabel("Databases");
     tmp52.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.resultset_cache.total_bytes", tmp52);
+    TMetricDefs.put("catalog.num_databases", tmp52);
     TMetricDef tmp54 = new TMetricDef();
     List<String> tmp55 = new ArrayList<String>();
     tmp55.add("PALO BE");
 
     tmp54.setContexts(tmp55);
-    tmp54.setDescription("Total number of rows cached to support HS2 FETCH_FIRST.");
-    tmp54.setKey("palo_be.resultset_cache.total_num_rows");
+    tmp54.setDescription("The number of tables in the catalog.");
+    tmp54.setKey("catalog.num_tables");
     tmp54.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp54.setLabel("Palo Be Resultset Cache Total Num Rows");
+    tmp54.setLabel("Tables");
     tmp54.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.resultset_cache.total_num_rows", tmp54);
+    TMetricDefs.put("catalog.num_tables", tmp54);
     TMetricDef tmp56 = new TMetricDef();
     List<String> tmp57 = new ArrayList<String>();
     tmp57.add("PALO BE");
 
     tmp56.setContexts(tmp57);
-    tmp56.setDescription("The total number of scan ranges read over the life of the process that did not have volume metadata");
-    tmp56.setKey("palo_be.scan_ranges.num_missing_volume_id");
-    tmp56.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp56.setLabel("Scan Ranges Missing Volume Information");
-    tmp56.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp56.setDescription("Indicates if the catalog is ready.");
+    tmp56.setKey("catalog.ready");
+    tmp56.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
+    tmp56.setLabel("Catalog Ready");
+    tmp56.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.scan_ranges.num_missing_volume_id", tmp56);
+    TMetricDefs.put("catalog.ready", tmp56);
     TMetricDef tmp58 = new TMetricDef();
     List<String> tmp59 = new ArrayList<String>();
     tmp59.add("PALO BE");
 
     tmp58.setContexts(tmp59);
-    tmp58.setDescription("The total number of scan ranges read over the life of the process");
-    tmp58.setKey("palo_be.scan_ranges.total");
-    tmp58.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp58.setLabel("Scan Ranges");
-    tmp58.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp58.setDescription("The number of clients currently in use by the Catalog Server client cache.");
+    tmp58.setKey("catalog.server.client_cache.clients_in_use");
+    tmp58.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp58.setLabel("Catalog Server Client Cache Clients In Use");
+    tmp58.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.scan_ranges.total", tmp58);
+    TMetricDefs.put("catalog.server.client_cache.clients_in_use", tmp58);
     TMetricDef tmp60 = new TMetricDef();
     List<String> tmp61 = new ArrayList<String>();
-    tmp61.add("PALO_BE");
+    tmp61.add("PALO BE");
 
     tmp60.setContexts(tmp61);
-    tmp60.setDescription("The local start time of the Palo Be.");
-    tmp60.setKey("palo_be.start_time");
-    tmp60.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
-    tmp60.setLabel("Palo Be Start Time");
+    tmp60.setDescription("The total number of clients in the Catalog Server client cache.");
+    tmp60.setKey("catalog.server.client_cache.total_clients");
+    tmp60.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp60.setLabel("Catalog Server Client Cache Total Clients");
     tmp60.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.start_time", tmp60);
+    TMetricDefs.put("catalog.server.client_cache.total_clients", tmp60);
     TMetricDef tmp62 = new TMetricDef();
     List<String> tmp63 = new ArrayList<String>();
-    tmp63.add("PALO_BE");
+    tmp63.add("CATALOGSERVER");
 
     tmp62.setContexts(tmp63);
-    tmp62.setDescription("The full version string of the Palo Be.");
-    tmp62.setKey("palo_be.version");
+    tmp62.setDescription("The full version string of the Catalog Server.");
+    tmp62.setKey("catalog.version");
     tmp62.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
-    tmp62.setLabel("Palo Be Version");
+    tmp62.setLabel("Catalog Version");
     tmp62.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.version", tmp62);
+    TMetricDefs.put("catalog.version", tmp62);
     TMetricDef tmp64 = new TMetricDef();
     List<String> tmp65 = new ArrayList<String>();
-    tmp65.add("PALO_BE");
+    tmp65.add("PALO BE");
 
     tmp64.setContexts(tmp65);
-    tmp64.setDescription("Looking count of olapengine's lru cache.");
-    tmp64.setKey("palo_be.olap.lru_cache.lookup_count");
-    tmp64.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp64.setLabel("OlapEngine Lru Cache Lookup Count");
-    tmp64.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp64.setDescription("The number of cgroups currently registered with the Cgroups Manager");
+    tmp64.setKey("cgroups_mgr.active_cgroups");
+    tmp64.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp64.setLabel("Cgroups Manager Active Cgroups");
+    tmp64.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("palo_be.olap.lru_cache.lookup_count", tmp64);
+    TMetricDefs.put("cgroups_mgr.active_cgroups", tmp64);
     TMetricDef tmp66 = new TMetricDef();
     List<String> tmp67 = new ArrayList<String>();
-    tmp67.add("PALO_BE");
+    tmp67.add("PALO BE");
 
     tmp66.setContexts(tmp67);
-    tmp66.setDescription("Hit count of olapengine's lru cache.");
-    tmp66.setKey("palo_be.olap.lru_cache.hit_count");
+    tmp66.setDescription("Number of cache hits in the External Data Source Class Cache");
+    tmp66.setKey("external_data_source.class_cache.hits");
     tmp66.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp66.setLabel("OlapEngine Lru Cache Hit Count");
-    tmp66.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp66.setLabel("External Data Source Class Cache Hits");
+    tmp66.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("palo_be.olap.lru_cache.hit_count", tmp66);
+    TMetricDefs.put("external_data_source.class_cache.hits", tmp66);
     TMetricDef tmp68 = new TMetricDef();
     List<String> tmp69 = new ArrayList<String>();
-    tmp69.add("PALO_BE");
+    tmp69.add("PALO BE");
 
     tmp68.setContexts(tmp69);
-    tmp68.setDescription("Pushing count over the life of the Palo Be process.");
-    tmp68.setKey("palo_be.olap.push_count");
+    tmp68.setDescription("Number of cache misses in the External Data Source Class Cache");
+    tmp68.setKey("external_data_source.class_cache.misses");
     tmp68.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp68.setLabel("OlapEngine Pushing Count");
-    tmp68.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp68.setLabel("External Data Source Class Cache Misses");
+    tmp68.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("palo_be.olap.push_count", tmp68);
+    TMetricDefs.put("external_data_source.class_cache.misses", tmp68);
     TMetricDef tmp70 = new TMetricDef();
     List<String> tmp71 = new ArrayList<String>();
     tmp71.add("PALO_BE");
 
     tmp70.setContexts(tmp71);
-    tmp70.setDescription("Fetch count over the life of the Palo Be process.");
-    tmp70.setKey("palo_be.olap.fetch_count");
-    tmp70.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp70.setLabel("OlapEngine Fetch Count");
+    tmp70.setDescription("The number of active Palo Backend clients. These clients are for communication with other Palo Be.");
+    tmp70.setKey("palo.backends.client_cache.clients_in_use");
+    tmp70.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp70.setLabel("Palo Backend Active Clients");
     tmp70.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.olap.fetch_count", tmp70);
+    TMetricDefs.put("palo.backends.client_cache.clients_in_use", tmp70);
     TMetricDef tmp72 = new TMetricDef();
     List<String> tmp73 = new ArrayList<String>();
     tmp73.add("PALO_BE");
 
     tmp72.setContexts(tmp73);
-    tmp72.setDescription("Request count over the life of the Palo Be process.");
-    tmp72.setKey("palo_be.olap.request_count");
-    tmp72.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp72.setLabel("OlapEngine Request Count");
+    tmp72.setDescription("The total number of Palo Backend clients in this Palo Be's client cache. These clients are for communication with other Palo Be.");
+    tmp72.setKey("palo.backends.client_cache.total_clients");
+    tmp72.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp72.setLabel("Palo Backend Total Clients");
     tmp72.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.olap.request_count", tmp72);
+    TMetricDefs.put("palo.backends.client_cache.total_clients", tmp72);
     TMetricDef tmp74 = new TMetricDef();
     List<String> tmp75 = new ArrayList<String>();
-    tmp75.add("PALO_BE");
+    tmp75.add("PALO BE");
 
     tmp74.setContexts(tmp75);
-    tmp74.setDescription("Base compaction num over the life of the Palo Be process.");
-    tmp74.setKey("palo_be.olap.be_merge.delta_num");
-    tmp74.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp74.setLabel("OlapEngine base compatcion num");
-    tmp74.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp74.setDescription("Distribution of DDL operation latencies");
+    tmp74.setKey("palo_be.ddl_durations_ms");
+    tmp74.setKind(com.baidu.palo.thrift.TMetricKind.HISTOGRAM);
+    tmp74.setLabel("DDL latency distribution");
+    tmp74.setUnits(com.baidu.palo.thrift.TUnit.TIME_MS);
 
-    TMetricDefs.put("palo_be.olap.be_merge.delta_num", tmp74);
+    TMetricDefs.put("palo_be.ddl_durations_ms", tmp74);
     TMetricDef tmp76 = new TMetricDef();
     List<String> tmp77 = new ArrayList<String>();
-    tmp77.add("PALO_BE");
+    tmp77.add("PALO BE");
 
     tmp76.setContexts(tmp77);
-    tmp76.setDescription("Base compaction size over the life of the Palo Be process.");
-    tmp76.setKey("palo_be.olap.be_merge_size");
-    tmp76.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp76.setLabel("OlapEngine base compatcion size");
-    tmp76.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp76.setDescription("The current size of all allocated hash tables.");
+    tmp76.setKey("palo_be.hash_table.total_bytes");
+    tmp76.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp76.setLabel("Hash Tables Size");
+    tmp76.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("palo_be.olap.be_merge_size", tmp76);
+    TMetricDefs.put("palo_be.hash_table.total_bytes", tmp76);
     TMetricDef tmp78 = new TMetricDef();
     List<String> tmp79 = new ArrayList<String>();
-    tmp79.add("PALO_BE");
+    tmp79.add("PALO BE");
 
     tmp78.setContexts(tmp79);
-    tmp78.setDescription("Cumulative compaction num over the life of the Palo Be process.");
-    tmp78.setKey("palo_be.olap.ce_merge.delta_num");
+    tmp78.setDescription("The total number of bytes read by the IO manager.");
+    tmp78.setKey("palo_be.io_mgr.bytes_read");
     tmp78.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp78.setLabel("OlapEngine cumulative compatcion num");
-    tmp78.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp78.setLabel("Palo Be Io Mgr Bytes Read");
+    tmp78.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("palo_be.olap.ce_merge.delta_num", tmp78);
+    TMetricDefs.put("palo_be.io_mgr.bytes_read", tmp78);
     TMetricDef tmp80 = new TMetricDef();
     List<String> tmp81 = new ArrayList<String>();
-    tmp81.add("PALO_BE");
+    tmp81.add("PALO BE");
 
     tmp80.setContexts(tmp81);
-    tmp80.setDescription("Cumulative compaction size over the life of the Palo Be process.");
-    tmp80.setKey("palo_be.olap.ce_merge_size");
+    tmp80.setDescription("Total number of bytes written to disk by the IO manager.");
+    tmp80.setKey("palo_be.io_mgr.bytes_written");
     tmp80.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp80.setLabel("OlapEngine cumulative compatcion size");
-    tmp80.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp80.setLabel("Palo Be Io Mgr Bytes Written");
+    tmp80.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("palo_be.olap.ce_merge_size", tmp80);
+    TMetricDefs.put("palo_be.io_mgr.bytes_written", tmp80);
     TMetricDef tmp82 = new TMetricDef();
     List<String> tmp83 = new ArrayList<String>();
     tmp83.add("PALO BE");
 
     tmp82.setContexts(tmp83);
-    tmp82.setDescription("The number of active Palo Backend client connections to this Palo Be.");
-    tmp82.setKey("palo_be.thrift_server.PaloBackend.connections_in_use");
-    tmp82.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp82.setLabel("Palo Backend Active Connections");
-    tmp82.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp82.setDescription("Total number of cached bytes read by the IO manager.");
+    tmp82.setKey("palo_be.io_mgr.cached_bytes_read");
+    tmp82.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp82.setLabel("Palo Be Io Mgr Cached Bytes Read");
+    tmp82.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("palo_be.thrift_server.PaloBackend.connections_in_use", tmp82);
+    TMetricDefs.put("palo_be.io_mgr.cached_bytes_read", tmp82);
     TMetricDef tmp84 = new TMetricDef();
     List<String> tmp85 = new ArrayList<String>();
     tmp85.add("PALO BE");
 
     tmp84.setContexts(tmp85);
-    tmp84.setDescription("The total number of Palo Backend client connections made to this Palo Be over its lifetime.");
-    tmp84.setKey("palo_be.thrift_server.PaloBackend.total_connections");
+    tmp84.setDescription("Total number of local bytes read by the IO manager.");
+    tmp84.setKey("palo_be.io_mgr.local_bytes_read");
     tmp84.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp84.setLabel("Palo Backend Server Total Connections");
-    tmp84.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp84.setLabel("Palo Be Io Mgr Local Bytes Read");
+    tmp84.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("palo_be.thrift_server.PaloBackend.total_connections", tmp84);
+    TMetricDefs.put("palo_be.io_mgr.local_bytes_read", tmp84);
     TMetricDef tmp86 = new TMetricDef();
     List<String> tmp87 = new ArrayList<String>();
     tmp87.add("PALO BE");
 
     tmp86.setContexts(tmp87);
-    tmp86.setDescription("The number of active Palo Backend heartbeat connections to this Palo Be.");
-    tmp86.setKey("palo_be.thrift_server.heartbeat.connections_in_use");
+    tmp86.setDescription("The number of allocated IO buffers. IO buffers are shared by all queries.");
+    tmp86.setKey("palo_be.io_mgr.num_buffers");
     tmp86.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp86.setLabel("Palo Backend HeartBeat Active Connections");
+    tmp86.setLabel("IO Buffers");
     tmp86.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.thrift_server.heartbeat.connections_in_use", tmp86);
+    TMetricDefs.put("palo_be.io_mgr.num_buffers", tmp86);
     TMetricDef tmp88 = new TMetricDef();
     List<String> tmp89 = new ArrayList<String>();
     tmp89.add("PALO BE");
 
     tmp88.setContexts(tmp89);
-    tmp88.setDescription("The total number of Palo Backend heartbeat connections made to this Palo Be over its lifetime.");
-    tmp88.setKey("palo_be.thrift_server.heartbeat.total_connections");
-    tmp88.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp88.setLabel("Palo Backend HeartBeat Total Connections");
-    tmp88.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp88.setDescription("The current number of files opened by the IO Manager");
+    tmp88.setKey("palo_be.io_mgr.num_open_files");
+    tmp88.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp88.setLabel("Open Files");
+    tmp88.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.thrift_server.heartbeat.total_connections", tmp88);
+    TMetricDefs.put("palo_be.io_mgr.num_open_files", tmp88);
     TMetricDef tmp90 = new TMetricDef();
     List<String> tmp91 = new ArrayList<String>();
     tmp91.add("PALO BE");
 
     tmp90.setContexts(tmp91);
-    tmp90.setDescription("The number of connections to the Catalog Service that have been accepted and are waiting to be setup.");
-    tmp90.setKey("impala.thrift_server.CatalogService.connection_setup_queue_size");
+    tmp90.setDescription("The number of unused IO buffers. IO buffers are shared by all queries.");
+    tmp90.setKey("palo_be.io_mgr.num_unused_buffers");
     tmp90.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp90.setLabel("Catalog Service Connections Queued for Setup");
+    tmp90.setLabel("Unused IO Buffers");
     tmp90.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("impala.thrift_server.CatalogService.connection_setup_queue_size", tmp90);
+    TMetricDefs.put("palo_be.io_mgr.num_unused_buffers", tmp90);
     TMetricDef tmp92 = new TMetricDef();
     List<String> tmp93 = new ArrayList<String>();
-    tmp93.add("CATALOGSERVER");
+    tmp93.add("PALO BE");
 
     tmp92.setContexts(tmp93);
-    tmp92.setDescription("The number of active catalog service connections to this Catalog Server.");
-    tmp92.setKey("impala.thrift_server.CatalogService.connections_in_use");
-    tmp92.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp92.setLabel("Catalog Service Active Connections");
-    tmp92.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp92.setDescription("Total number of short_circuit bytes read by the IO manager.");
+    tmp92.setKey("palo_be.io_mgr.short_circuit_bytes_read");
+    tmp92.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp92.setLabel("Palo Be Io Mgr Short Circuit Bytes Read");
+    tmp92.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("impala.thrift_server.CatalogService.connections_in_use", tmp92);
+    TMetricDefs.put("palo_be.io_mgr.short_circuit_bytes_read", tmp92);
     TMetricDef tmp94 = new TMetricDef();
     List<String> tmp95 = new ArrayList<String>();
-    tmp95.add("CATALOGSERVER");
+    tmp95.add("PALO BE");
 
     tmp94.setContexts(tmp95);
-    tmp94.setDescription("The total number of connections made to this Catalog Server's catalog service  over its lifetime.");
-    tmp94.setKey("impala.thrift_server.CatalogService.total_connections");
-    tmp94.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp94.setLabel("Catalog Service Total Connections");
-    tmp94.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp94.setDescription("Number of bytes used by IO buffers (used and unused).");
+    tmp94.setKey("palo_be.io_mgr.total_bytes");
+    tmp94.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp94.setLabel("IO Buffers Total Size");
+    tmp94.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("impala.thrift_server.CatalogService.total_connections", tmp94);
+    TMetricDefs.put("palo_be.io_mgr.total_bytes", tmp94);
     TMetricDef tmp96 = new TMetricDef();
     List<String> tmp97 = new ArrayList<String>();
     tmp97.add("PALO BE");
 
     tmp96.setContexts(tmp97);
-    tmp96.setDescription("The number of connections to the Statestore Service that have been accepted and are waiting to be setup.");
-    tmp96.setKey("impala.thrift_server.StatestoreService.connection_setup_queue_size");
+    tmp96.setDescription("Number of cache hits for cached HDFS file handles");
+    tmp96.setKey("palo_be.io_mgr.cached_file_handles_hit_count");
     tmp96.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp96.setLabel("Statestore Service Connections Queued for Setup");
+    tmp96.setLabel("HDFS cached file handles hit count");
     tmp96.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("impala.thrift_server.StatestoreService.connection_setup_queue_size", tmp96);
+    TMetricDefs.put("palo_be.io_mgr.cached_file_handles_hit_count", tmp96);
     TMetricDef tmp98 = new TMetricDef();
     List<String> tmp99 = new ArrayList<String>();
-    tmp99.add("STATESTORE");
+    tmp99.add("PALO BE");
 
     tmp98.setContexts(tmp99);
-    tmp98.setDescription("The number of active connections to this StateStore's StateStore service.");
-    tmp98.setKey("impala.thrift_server.StatestoreService.connections_in_use");
-    tmp98.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp98.setLabel("StateStore Service Active Connections");
+    tmp98.setDescription("HDFS file handle cache hit ratio, between 0 and 1, where 1 means all reads were served from cached file handles.");
+    tmp98.setKey("palo_be.io_mgr.cached_file_handles_hit_ratio");
+    tmp98.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
+    tmp98.setLabel("HDFS file handle cache hit ratio");
     tmp98.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("impala.thrift_server.StatestoreService.connections_in_use", tmp98);
+    TMetricDefs.put("palo_be.io_mgr.cached_file_handles_hit_ratio", tmp98);
     TMetricDef tmp100 = new TMetricDef();
     List<String> tmp101 = new ArrayList<String>();
-    tmp101.add("STATESTORE");
+    tmp101.add("PALO BE");
 
     tmp100.setContexts(tmp101);
-    tmp100.setDescription("The total number of connections made to this StateStore's StateStore service over its lifetime.");
-    tmp100.setKey("impala.thrift_server.StatestoreService.total_connections");
-    tmp100.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp100.setLabel("StateStore Service Connections");
-    tmp100.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp100.setDescription("Number of cache misses for cached HDFS file handles");
+    tmp100.setKey("palo_be.io_mgr.cached_file_handles_miss_count");
+    tmp100.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp100.setLabel("HDFS cached file handles miss count");
+    tmp100.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("impala.thrift_server.StatestoreService.total_connections", tmp100);
+    TMetricDefs.put("palo_be.io_mgr.cached_file_handles_miss_count", tmp100);
     TMetricDef tmp102 = new TMetricDef();
     List<String> tmp103 = new ArrayList<String>();
     tmp103.add("PALO BE");
 
     tmp102.setContexts(tmp103);
-    tmp102.setDescription("The number of connections to the Impala Backend Server that have been accepted and are waiting to be setup.");
-    tmp102.setKey("impala.thrift_server.backend.connection_setup_queue_size");
+    tmp102.setDescription("Number of currently cached HDFS file handles in the IO manager.");
+    tmp102.setKey("palo_be.io_mgr.num_cached_file_handles");
     tmp102.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp102.setLabel("Impala Backend Server Connections Queued for Setup");
+    tmp102.setLabel("Number of cached HDFS file handles");
     tmp102.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("impala.thrift_server.backend.connection_setup_queue_size", tmp102);
+    TMetricDefs.put("palo_be.io_mgr.num_cached_file_handles", tmp102);
     TMetricDef tmp104 = new TMetricDef();
     List<String> tmp105 = new ArrayList<String>();
     tmp105.add("PALO BE");
 
     tmp104.setContexts(tmp105);
-    tmp104.setDescription("The number of active Impala Backend client connections to this Impala Daemon.");
-    tmp104.setKey("impala.thrift_server.backend.connections_in_use");
+    tmp104.setDescription("Number of HDFS file handles that are currently in use by readers.");
+    tmp104.setKey("palo_be.io_mgr.num_file_handles_outstanding");
     tmp104.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp104.setLabel("Impala Backend Server Active Connections");
+    tmp104.setLabel("Number of outstanding HDFS file handles");
     tmp104.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("impala.thrift_server.backend.connections_in_use", tmp104);
+    TMetricDefs.put("palo_be.io_mgr.num_file_handles_outstanding", tmp104);
     TMetricDef tmp106 = new TMetricDef();
-    tmp106.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp106.setLabel("Impala Backend Server Connections");
-    tmp106.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
     List<String> tmp107 = new ArrayList<String>();
     tmp107.add("PALO BE");
 
     tmp106.setContexts(tmp107);
-    tmp106.setDescription("The total number of Impala Backend client connections made to this Impala Daemon over its lifetime.");
-    tmp106.setKey("impala.thrift_server.backend.total_connections");
+    tmp106.setDescription("The current size of the memory pool shared by all queries");
+    tmp106.setKey("palo_be.mem_pool.total_bytes");
+    tmp106.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp106.setLabel("Memory Pool Size");
+    tmp106.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("impala.thrift_server.backend.total_connections", tmp106);
+    TMetricDefs.put("palo_be.mem_pool.total_bytes", tmp106);
     TMetricDef tmp108 = new TMetricDef();
-    tmp108.setKey("jvm.$0.peak_current_usage_bytes");
-    tmp108.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp108.setLabel("Jvm $0 Peak Current Usage Bytes");
-    tmp108.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
     List<String> tmp109 = new ArrayList<String>();
-    tmp109.add("CATALOGSERVER");
     tmp109.add("PALO BE");
 
     tmp108.setContexts(tmp109);
-    tmp108.setDescription("Jvm $0 Peak Current Usage Bytes");
+    tmp108.setDescription("The number of HDFS files currently open for writing.");
+    tmp108.setKey("palo_be.num_files_open_for_insert");
+    tmp108.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp108.setLabel("Files Open For Insert");
+    tmp108.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("jvm.$0.peak_current_usage_bytes", tmp108);
+    TMetricDefs.put("palo_be.num_files_open_for_insert", tmp108);
     TMetricDef tmp110 = new TMetricDef();
     List<String> tmp111 = new ArrayList<String>();
-    tmp111.add("STATESTORE");
-    tmp111.add("CATALOGSERVER");
     tmp111.add("PALO BE");
 
     tmp110.setContexts(tmp111);
-    tmp110.setDescription("Total memory currently used by TCMalloc and buffer pool.");
-    tmp110.setKey("memory.total_used");
-    tmp110.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp110.setLabel("Total Used Memory.");
-    tmp110.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp110.setDescription("The total number of query fragments processed over the life of the process.");
+    tmp110.setKey("palo_be.num_fragments");
+    tmp110.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp110.setLabel("Query Fragments");
+    tmp110.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("memory.total_used", tmp110);
+    TMetricDefs.put("palo_be.num_fragments", tmp110);
     TMetricDef tmp112 = new TMetricDef();
     List<String> tmp113 = new ArrayList<String>();
     tmp113.add("PALO BE");
 
     tmp112.setContexts(tmp113);
-    tmp112.setDescription("Time (ms) spent resolving request request pools.");
-    tmp112.setKey("request_pool_service.resolve_pool_duration_ms");
-    tmp112.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
-    tmp112.setLabel("Request Pool Service Resolve Pool Duration Ms");
-    tmp112.setUnits(com.baidu.palo.thrift.TUnit.TIME_MS);
+    tmp112.setDescription("The number of query fragments currently executing.");
+    tmp112.setKey("palo_be.num_fragments_in_flight");
+    tmp112.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp112.setLabel("Query Fragments");
+    tmp112.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("request_pool_service.resolve_pool_duration_ms", tmp112);
+    TMetricDefs.put("palo_be.num_fragments_in_flight", tmp112);
     TMetricDef tmp114 = new TMetricDef();
     List<String> tmp115 = new ArrayList<String>();
-    tmp115.add("CATALOGSERVER");
-    tmp115.add("STATESTORE");
     tmp115.add("PALO BE");
 
     tmp114.setContexts(tmp115);
-    tmp114.setDescription("Duration (ms) of RPC calls to $0");
-    tmp114.setKey("rpc_method.$0.call_duration");
-    tmp114.setKind(com.baidu.palo.thrift.TMetricKind.HISTOGRAM);
-    tmp114.setLabel("$0 RPC Call Duration");
-    tmp114.setUnits(com.baidu.palo.thrift.TUnit.TIME_MS);
+    tmp114.setDescription("The number of open Beeswax sessions.");
+    tmp114.setKey("palo_be.num_open_beeswax_sessions");
+    tmp114.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp114.setLabel("Beeswax Sessions");
+    tmp114.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("rpc_method.$0.call_duration", tmp114);
+    TMetricDefs.put("palo_be.num_open_beeswax_sessions", tmp114);
     TMetricDef tmp116 = new TMetricDef();
     List<String> tmp117 = new ArrayList<String>();
     tmp117.add("PALO BE");
 
     tmp116.setContexts(tmp117);
-    tmp116.setDescription("Number of senders waiting for receiving fragment to initialize");
-    tmp116.setKey("senders_blocked_on_recvr_creation");
+    tmp116.setDescription("The number of open HiveServer2 sessions.");
+    tmp116.setKey("palo_be.num_open_hiveserver2_sessions");
     tmp116.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp116.setLabel("Number of senders waiting for receiving fragment to initialize.");
+    tmp116.setLabel("HiveServer2 Sessions");
     tmp116.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("senders_blocked_on_recvr_creation", tmp116);
+    TMetricDefs.put("palo_be.num_open_hiveserver2_sessions", tmp116);
     TMetricDef tmp118 = new TMetricDef();
     List<String> tmp119 = new ArrayList<String>();
     tmp119.add("PALO BE");
 
     tmp118.setContexts(tmp119);
-    tmp118.setDescription("The number of assignments");
-    tmp118.setKey("simple_scheduler.assignments.total");
+    tmp118.setDescription("The total number of queries processed over the life of the process");
+    tmp118.setKey("palo_be.num_queries");
     tmp118.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp118.setLabel("Assignments");
+    tmp118.setLabel("Queries");
     tmp118.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("simple_scheduler.assignments.total", tmp118);
+    TMetricDefs.put("palo_be.num_queries", tmp118);
     TMetricDef tmp120 = new TMetricDef();
     List<String> tmp121 = new ArrayList<String>();
     tmp121.add("PALO BE");
 
     tmp120.setContexts(tmp121);
-    tmp120.setDescription("Indicates whether the scheduler has been initialized.");
-    tmp120.setKey("simple_scheduler.initialized");
-    tmp120.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
-    tmp120.setLabel("Simple Scheduler Initialized");
-    tmp120.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp120.setDescription("Number of queries expired due to inactivity.");
+    tmp120.setKey("palo_be.num_queries_expired");
+    tmp120.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp120.setLabel("Queries Expired");
+    tmp120.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("simple_scheduler.initialized", tmp120);
+    TMetricDefs.put("palo_be.num_queries_expired", tmp120);
     TMetricDef tmp122 = new TMetricDef();
     List<String> tmp123 = new ArrayList<String>();
     tmp123.add("PALO BE");
 
     tmp122.setContexts(tmp123);
-    tmp122.setDescription("Number of assignments operating on local data");
-    tmp122.setKey("simple_scheduler.local_assignments.total");
+    tmp122.setDescription("Number of queries for which any operator spilled.");
+    tmp122.setKey("palo_be.num_queries_spilled");
     tmp122.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp122.setLabel("Local Assignments");
+    tmp122.setLabel("Palo Be Num Queries Spilled");
     tmp122.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("simple_scheduler.local_assignments.total", tmp122);
+    TMetricDefs.put("palo_be.num_queries_spilled", tmp122);
     TMetricDef tmp124 = new TMetricDef();
     List<String> tmp125 = new ArrayList<String>();
     tmp125.add("PALO BE");
 
     tmp124.setContexts(tmp125);
-    tmp124.setDescription("The number of backend connections from this Impala Daemon to other Impala Daemons.");
-    tmp124.setKey("simple_scheduler.num_backends");
-    tmp124.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp124.setLabel("Backend Connections");
-    tmp124.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp124.setDescription("Number of sessions expired due to inactivity.");
+    tmp124.setKey("palo_be.num_sessions_expired");
+    tmp124.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp124.setLabel("Sessions Expired");
+    tmp124.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("simple_scheduler.num_backends", tmp124);
+    TMetricDefs.put("palo_be.num_sessions_expired", tmp124);
     TMetricDef tmp126 = new TMetricDef();
     List<String> tmp127 = new ArrayList<String>();
-    tmp127.add("CATALOGSERVER");
     tmp127.add("PALO BE");
 
     tmp126.setContexts(tmp127);
-    tmp126.setDescription("Whether the Impala Daemon considers itself connected to the StateStore.");
-    tmp126.setKey("statestore_subscriber.connected");
-    tmp126.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
-    tmp126.setLabel("StateStore Connectivity");
-    tmp126.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp126.setDescription("Distribution of query latencies");
+    tmp126.setKey("palo_be.query_durations_ms");
+    tmp126.setKind(com.baidu.palo.thrift.TMetricKind.HISTOGRAM);
+    tmp126.setLabel("Query latency distribution");
+    tmp126.setUnits(com.baidu.palo.thrift.TUnit.TIME_MS);
 
-    TMetricDefs.put("statestore_subscriber.connected", tmp126);
+    TMetricDefs.put("palo_be.query_durations_ms", tmp126);
     TMetricDef tmp128 = new TMetricDef();
     List<String> tmp129 = new ArrayList<String>();
-    tmp129.add("CATALOGSERVER");
     tmp129.add("PALO BE");
 
     tmp128.setContexts(tmp129);
-    tmp128.setDescription("The time (sec) between Statestore heartbeats.");
-    tmp128.setKey("statestore_subscriber.heartbeat_interval_time");
-    tmp128.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
-    tmp128.setLabel("Statestore Subscriber Heartbeat Interval Time");
-    tmp128.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
+    tmp128.setDescription("Indicates if the Palo Be is ready.");
+    tmp128.setKey("palo_be.ready");
+    tmp128.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
+    tmp128.setLabel("Palo Be Ready");
+    tmp128.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore_subscriber.heartbeat_interval_time", tmp128);
+    TMetricDefs.put("palo_be.ready", tmp128);
     TMetricDef tmp130 = new TMetricDef();
     List<String> tmp131 = new ArrayList<String>();
-    tmp131.add("CATALOGSERVER");
     tmp131.add("PALO BE");
 
     tmp130.setContexts(tmp131);
-    tmp130.setDescription("The amount of time the StateStore subscriber took to recover the connection the last time it was lost.");
-    tmp130.setKey("statestore_subscriber.last_recovery_duration");
+    tmp130.setDescription("Total number of bytes consumed for rows cached to support HS2 FETCH_FIRST.");
+    tmp130.setKey("palo_be.resultset_cache.total_bytes");
     tmp130.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp130.setLabel("StateStore Subscriber Last Recovery Duration");
+    tmp130.setLabel("Palo Be Resultset Cache Total Bytes");
     tmp130.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore_subscriber.last_recovery_duration", tmp130);
+    TMetricDefs.put("palo_be.resultset_cache.total_bytes", tmp130);
     TMetricDef tmp132 = new TMetricDef();
     List<String> tmp133 = new ArrayList<String>();
-    tmp133.add("CATALOGSERVER");
     tmp133.add("PALO BE");
 
     tmp132.setContexts(tmp133);
-    tmp132.setDescription("The local time that the last statestore recovery happened.");
-    tmp132.setKey("statestore_subscriber.last_recovery_time");
-    tmp132.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
-    tmp132.setLabel("Statestore Subscriber Last Recovery Time");
+    tmp132.setDescription("Total number of rows cached to support HS2 FETCH_FIRST.");
+    tmp132.setKey("palo_be.resultset_cache.total_num_rows");
+    tmp132.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp132.setLabel("Palo Be Resultset Cache Total Num Rows");
     tmp132.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore_subscriber.last_recovery_time", tmp132);
+    TMetricDefs.put("palo_be.resultset_cache.total_num_rows", tmp132);
     TMetricDef tmp134 = new TMetricDef();
     List<String> tmp135 = new ArrayList<String>();
-    tmp135.add("CATALOGSERVER");
     tmp135.add("PALO BE");
 
     tmp134.setContexts(tmp135);
-    tmp134.setDescription("The most recent registration ID for this subscriber with the statestore. Set to 'N/A' if no registration has been completed");
-    tmp134.setKey("statestore_subscriber.registration_id");
-    tmp134.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
-    tmp134.setLabel("Statestore Subscriber Registration Id");
-    tmp134.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp134.setDescription("The total number of scan ranges read over the life of the process that did not have volume metadata");
+    tmp134.setKey("palo_be.scan_ranges.num_missing_volume_id");
+    tmp134.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp134.setLabel("Scan Ranges Missing Volume Information");
+    tmp134.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("statestore_subscriber.registration_id", tmp134);
+    TMetricDefs.put("palo_be.scan_ranges.num_missing_volume_id", tmp134);
     TMetricDef tmp136 = new TMetricDef();
     List<String> tmp137 = new ArrayList<String>();
-    tmp137.add("CATALOGSERVER");
     tmp137.add("PALO BE");
 
     tmp136.setContexts(tmp137);
-    tmp136.setDescription("The number of active StateStore subscriber clients in this Impala Daemon's client cache. These clients are for communication from this role to the StateStore.");
-    tmp136.setKey("statestore_subscriber.statestore.client_cache.clients_in_use");
-    tmp136.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp136.setLabel("StateStore Subscriber Active Clients");
-    tmp136.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp136.setDescription("The total number of scan ranges read over the life of the process");
+    tmp136.setKey("palo_be.scan_ranges.total");
+    tmp136.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp136.setLabel("Scan Ranges");
+    tmp136.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("statestore_subscriber.statestore.client_cache.clients_in_use", tmp136);
+    TMetricDefs.put("palo_be.scan_ranges.total", tmp136);
     TMetricDef tmp138 = new TMetricDef();
     List<String> tmp139 = new ArrayList<String>();
-    tmp139.add("CATALOGSERVER");
-    tmp139.add("PALO BE");
+    tmp139.add("PALO_BE");
 
     tmp138.setContexts(tmp139);
-    tmp138.setDescription("The total number of StateStore subscriber clients in this Impala Daemon's client cache. These clients are for communication from this role to the StateStore.");
-    tmp138.setKey("statestore_subscriber.statestore.client_cache.total_clients");
-    tmp138.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp138.setLabel("StateStore Subscriber Total Clients");
+    tmp138.setDescription("The local start time of the Palo Be.");
+    tmp138.setKey("palo_be.start_time");
+    tmp138.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
+    tmp138.setLabel("Palo Be Start Time");
     tmp138.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore_subscriber.statestore.client_cache.total_clients", tmp138);
+    TMetricDefs.put("palo_be.start_time", tmp138);
     TMetricDef tmp140 = new TMetricDef();
     List<String> tmp141 = new ArrayList<String>();
-    tmp141.add("CATALOGSERVER");
-    tmp141.add("PALO BE");
+    tmp141.add("PALO_BE");
 
     tmp140.setContexts(tmp141);
-    tmp140.setDescription("Statestore Subscriber Topic $0 Processing Time");
-    tmp140.setKey("statestore_subscriber.topic_$0.processing_time_s");
-    tmp140.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
-    tmp140.setLabel("Statestore Subscriber Topic $0 Processing Time");
-    tmp140.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
+    tmp140.setDescription("The full version string of the Palo Be.");
+    tmp140.setKey("palo_be.version");
+    tmp140.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
+    tmp140.setLabel("Palo Be Version");
+    tmp140.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore_subscriber.topic_$0.processing_time_s", tmp140);
+    TMetricDefs.put("palo_be.version", tmp140);
     TMetricDef tmp142 = new TMetricDef();
     List<String> tmp143 = new ArrayList<String>();
-    tmp143.add("CATALOGSERVER");
-    tmp143.add("PALO BE");
+    tmp143.add("PALO_BE");
 
     tmp142.setContexts(tmp143);
-    tmp142.setDescription("The time (sec) taken to process Statestore subcriber topic updates.");
-    tmp142.setKey("statestore_subscriber.topic_update_duration");
-    tmp142.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
-    tmp142.setLabel("Statestore Subscriber Topic Update Duration");
-    tmp142.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
+    tmp142.setDescription("Looking count of olapengine's lru cache.");
+    tmp142.setKey("palo_be.olap.lru_cache.lookup_count");
+    tmp142.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp142.setLabel("OlapEngine Lru Cache Lookup Count");
+    tmp142.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore_subscriber.topic_update_duration", tmp142);
+    TMetricDefs.put("palo_be.olap.lru_cache.lookup_count", tmp142);
     TMetricDef tmp144 = new TMetricDef();
     List<String> tmp145 = new ArrayList<String>();
-    tmp145.add("CATALOGSERVER");
-    tmp145.add("PALO BE");
+    tmp145.add("PALO_BE");
 
     tmp144.setContexts(tmp145);
-    tmp144.setDescription("The time (sec) between Statestore subscriber topic updates.");
-    tmp144.setKey("statestore_subscriber.topic_update_interval_time");
-    tmp144.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
-    tmp144.setLabel("Statestore Subscriber Topic Update Interval Time");
-    tmp144.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
+    tmp144.setDescription("Hit count of olapengine's lru cache.");
+    tmp144.setKey("palo_be.olap.lru_cache.hit_count");
+    tmp144.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp144.setLabel("OlapEngine Lru Cache Hit Count");
+    tmp144.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore_subscriber.topic_update_interval_time", tmp144);
+    TMetricDefs.put("palo_be.olap.lru_cache.hit_count", tmp144);
     TMetricDef tmp146 = new TMetricDef();
     List<String> tmp147 = new ArrayList<String>();
-    tmp147.add("STATESTORE");
+    tmp147.add("PALO_BE");
 
     tmp146.setContexts(tmp147);
-    tmp146.setDescription("The sum of the size of all keys for all topics tracked by the StateStore.");
-    tmp146.setKey("statestore.total_key_size_bytes");
-    tmp146.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp146.setLabel("Topic Key Size");
+    tmp146.setDescription("Pushing count over the life of the Palo Be process.");
+    tmp146.setKey("palo_be.olap.push_count");
+    tmp146.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp146.setLabel("OlapEngine Pushing Count");
     tmp146.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore.total_key_size_bytes", tmp146);
+    TMetricDefs.put("palo_be.olap.push_count", tmp146);
     TMetricDef tmp148 = new TMetricDef();
     List<String> tmp149 = new ArrayList<String>();
-    tmp149.add("STATESTORE");
+    tmp149.add("PALO_BE");
 
     tmp148.setContexts(tmp149);
-    tmp148.setDescription("The sum of the size of all keys and all values for all topics tracked by the StateStore.");
-    tmp148.setKey("statestore.total_topic_size_bytes");
-    tmp148.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp148.setLabel("Topic Size");
+    tmp148.setDescription("Fetch count over the life of the Palo Be process.");
+    tmp148.setKey("palo_be.olap.fetch_count");
+    tmp148.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp148.setLabel("OlapEngine Fetch Count");
     tmp148.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore.total_topic_size_bytes", tmp148);
+    TMetricDefs.put("palo_be.olap.fetch_count", tmp148);
     TMetricDef tmp150 = new TMetricDef();
     List<String> tmp151 = new ArrayList<String>();
-    tmp151.add("STATESTORE");
+    tmp151.add("PALO_BE");
 
     tmp150.setContexts(tmp151);
-    tmp150.setDescription("The sum of the size of all values for all topics tracked by the StateStore.");
-    tmp150.setKey("statestore.total_value_size_bytes");
-    tmp150.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp150.setLabel("Topic Value Size");
+    tmp150.setDescription("Request count over the life of the Palo Be process.");
+    tmp150.setKey("palo_be.olap.request_count");
+    tmp150.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp150.setLabel("OlapEngine Request Count");
     tmp150.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore.total_value_size_bytes", tmp150);
+    TMetricDefs.put("palo_be.olap.request_count", tmp150);
     TMetricDef tmp152 = new TMetricDef();
     List<String> tmp153 = new ArrayList<String>();
-    tmp153.add("STATESTORE");
+    tmp153.add("PALO_BE");
 
     tmp152.setContexts(tmp153);
-    tmp152.setDescription("The full version string of the Statestore Server.");
-    tmp152.setKey("statestore.version");
-    tmp152.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
-    tmp152.setLabel("Statestore Version");
+    tmp152.setDescription("Base compaction num over the life of the Palo Be process.");
+    tmp152.setKey("palo_be.olap.be_merge.delta_num");
+    tmp152.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp152.setLabel("OlapEngine base compatcion num");
     tmp152.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore.version", tmp152);
+    TMetricDefs.put("palo_be.olap.be_merge.delta_num", tmp152);
     TMetricDef tmp154 = new TMetricDef();
     List<String> tmp155 = new ArrayList<String>();
-    tmp155.add("STATESTORE");
+    tmp155.add("PALO_BE");
 
     tmp154.setContexts(tmp155);
-    tmp154.setDescription("The number of clients in use by the Statestore heartbeat client cache.");
-    tmp154.setKey("subscriber_heartbeat.client_cache.clients_in_use");
-    tmp154.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp154.setLabel("Subscriber Heartbeat Client Cache Clients In Use");
+    tmp154.setDescription("Base compaction size over the life of the Palo Be process.");
+    tmp154.setKey("palo_be.olap.be_merge_size");
+    tmp154.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp154.setLabel("OlapEngine base compatcion size");
     tmp154.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("subscriber_heartbeat.client_cache.clients_in_use", tmp154);
+    TMetricDefs.put("palo_be.olap.be_merge_size", tmp154);
     TMetricDef tmp156 = new TMetricDef();
     List<String> tmp157 = new ArrayList<String>();
-    tmp157.add("STATESTORE");
+    tmp157.add("PALO_BE");
 
     tmp156.setContexts(tmp157);
-    tmp156.setDescription("The total number of clients in the Statestore heartbeat client cache.");
-    tmp156.setKey("subscriber_heartbeat.client_cache.total_clients");
-    tmp156.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp156.setLabel("Subscriber Heartbeat Client Cache Total Clients");
+    tmp156.setDescription("Cumulative compaction num over the life of the Palo Be process.");
+    tmp156.setKey("palo_be.olap.ce_merge.delta_num");
+    tmp156.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp156.setLabel("OlapEngine cumulative compatcion num");
     tmp156.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("subscriber_heartbeat.client_cache.total_clients", tmp156);
+    TMetricDefs.put("palo_be.olap.ce_merge.delta_num", tmp156);
     TMetricDef tmp158 = new TMetricDef();
     List<String> tmp159 = new ArrayList<String>();
-    tmp159.add("STATESTORE");
+    tmp159.add("PALO_BE");
 
     tmp158.setContexts(tmp159);
-    tmp158.setDescription("The number of clients in use by the Statestore update state client cache.");
-    tmp158.setKey("subscriber_update_state.client_cache.clients_in_use");
-    tmp158.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp158.setLabel("Subscriber Update State Client Cache Clients In Use");
+    tmp158.setDescription("Cumulative compaction size over the life of the Palo Be process.");
+    tmp158.setKey("palo_be.olap.ce_merge_size");
+    tmp158.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp158.setLabel("OlapEngine cumulative compatcion size");
     tmp158.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("subscriber_update_state.client_cache.clients_in_use", tmp158);
+    TMetricDefs.put("palo_be.olap.ce_merge_size", tmp158);
     TMetricDef tmp160 = new TMetricDef();
     List<String> tmp161 = new ArrayList<String>();
-    tmp161.add("STATESTORE");
+    tmp161.add("PALO BE");
 
     tmp160.setContexts(tmp161);
-    tmp160.setDescription("The total number of clients in the Statestore update state client cache.");
-    tmp160.setKey("subscriber_update_state.client_cache.total_clients");
+    tmp160.setDescription("The number of active Palo Backend client connections to this Palo Be.");
+    tmp160.setKey("palo_be.thrift_server.PaloBackend.connections_in_use");
     tmp160.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp160.setLabel("Subscriber Update State Client Cache Total Clients");
+    tmp160.setLabel("Palo Backend Active Connections");
     tmp160.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("subscriber_update_state.client_cache.total_clients", tmp160);
+    TMetricDefs.put("palo_be.thrift_server.PaloBackend.connections_in_use", tmp160);
     TMetricDef tmp162 = new TMetricDef();
     List<String> tmp163 = new ArrayList<String>();
-    tmp163.add("STATESTORE");
-    tmp163.add("CATALOGSERVER");
     tmp163.add("PALO BE");
 
     tmp162.setContexts(tmp163);
-    tmp162.setDescription("Number of bytes used by the application. This will not typically match the memory use reported by the OS, because it does not include TCMalloc overhead or memory fragmentation.");
-    tmp162.setKey("tcmalloc.bytes_in_use");
-    tmp162.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp162.setLabel("TCMalloc Bytes in Use");
-    tmp162.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp162.setDescription("The total number of Palo Backend client connections made to this Palo Be over its lifetime.");
+    tmp162.setKey("palo_be.thrift_server.PaloBackend.total_connections");
+    tmp162.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp162.setLabel("Palo Backend Server Total Connections");
+    tmp162.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("tcmalloc.bytes_in_use", tmp162);
+    TMetricDefs.put("palo_be.thrift_server.PaloBackend.total_connections", tmp162);
     TMetricDef tmp164 = new TMetricDef();
     List<String> tmp165 = new ArrayList<String>();
-    tmp165.add("STATESTORE");
-    tmp165.add("CATALOGSERVER");
     tmp165.add("PALO BE");
 
     tmp164.setContexts(tmp165);
-    tmp164.setDescription("Number of bytes in free, mapped pages in page heap. These bytes can be used to fulfill allocation requests. They always count towards virtual memory usage, and unless the underlying memory is swapped out by the OS, they also count towards physical memory usage.");
-    tmp164.setKey("tcmalloc.pageheap_free_bytes");
+    tmp164.setDescription("The number of active Palo Backend heartbeat connections to this Palo Be.");
+    tmp164.setKey("palo_be.thrift_server.heartbeat.connections_in_use");
     tmp164.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp164.setLabel("TCMalloc Pageheap Free");
-    tmp164.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp164.setLabel("Palo Backend HeartBeat Active Connections");
+    tmp164.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("tcmalloc.pageheap_free_bytes", tmp164);
+    TMetricDefs.put("palo_be.thrift_server.heartbeat.connections_in_use", tmp164);
     TMetricDef tmp166 = new TMetricDef();
     List<String> tmp167 = new ArrayList<String>();
-    tmp167.add("STATESTORE");
-    tmp167.add("CATALOGSERVER");
     tmp167.add("PALO BE");
 
     tmp166.setContexts(tmp167);
-    tmp166.setDescription("Number of bytes in free, unmapped pages in page heap. These are bytes that have been released back to the OS, possibly by one of the MallocExtension \"Release\" calls. They can be used to fulfill allocation requests, but typically incur a page fault. They always count towards virtual memory usage, and depending on the OS, typically do not count towards physical memory usage.");
-    tmp166.setKey("tcmalloc.pageheap_unmapped_bytes");
-    tmp166.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp166.setLabel("TCMalloc Pageheap Unmapped");
-    tmp166.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp166.setDescription("The total number of Palo Backend heartbeat connections made to this Palo Be over its lifetime.");
+    tmp166.setKey("palo_be.thrift_server.heartbeat.total_connections");
+    tmp166.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp166.setLabel("Palo Backend HeartBeat Total Connections");
+    tmp166.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("tcmalloc.pageheap_unmapped_bytes", tmp166);
+    TMetricDefs.put("palo_be.thrift_server.heartbeat.total_connections", tmp166);
     TMetricDef tmp168 = new TMetricDef();
     List<String> tmp169 = new ArrayList<String>();
-    tmp169.add("STATESTORE");
-    tmp169.add("CATALOGSERVER");
     tmp169.add("PALO BE");
 
     tmp168.setContexts(tmp169);
-    tmp168.setDescription("Derived metric computing the amount of physical memory (in bytes) used by the process, including that actually in use and free bytes reserved by tcmalloc. Does not include the tcmalloc metadata.");
-    tmp168.setKey("tcmalloc.physical_bytes_reserved");
+    tmp168.setDescription("The number of connections to the Catalog Service that have been accepted and are waiting to be setup.");
+    tmp168.setKey("impala.thrift_server.CatalogService.connection_setup_queue_size");
     tmp168.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp168.setLabel("TCMalloc Physical Bytes Reserved");
-    tmp168.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp168.setLabel("Catalog Service Connections Queued for Setup");
+    tmp168.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("tcmalloc.physical_bytes_reserved", tmp168);
+    TMetricDefs.put("impala.thrift_server.CatalogService.connection_setup_queue_size", tmp168);
     TMetricDef tmp170 = new TMetricDef();
     List<String> tmp171 = new ArrayList<String>();
-    tmp171.add("STATESTORE");
     tmp171.add("CATALOGSERVER");
-    tmp171.add("PALO BE");
 
     tmp170.setContexts(tmp171);
-    tmp170.setDescription("Bytes of system memory reserved by TCMalloc.");
-    tmp170.setKey("tcmalloc.total_bytes_reserved");
+    tmp170.setDescription("The number of active catalog service connections to this Catalog Server.");
+    tmp170.setKey("impala.thrift_server.CatalogService.connections_in_use");
     tmp170.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp170.setLabel("TCMalloc Total Bytes Reserved");
-    tmp170.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp170.setLabel("Catalog Service Active Connections");
+    tmp170.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("tcmalloc.total_bytes_reserved", tmp170);
+    TMetricDefs.put("impala.thrift_server.CatalogService.connections_in_use", tmp170);
     TMetricDef tmp172 = new TMetricDef();
     List<String> tmp173 = new ArrayList<String>();
-    tmp173.add("STATESTORE");
     tmp173.add("CATALOGSERVER");
-    tmp173.add("PALO BE");
 
     tmp172.setContexts(tmp173);
-    tmp172.setDescription("The number of running threads in this process.");
-    tmp172.setKey("thread_manager.running_threads");
-    tmp172.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp172.setLabel("Running Threads");
-    tmp172.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp172.setDescription("The total number of connections made to this Catalog Server's catalog service  over its lifetime.");
+    tmp172.setKey("impala.thrift_server.CatalogService.total_connections");
+    tmp172.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp172.setLabel("Catalog Service Total Connections");
+    tmp172.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("thread_manager.running_threads", tmp172);
+    TMetricDefs.put("impala.thrift_server.CatalogService.total_connections", tmp172);
     TMetricDef tmp174 = new TMetricDef();
     List<String> tmp175 = new ArrayList<String>();
-    tmp175.add("STATESTORE");
-    tmp175.add("CATALOGSERVER");
     tmp175.add("PALO BE");
 
     tmp174.setContexts(tmp175);
-    tmp174.setDescription("Threads created over the lifetime of the process.");
-    tmp174.setKey("thread_manager.total_threads_created");
+    tmp174.setDescription("The number of connections to the Statestore Service that have been accepted and are waiting to be setup.");
+    tmp174.setKey("impala.thrift_server.StatestoreService.connection_setup_queue_size");
     tmp174.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp174.setLabel("Threads Created");
+    tmp174.setLabel("Statestore Service Connections Queued for Setup");
     tmp174.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("thread_manager.total_threads_created", tmp174);
+    TMetricDefs.put("impala.thrift_server.StatestoreService.connection_setup_queue_size", tmp174);
     TMetricDef tmp176 = new TMetricDef();
     List<String> tmp177 = new ArrayList<String>();
-    tmp177.add("PALO BE");
+    tmp177.add("STATESTORE");
 
     tmp176.setContexts(tmp177);
-    tmp176.setDescription("The number of active scratch directories for spilling to disk.");
-    tmp176.setKey("tmp_file_mgr.active_scratch_dirs");
+    tmp176.setDescription("The number of active connections to this StateStore's StateStore service.");
+    tmp176.setKey("impala.thrift_server.StatestoreService.connections_in_use");
     tmp176.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp176.setLabel("Active scratch directories");
+    tmp176.setLabel("StateStore Service Active Connections");
     tmp176.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("tmp_file_mgr.active_scratch_dirs", tmp176);
+    TMetricDefs.put("impala.thrift_server.StatestoreService.connections_in_use", tmp176);
     TMetricDef tmp178 = new TMetricDef();
     List<String> tmp179 = new ArrayList<String>();
-    tmp179.add("PALO BE");
+    tmp179.add("STATESTORE");
 
     tmp178.setContexts(tmp179);
-    tmp178.setDescription("The set of all active scratch directories for spilling to disk.");
-    tmp178.setKey("tmp_file_mgr.active_scratch_dirs.list");
-    tmp178.setKind(com.baidu.palo.thrift.TMetricKind.SET);
-    tmp178.setLabel("Active scratch directories list");
-    tmp178.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp178.setDescription("The total number of connections made to this StateStore's StateStore service over its lifetime.");
+    tmp178.setKey("impala.thrift_server.StatestoreService.total_connections");
+    tmp178.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp178.setLabel("StateStore Service Connections");
+    tmp178.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("tmp_file_mgr.active_scratch_dirs.list", tmp178);
+    TMetricDefs.put("impala.thrift_server.StatestoreService.total_connections", tmp178);
     TMetricDef tmp180 = new TMetricDef();
     List<String> tmp181 = new ArrayList<String>();
     tmp181.add("PALO BE");
 
     tmp180.setContexts(tmp181);
-    tmp180.setDescription("Total number of senders that timed_out waiting for receiving fragment to initialize.");
-    tmp180.setKey("total_senders_timedout_waiting_for_recvr_creation");
-    tmp180.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp180.setLabel("Total senders timed_out waiting for receiving fragment to initialize");
+    tmp180.setDescription("The number of connections to the Impala Backend Server that have been accepted and are waiting to be setup.");
+    tmp180.setKey("impala.thrift_server.backend.connection_setup_queue_size");
+    tmp180.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp180.setLabel("Impala Backend Server Connections Queued for Setup");
     tmp180.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("total_senders_timedout_waiting_for_recvr_creation", tmp180);
+    TMetricDefs.put("impala.thrift_server.backend.connection_setup_queue_size", tmp180);
     TMetricDef tmp182 = new TMetricDef();
     List<String> tmp183 = new ArrayList<String>();
-    tmp183.add("RESOURCE_POOL");
+    tmp183.add("PALO BE");
 
     tmp182.setContexts(tmp183);
-    tmp182.setDescription("Resource Pool $0 Aggregate Mem Reserved");
-    tmp182.setKey("admission_controller.agg_mem_reserved.$0");
+    tmp182.setDescription("The number of active Impala Backend client connections to this Impala Daemon.");
+    tmp182.setKey("impala.thrift_server.backend.connections_in_use");
     tmp182.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp182.setLabel("Resource Pool $0 Aggregate Mem Reserved");
+    tmp182.setLabel("Impala Backend Server Active Connections");
     tmp182.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("admission_controller.agg_mem_reserved.$0", tmp182);
+    TMetricDefs.put("impala.thrift_server.backend.connections_in_use", tmp182);
     TMetricDef tmp184 = new TMetricDef();
     List<String> tmp185 = new ArrayList<String>();
-    tmp185.add("RESOURCE_POOL");
+    tmp185.add("PALO BE");
 
     tmp184.setContexts(tmp185);
-    tmp184.setDescription("Resource Pool $0 Aggregate Queue Size");
-    tmp184.setKey("admission_controller.agg_num_queued.$0");
-    tmp184.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp184.setLabel("Resource Pool $0 Aggregate Queue Size");
-    tmp184.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp184.setDescription("The total number of Impala Backend client connections made to this Impala Daemon over its lifetime.");
+    tmp184.setKey("impala.thrift_server.backend.total_connections");
+    tmp184.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp184.setLabel("Impala Backend Server Connections");
+    tmp184.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("admission_controller.agg_num_queued.$0", tmp184);
+    TMetricDefs.put("impala.thrift_server.backend.total_connections", tmp184);
     TMetricDef tmp186 = new TMetricDef();
     List<String> tmp187 = new ArrayList<String>();
-    tmp187.add("RESOURCE_POOL");
+    tmp187.add("PALO BE");
 
     tmp186.setContexts(tmp187);
-    tmp186.setDescription("Resource Pool $0 Aggregate Num Running");
-    tmp186.setKey("admission_controller.agg_num_running.$0");
+    tmp186.setDescription("The number of active Beeswax API connections to this Impala Daemon.");
+    tmp186.setKey("impala.thrift_server.beeswax_frontend.connections_in_use");
     tmp186.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp186.setLabel("Resource Pool $0 Aggregate Num Running");
+    tmp186.setLabel("Beeswax API Active Connections");
     tmp186.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("admission_controller.agg_num_running.$0", tmp186);
+    TMetricDefs.put("impala.thrift_server.beeswax_frontend.connections_in_use", tmp186);
     TMetricDef tmp188 = new TMetricDef();
-    tmp188.setDescription("Resource Pool $0 Mem Reserved by the backend coordinator");
     List<String> tmp189 = new ArrayList<String>();
-    tmp189.add("RESOURCE_POOL");
+    tmp189.add("PALO BE");
 
     tmp188.setContexts(tmp189);
-    tmp188.setKey("admission_controller.local_backend_mem_reserved.$0");
-    tmp188.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp188.setLabel("Resource Pool $0 Coordinator Backend Mem Reserved");
-    tmp188.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp188.setDescription("The total number of Beeswax API connections made to this Impala Daemon over its lifetime.");
+    tmp188.setKey("impala.thrift_server.beeswax_frontend.total_connections");
+    tmp188.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp188.setLabel("Beeswax API Total Connections");
+    tmp188.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("admission_controller.local_backend_mem_reserved.$0", tmp188);
+    TMetricDefs.put("impala.thrift_server.beeswax_frontend.total_connections", tmp188);
     TMetricDef tmp190 = new TMetricDef();
     List<String> tmp191 = new ArrayList<String>();
-    tmp191.add("RESOURCE_POOL");
+    tmp191.add("PALO BE");
 
     tmp190.setContexts(tmp191);
-    tmp190.setDescription("Resource Pool $0 Coordinator Backend Mem Usage");
-    tmp190.setKey("admission_controller.local_backend_mem_usage.$0");
+    tmp190.setDescription("The number of active HiveServer2 API connections to this Impala Daemon.");
+    tmp190.setKey("impala.thrift_server.hiveserver2_frontend.connections_in_use");
     tmp190.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp190.setLabel("Resource Pool $0 Coordinator Backend Mem Usage");
+    tmp190.setLabel("HiveServer2 API Active Connections");
     tmp190.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("admission_controller.local_backend_mem_usage.$0", tmp190);
+    TMetricDefs.put("impala.thrift_server.hiveserver2_frontend.connections_in_use", tmp190);
     TMetricDef tmp192 = new TMetricDef();
     List<String> tmp193 = new ArrayList<String>();
-    tmp193.add("RESOURCE_POOL");
+    tmp193.add("PALO BE");
 
     tmp192.setContexts(tmp193);
-    tmp192.setDescription("Resource Pool $0 Local Mem Admitted");
-    tmp192.setKey("admission_controller.local_mem_admitted.$0");
-    tmp192.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp192.setLabel("Resource Pool $0 Local Mem Admitted");
-    tmp192.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp192.setDescription("The total number of HiveServer2 API connections made to this Impala Daemon over its lifetime.");
+    tmp192.setKey("impala.thrift_server.hiveserver2_frontend.total_connections");
+    tmp192.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp192.setLabel("HiveServer2 API Total Connections");
+    tmp192.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("admission_controller.local_mem_admitted.$0", tmp192);
+    TMetricDefs.put("impala.thrift_server.hiveserver2_frontend.total_connections", tmp192);
     TMetricDef tmp194 = new TMetricDef();
     List<String> tmp195 = new ArrayList<String>();
-    tmp195.add("RESOURCE_POOL");
+    tmp195.add("CATALOGSERVER");
+    tmp195.add("PALO BE");
 
     tmp194.setContexts(tmp195);
-    tmp194.setDescription("Resource Pool $0 Coordinator Backend Num Running");
-    tmp194.setKey("admission_controller.local_num_admitted_running.$0");
+    tmp194.setDescription("Jvm $0 Committed Usage Bytes");
+    tmp194.setKey("jvm.$0.committed_usage_bytes");
     tmp194.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp194.setLabel("Resource Pool $0 Coordinator Backend Num Running");
-    tmp194.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp194.setLabel("Jvm $0 Committed Usage Bytes");
+    tmp194.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("admission_controller.local_num_admitted_running.$0", tmp194);
+    TMetricDefs.put("jvm.$0.committed_usage_bytes", tmp194);
     TMetricDef tmp196 = new TMetricDef();
     List<String> tmp197 = new ArrayList<String>();
-    tmp197.add("RESOURCE_POOL");
+    tmp197.add("CATALOGSERVER");
+    tmp197.add("PALO BE");
 
     tmp196.setContexts(tmp197);
-    tmp196.setDescription("Resource Pool $0 Queue Size on the coordinator");
-    tmp196.setKey("admission_controller.local_num_queued.$0");
+    tmp196.setDescription("Jvm $0 Current Usage Bytes");
+    tmp196.setKey("jvm.$0.current_usage_bytes");
     tmp196.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp196.setLabel("Resource Pool $0 Coordinator Backend Queue Size");
-    tmp196.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp196.setLabel("Jvm $0 Current Usage Bytes");
+    tmp196.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("admission_controller.local_num_queued.$0", tmp196);
+    TMetricDefs.put("jvm.$0.current_usage_bytes", tmp196);
     TMetricDef tmp198 = new TMetricDef();
     List<String> tmp199 = new ArrayList<String>();
-    tmp199.add("RESOURCE_POOL");
+    tmp199.add("CATALOGSERVER");
+    tmp199.add("PALO BE");
 
     tmp198.setContexts(tmp199);
-    tmp198.setDescription("Resource Pool $0 Configured Max Mem Resources");
-    tmp198.setKey("admission_controller.pool_max_mem_resources.$0");
+    tmp198.setDescription("Jvm $0 Init Usage Bytes");
+    tmp198.setKey("jvm.$0.init_usage_bytes");
     tmp198.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp198.setLabel("Resource Pool $0 Configured Max Mem Resources");
-    tmp198.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp198.setLabel("Jvm $0 Init Usage Bytes");
+    tmp198.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("admission_controller.pool_max_mem_resources.$0", tmp198);
+    TMetricDefs.put("jvm.$0.init_usage_bytes", tmp198);
     TMetricDef tmp200 = new TMetricDef();
     List<String> tmp201 = new ArrayList<String>();
-    tmp201.add("RESOURCE_POOL");
+    tmp201.add("CATALOGSERVER");
+    tmp201.add("PALO BE");
 
     tmp200.setContexts(tmp201);
-    tmp200.setDescription("Resource Pool $0 Configured Max Queued");
-    tmp200.setKey("admission_controller.pool_max_queued.$0");
+    tmp200.setDescription("Jvm $0 Max Usage Bytes");
+    tmp200.setKey("jvm.$0.max_usage_bytes");
     tmp200.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp200.setLabel("Resource Pool $0 Configured Max Queued");
-    tmp200.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp200.setLabel("Jvm $0 Max Usage Bytes");
+    tmp200.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("admission_controller.pool_max_queued.$0", tmp200);
+    TMetricDefs.put("jvm.$0.max_usage_bytes", tmp200);
     TMetricDef tmp202 = new TMetricDef();
     List<String> tmp203 = new ArrayList<String>();
-    tmp203.add("RESOURCE_POOL");
+    tmp203.add("CATALOGSERVER");
+    tmp203.add("PALO BE");
 
     tmp202.setContexts(tmp203);
-    tmp202.setDescription("Resource Pool $0 Configured Max Requests");
-    tmp202.setKey("admission_controller.pool_max_requests.$0");
+    tmp202.setDescription("Jvm $0 Peak Committed Usage Bytes");
+    tmp202.setKey("jvm.$0.peak_committed_usage_bytes");
     tmp202.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp202.setLabel("Resource Pool $0 Configured Max Requests");
-    tmp202.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp202.setLabel("Jvm $0 Peak Committed Usage Bytes");
+    tmp202.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("admission_controller.pool_max_requests.$0", tmp202);
+    TMetricDefs.put("jvm.$0.peak_committed_usage_bytes", tmp202);
     TMetricDef tmp204 = new TMetricDef();
     List<String> tmp205 = new ArrayList<String>();
-    tmp205.add("RESOURCE_POOL");
+    tmp205.add("CATALOGSERVER");
+    tmp205.add("PALO BE");
 
     tmp204.setContexts(tmp205);
-    tmp204.setDescription("Resource Pool $0 Time in Queue");
-    tmp204.setKey("admission_controller.time_in_queue_ms.$0");
-    tmp204.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp204.setLabel("Resource Pool $0 Time in Queue");
-    tmp204.setUnits(com.baidu.palo.thrift.TUnit.TIME_MS);
+    tmp204.setDescription("Jvm $0 Peak Current Usage Bytes");
+    tmp204.setKey("jvm.$0.peak_current_usage_bytes");
+    tmp204.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp204.setLabel("Jvm $0 Peak Current Usage Bytes");
+    tmp204.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("admission_controller.time_in_queue_ms.$0", tmp204);
+    TMetricDefs.put("jvm.$0.peak_current_usage_bytes", tmp204);
     TMetricDef tmp206 = new TMetricDef();
     List<String> tmp207 = new ArrayList<String>();
-    tmp207.add("RESOURCE_POOL");
+    tmp207.add("CATALOGSERVER");
+    tmp207.add("PALO BE");
 
     tmp206.setContexts(tmp207);
-    tmp206.setDescription("Total number of requests admitted to pool $0");
-    tmp206.setKey("admission_controller.total_admitted.$0");
-    tmp206.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp206.setLabel("Resource Pool $0 Total Admitted");
-    tmp206.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp206.setDescription("Jvm $0 Peak Init Usage Bytes");
+    tmp206.setKey("jvm.$0.peak_init_usage_bytes");
+    tmp206.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp206.setLabel("Jvm $0 Peak Init Usage Bytes");
+    tmp206.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("admission_controller.total_admitted.$0", tmp206);
+    TMetricDefs.put("jvm.$0.peak_init_usage_bytes", tmp206);
     TMetricDef tmp208 = new TMetricDef();
     List<String> tmp209 = new ArrayList<String>();
-    tmp209.add("RESOURCE_POOL");
+    tmp209.add("CATALOGSERVER");
+    tmp209.add("PALO BE");
 
     tmp208.setContexts(tmp209);
-    tmp208.setDescription("Total number of requests dequeued in pool $0");
-    tmp208.setKey("admission_controller.total_dequeued.$0");
-    tmp208.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp208.setLabel("Resource Pool $0 Total Dequeued");
-    tmp208.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp208.setDescription("Jvm $0 Peak Max Usage Bytes");
+    tmp208.setKey("jvm.$0.peak_max_usage_bytes");
+    tmp208.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp208.setLabel("Jvm $0 Peak Max Usage Bytes");
+    tmp208.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("admission_controller.total_dequeued.$0", tmp208);
+    TMetricDefs.put("jvm.$0.peak_max_usage_bytes", tmp208);
     TMetricDef tmp210 = new TMetricDef();
     List<String> tmp211 = new ArrayList<String>();
-    tmp211.add("RESOURCE_POOL");
+    tmp211.add("PALO BE");
 
     tmp210.setContexts(tmp211);
-    tmp210.setDescription("Total number of requests queued in pool $0");
-    tmp210.setKey("admission_controller.total_queued.$0");
-    tmp210.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp210.setLabel("Resource Pool $0 Total Queued");
-    tmp210.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp210.setDescription("The amount of memory freed by the last memory tracker garbage collection.");
+    tmp210.setKey("mem_tracker.process.bytes_freed_by_last_gc");
+    tmp210.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp210.setLabel("MemTracker Bytes Freed By Last Garbage Collection");
+    tmp210.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("admission_controller.total_queued.$0", tmp210);
+    TMetricDefs.put("mem_tracker.process.bytes_freed_by_last_gc", tmp210);
     TMetricDef tmp212 = new TMetricDef();
     List<String> tmp213 = new ArrayList<String>();
-    tmp213.add("RESOURCE_POOL");
+    tmp213.add("PALO BE");
 
     tmp212.setContexts(tmp213);
-    tmp212.setDescription("Total number of requests rejected in pool $0");
-    tmp212.setKey("admission_controller.total_rejected.$0");
-    tmp212.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp212.setLabel("Resource Pool $0 Total Rejected");
-    tmp212.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp212.setDescription("The amount of memory by which the process was over its memory limit the last time the memory limit was encountered.");
+    tmp212.setKey("mem_tracker.process.bytes_over_limit");
+    tmp212.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp212.setLabel("MemTracker Bytes Over Limit");
+    tmp212.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("admission_controller.total_rejected.$0", tmp212);
+    TMetricDefs.put("mem_tracker.process.bytes_over_limit", tmp212);
     TMetricDef tmp214 = new TMetricDef();
     List<String> tmp215 = new ArrayList<String>();
-    tmp215.add("RESOURCE_POOL");
+    tmp215.add("PALO BE");
 
     tmp214.setContexts(tmp215);
-    tmp214.setDescription("Total number of requests that have completed and released resources in pool $0");
-    tmp214.setKey("admission_controller.total_released.$0");
-    tmp214.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp214.setLabel("Resource Pool $0 Total Released");
-    tmp214.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp214.setDescription("The process memory tracker limit.");
+    tmp214.setKey("mem_tracker.process.limit");
+    tmp214.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp214.setLabel("Process Tracker Limit");
+    tmp214.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("admission_controller.total_released.$0", tmp214);
+    TMetricDefs.put("mem_tracker.process.limit", tmp214);
     TMetricDef tmp216 = new TMetricDef();
     List<String> tmp217 = new ArrayList<String>();
-    tmp217.add("RESOURCE_POOL");
+    tmp217.add("PALO BE");
 
     tmp216.setContexts(tmp217);
-    tmp216.setDescription("Total number of requests timed out waiting while queued in pool $0");
-    tmp216.setKey("admission_controller.total_timed_out.$0");
+    tmp216.setDescription("The total number of garbage collections performed by the memory tracker over the life of the process.");
+    tmp216.setKey("mem_tracker.process.num_gcs");
     tmp216.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp216.setLabel("Resource Pool $0 Total Timed Out");
+    tmp216.setLabel("MemTracker Garbage Collections");
     tmp216.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("admission_controller.total_timed_out.$0", tmp216);
+    TMetricDefs.put("mem_tracker.process.num_gcs", tmp216);
     TMetricDef tmp218 = new TMetricDef();
     List<String> tmp219 = new ArrayList<String>();
+    tmp219.add("STATESTORE");
+    tmp219.add("CATALOGSERVER");
     tmp219.add("PALO BE");
 
     tmp218.setContexts(tmp219);
-    tmp218.setDescription("Maximum allowed bytes allocated by the buffer pool.");
-    tmp218.setKey("buffer_pool.limit");
+    tmp218.setDescription("Total memory currently used by TCMalloc and buffer pool.");
+    tmp218.setKey("memory.total_used");
     tmp218.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp218.setLabel("Buffer Pool Allocated Memory Limit.");
+    tmp218.setLabel("Total Used Memory.");
     tmp218.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("buffer_pool.limit", tmp218);
+    TMetricDefs.put("memory.total_used", tmp218);
     TMetricDef tmp220 = new TMetricDef();
     List<String> tmp221 = new ArrayList<String>();
     tmp221.add("PALO BE");
 
     tmp220.setContexts(tmp221);
-    tmp220.setDescription("Total memory currently reserved for buffers.");
-    tmp220.setKey("buffer_pool.reserved");
-    tmp220.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp220.setLabel("Buffer Pool Total Reserved Memory.");
-    tmp220.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp220.setDescription("Time (ms) spent resolving request request pools.");
+    tmp220.setKey("request_pool_service.resolve_pool_duration_ms");
+    tmp220.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
+    tmp220.setLabel("Request Pool Service Resolve Pool Duration Ms");
+    tmp220.setUnits(com.baidu.palo.thrift.TUnit.TIME_MS);
 
-    TMetricDefs.put("buffer_pool.reserved", tmp220);
+    TMetricDefs.put("request_pool_service.resolve_pool_duration_ms", tmp220);
     TMetricDef tmp222 = new TMetricDef();
     List<String> tmp223 = new ArrayList<String>();
+    tmp223.add("CATALOGSERVER");
+    tmp223.add("STATESTORE");
     tmp223.add("PALO BE");
 
     tmp222.setContexts(tmp223);
-    tmp222.setDescription("Total buffer memory currently allocated by the buffer pool.");
-    tmp222.setKey("buffer_pool.system_allocated");
-    tmp222.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp222.setLabel("Buffer Pool Total Allocated Memory.");
-    tmp222.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp222.setDescription("Duration (ms) of RPC calls to $0");
+    tmp222.setKey("rpc_method.$0.call_duration");
+    tmp222.setKind(com.baidu.palo.thrift.TMetricKind.HISTOGRAM);
+    tmp222.setLabel("$0 RPC Call Duration");
+    tmp222.setUnits(com.baidu.palo.thrift.TUnit.TIME_MS);
 
-    TMetricDefs.put("buffer_pool.system_allocated", tmp222);
+    TMetricDefs.put("rpc_method.$0.call_duration", tmp222);
     TMetricDef tmp224 = new TMetricDef();
     List<String> tmp225 = new ArrayList<String>();
-    tmp225.add("CATALOGSERVER");
+    tmp225.add("PALO BE");
 
     tmp224.setContexts(tmp225);
-    tmp224.setDescription("Catalog Server Topic Processing Time");
-    tmp224.setKey("catalog_server.topic_processing_time_s");
-    tmp224.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
-    tmp224.setLabel("Catalog Server Topic Processing Time");
-    tmp224.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
+    tmp224.setDescription("Number of senders waiting for receiving fragment to initialize");
+    tmp224.setKey("senders_blocked_on_recvr_creation");
+    tmp224.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp224.setLabel("Number of senders waiting for receiving fragment to initialize.");
+    tmp224.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("catalog_server.topic_processing_time_s", tmp224);
+    TMetricDefs.put("senders_blocked_on_recvr_creation", tmp224);
     TMetricDef tmp226 = new TMetricDef();
     List<String> tmp227 = new ArrayList<String>();
     tmp227.add("PALO BE");
 
     tmp226.setContexts(tmp227);
-    tmp226.setDescription("The number of databases in the catalog.");
-    tmp226.setKey("catalog.num_databases");
-    tmp226.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp226.setLabel("Databases");
-    tmp226.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp226.setDescription("The number of assignments");
+    tmp226.setKey("simple_scheduler.assignments.total");
+    tmp226.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp226.setLabel("Assignments");
+    tmp226.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("catalog.num_databases", tmp226);
+    TMetricDefs.put("simple_scheduler.assignments.total", tmp226);
     TMetricDef tmp228 = new TMetricDef();
     List<String> tmp229 = new ArrayList<String>();
     tmp229.add("PALO BE");
 
     tmp228.setContexts(tmp229);
-    tmp228.setDescription("The number of tables in the catalog.");
-    tmp228.setKey("catalog.num_tables");
-    tmp228.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp228.setLabel("Tables");
+    tmp228.setDescription("Indicates whether the scheduler has been initialized.");
+    tmp228.setKey("simple_scheduler.initialized");
+    tmp228.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
+    tmp228.setLabel("Simple Scheduler Initialized");
     tmp228.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("catalog.num_tables", tmp228);
+    TMetricDefs.put("simple_scheduler.initialized", tmp228);
     TMetricDef tmp230 = new TMetricDef();
     List<String> tmp231 = new ArrayList<String>();
     tmp231.add("PALO BE");
 
     tmp230.setContexts(tmp231);
-    tmp230.setDescription("Indicates if the catalog is ready.");
-    tmp230.setKey("catalog.ready");
-    tmp230.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
-    tmp230.setLabel("Catalog Ready");
-    tmp230.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp230.setDescription("Number of assignments operating on local data");
+    tmp230.setKey("simple_scheduler.local_assignments.total");
+    tmp230.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp230.setLabel("Local Assignments");
+    tmp230.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
 
-    TMetricDefs.put("catalog.ready", tmp230);
+    TMetricDefs.put("simple_scheduler.local_assignments.total", tmp230);
     TMetricDef tmp232 = new TMetricDef();
     List<String> tmp233 = new ArrayList<String>();
     tmp233.add("PALO BE");
 
     tmp232.setContexts(tmp233);
-    tmp232.setDescription("The number of clients currently in use by the Catalog Server client cache.");
-    tmp232.setKey("catalog.server.client_cache.clients_in_use");
+    tmp232.setDescription("The number of backend connections from this Impala Daemon to other Impala Daemons.");
+    tmp232.setKey("simple_scheduler.num_backends");
     tmp232.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp232.setLabel("Catalog Server Client Cache Clients In Use");
+    tmp232.setLabel("Backend Connections");
     tmp232.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("catalog.server.client_cache.clients_in_use", tmp232);
+    TMetricDefs.put("simple_scheduler.num_backends", tmp232);
     TMetricDef tmp234 = new TMetricDef();
     List<String> tmp235 = new ArrayList<String>();
+    tmp235.add("CATALOGSERVER");
     tmp235.add("PALO BE");
 
     tmp234.setContexts(tmp235);
-    tmp234.setDescription("The total number of clients in the Catalog Server client cache.");
-    tmp234.setKey("catalog.server.client_cache.total_clients");
-    tmp234.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp234.setLabel("Catalog Server Client Cache Total Clients");
+    tmp234.setDescription("Whether the Impala Daemon considers itself connected to the StateStore.");
+    tmp234.setKey("statestore_subscriber.connected");
+    tmp234.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
+    tmp234.setLabel("StateStore Connectivity");
     tmp234.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("catalog.server.client_cache.total_clients", tmp234);
+    TMetricDefs.put("statestore_subscriber.connected", tmp234);
     TMetricDef tmp236 = new TMetricDef();
     List<String> tmp237 = new ArrayList<String>();
     tmp237.add("CATALOGSERVER");
+    tmp237.add("PALO BE");
 
     tmp236.setContexts(tmp237);
-    tmp236.setDescription("The full version string of the Catalog Server.");
-    tmp236.setKey("catalog.version");
-    tmp236.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
-    tmp236.setLabel("Catalog Version");
-    tmp236.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp236.setDescription("The time (sec) between Statestore heartbeats.");
+    tmp236.setKey("statestore_subscriber.heartbeat_interval_time");
+    tmp236.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
+    tmp236.setLabel("Statestore Subscriber Heartbeat Interval Time");
+    tmp236.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
 
-    TMetricDefs.put("catalog.version", tmp236);
+    TMetricDefs.put("statestore_subscriber.heartbeat_interval_time", tmp236);
     TMetricDef tmp238 = new TMetricDef();
     List<String> tmp239 = new ArrayList<String>();
+    tmp239.add("CATALOGSERVER");
     tmp239.add("PALO BE");
 
     tmp238.setContexts(tmp239);
-    tmp238.setDescription("Number of cache hits in the External Data Source Class Cache");
-    tmp238.setKey("external_data_source.class_cache.hits");
-    tmp238.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp238.setLabel("External Data Source Class Cache Hits");
-    tmp238.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp238.setDescription("The amount of time the StateStore subscriber took to recover the connection the last time it was lost.");
+    tmp238.setKey("statestore_subscriber.last_recovery_duration");
+    tmp238.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp238.setLabel("StateStore Subscriber Last Recovery Duration");
+    tmp238.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("external_data_source.class_cache.hits", tmp238);
+    TMetricDefs.put("statestore_subscriber.last_recovery_duration", tmp238);
     TMetricDef tmp240 = new TMetricDef();
     List<String> tmp241 = new ArrayList<String>();
+    tmp241.add("CATALOGSERVER");
     tmp241.add("PALO BE");
 
     tmp240.setContexts(tmp241);
-    tmp240.setDescription("Number of cache misses in the External Data Source Class Cache");
-    tmp240.setKey("external_data_source.class_cache.misses");
-    tmp240.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp240.setLabel("External Data Source Class Cache Misses");
-    tmp240.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp240.setDescription("The local time that the last statestore recovery happened.");
+    tmp240.setKey("statestore_subscriber.last_recovery_time");
+    tmp240.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
+    tmp240.setLabel("Statestore Subscriber Last Recovery Time");
+    tmp240.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("external_data_source.class_cache.misses", tmp240);
+    TMetricDefs.put("statestore_subscriber.last_recovery_time", tmp240);
     TMetricDef tmp242 = new TMetricDef();
     List<String> tmp243 = new ArrayList<String>();
-    tmp243.add("PALO_BE");
+    tmp243.add("CATALOGSERVER");
+    tmp243.add("PALO BE");
 
     tmp242.setContexts(tmp243);
-    tmp242.setDescription("The number of active Palo Backend clients. These clients are for communication with other Palo Be.");
-    tmp242.setKey("palo.backends.client_cache.clients_in_use");
-    tmp242.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp242.setLabel("Palo Backend Active Clients");
+    tmp242.setDescription("The most recent registration ID for this subscriber with the statestore. Set to 'N/A' if no registration has been completed");
+    tmp242.setKey("statestore_subscriber.registration_id");
+    tmp242.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
+    tmp242.setLabel("Statestore Subscriber Registration Id");
     tmp242.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo.backends.client_cache.clients_in_use", tmp242);
+    TMetricDefs.put("statestore_subscriber.registration_id", tmp242);
     TMetricDef tmp244 = new TMetricDef();
     List<String> tmp245 = new ArrayList<String>();
-    tmp245.add("PALO_BE");
+    tmp245.add("CATALOGSERVER");
+    tmp245.add("PALO BE");
 
     tmp244.setContexts(tmp245);
-    tmp244.setDescription("The total number of Palo Backend clients in this Palo Be's client cache. These clients are for communication with other Palo Be.");
-    tmp244.setKey("palo.backends.client_cache.total_clients");
+    tmp244.setDescription("The number of active StateStore subscriber clients in this Impala Daemon's client cache. These clients are for communication from this role to the StateStore.");
+    tmp244.setKey("statestore_subscriber.statestore.client_cache.clients_in_use");
     tmp244.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp244.setLabel("Palo Backend Total Clients");
+    tmp244.setLabel("StateStore Subscriber Active Clients");
     tmp244.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo.backends.client_cache.total_clients", tmp244);
+    TMetricDefs.put("statestore_subscriber.statestore.client_cache.clients_in_use", tmp244);
     TMetricDef tmp246 = new TMetricDef();
     List<String> tmp247 = new ArrayList<String>();
+    tmp247.add("CATALOGSERVER");
     tmp247.add("PALO BE");
 
     tmp246.setContexts(tmp247);
-    tmp246.setDescription("Distribution of DDL operation latencies");
-    tmp246.setKey("palo_be.ddl_durations_ms");
-    tmp246.setKind(com.baidu.palo.thrift.TMetricKind.HISTOGRAM);
-    tmp246.setLabel("DDL latency distribution");
-    tmp246.setUnits(com.baidu.palo.thrift.TUnit.TIME_MS);
+    tmp246.setDescription("The total number of StateStore subscriber clients in this Impala Daemon's client cache. These clients are for communication from this role to the StateStore.");
+    tmp246.setKey("statestore_subscriber.statestore.client_cache.total_clients");
+    tmp246.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp246.setLabel("StateStore Subscriber Total Clients");
+    tmp246.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.ddl_durations_ms", tmp246);
+    TMetricDefs.put("statestore_subscriber.statestore.client_cache.total_clients", tmp246);
     TMetricDef tmp248 = new TMetricDef();
     List<String> tmp249 = new ArrayList<String>();
+    tmp249.add("CATALOGSERVER");
     tmp249.add("PALO BE");
 
     tmp248.setContexts(tmp249);
-    tmp248.setDescription("The current size of all allocated hash tables.");
-    tmp248.setKey("palo_be.hash_table.total_bytes");
-    tmp248.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp248.setLabel("Hash Tables Size");
-    tmp248.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp248.setDescription("Statestore Subscriber Topic $0 Processing Time");
+    tmp248.setKey("statestore_subscriber.topic_$0.processing_time_s");
+    tmp248.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
+    tmp248.setLabel("Statestore Subscriber Topic $0 Processing Time");
+    tmp248.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
 
-    TMetricDefs.put("palo_be.hash_table.total_bytes", tmp248);
+    TMetricDefs.put("statestore_subscriber.topic_$0.processing_time_s", tmp248);
     TMetricDef tmp250 = new TMetricDef();
     List<String> tmp251 = new ArrayList<String>();
+    tmp251.add("CATALOGSERVER");
     tmp251.add("PALO BE");
 
     tmp250.setContexts(tmp251);
-    tmp250.setDescription("The total number of bytes read by the IO manager.");
-    tmp250.setKey("palo_be.io_mgr.bytes_read");
-    tmp250.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp250.setLabel("Palo Be Io Mgr Bytes Read");
-    tmp250.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp250.setDescription("The time (sec) taken to process Statestore subcriber topic updates.");
+    tmp250.setKey("statestore_subscriber.topic_update_duration");
+    tmp250.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
+    tmp250.setLabel("Statestore Subscriber Topic Update Duration");
+    tmp250.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
 
-    TMetricDefs.put("palo_be.io_mgr.bytes_read", tmp250);
+    TMetricDefs.put("statestore_subscriber.topic_update_duration", tmp250);
     TMetricDef tmp252 = new TMetricDef();
     List<String> tmp253 = new ArrayList<String>();
+    tmp253.add("CATALOGSERVER");
     tmp253.add("PALO BE");
 
     tmp252.setContexts(tmp253);
-    tmp252.setDescription("Total number of bytes written to disk by the IO manager.");
-    tmp252.setKey("palo_be.io_mgr.bytes_written");
-    tmp252.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp252.setLabel("Palo Be Io Mgr Bytes Written");
-    tmp252.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp252.setDescription("The time (sec) between Statestore subscriber topic updates.");
+    tmp252.setKey("statestore_subscriber.topic_update_interval_time");
+    tmp252.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
+    tmp252.setLabel("Statestore Subscriber Topic Update Interval Time");
+    tmp252.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
 
-    TMetricDefs.put("palo_be.io_mgr.bytes_written", tmp252);
+    TMetricDefs.put("statestore_subscriber.topic_update_interval_time", tmp252);
     TMetricDef tmp254 = new TMetricDef();
     List<String> tmp255 = new ArrayList<String>();
-    tmp255.add("PALO BE");
+    tmp255.add("STATESTORE");
 
     tmp254.setContexts(tmp255);
-    tmp254.setDescription("Total number of cached bytes read by the IO manager.");
-    tmp254.setKey("palo_be.io_mgr.cached_bytes_read");
-    tmp254.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp254.setLabel("Palo Be Io Mgr Cached Bytes Read");
-    tmp254.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp254.setDescription("The time (sec) spent sending heartbeat RPCs. Includes subscriber_side processing time and network transmission time.");
+    tmp254.setKey("statestore.heartbeat_durations");
+    tmp254.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
+    tmp254.setLabel("Statestore Heartbeat Durations");
+    tmp254.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
 
-    TMetricDefs.put("palo_be.io_mgr.cached_bytes_read", tmp254);
+    TMetricDefs.put("statestore.heartbeat_durations", tmp254);
     TMetricDef tmp256 = new TMetricDef();
     List<String> tmp257 = new ArrayList<String>();
-    tmp257.add("PALO BE");
+    tmp257.add("STATESTORE");
 
     tmp256.setContexts(tmp257);
-    tmp256.setDescription("Total number of local bytes read by the IO manager.");
-    tmp256.setKey("palo_be.io_mgr.local_bytes_read");
-    tmp256.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp256.setLabel("Palo Be Io Mgr Local Bytes Read");
-    tmp256.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp256.setDescription("The number of registered Statestore subscribers.");
+    tmp256.setKey("statestore.live_backends");
+    tmp256.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp256.setLabel("Statestore Live Backends");
+    tmp256.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.io_mgr.local_bytes_read", tmp256);
+    TMetricDefs.put("statestore.live_backends", tmp256);
     TMetricDef tmp258 = new TMetricDef();
     List<String> tmp259 = new ArrayList<String>();
-    tmp259.add("PALO BE");
+    tmp259.add("STATESTORE");
 
     tmp258.setContexts(tmp259);
-    tmp258.setDescription("The number of allocated IO buffers. IO buffers are shared by all queries.");
-    tmp258.setKey("palo_be.io_mgr.num_buffers");
-    tmp258.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp258.setLabel("IO Buffers");
+    tmp258.setDescription("The set of all live Statestore subscribers.");
+    tmp258.setKey("statestore.live_backends.list");
+    tmp258.setKind(com.baidu.palo.thrift.TMetricKind.SET);
+    tmp258.setLabel("Statestore Live Backends List");
     tmp258.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.io_mgr.num_buffers", tmp258);
+    TMetricDefs.put("statestore.live_backends.list", tmp258);
     TMetricDef tmp260 = new TMetricDef();
     List<String> tmp261 = new ArrayList<String>();
-    tmp261.add("PALO BE");
+    tmp261.add("STATESTORE");
 
     tmp260.setContexts(tmp261);
-    tmp260.setDescription("The current number of files opened by the IO Manager");
-    tmp260.setKey("palo_be.io_mgr.num_open_files");
-    tmp260.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp260.setLabel("Open Files");
-    tmp260.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp260.setDescription("The time (sec) spent sending topic update RPCs. Includes subscriber_side processing time and network transmission time.");
+    tmp260.setKey("statestore.topic_update_durations");
+    tmp260.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
+    tmp260.setLabel("Statestore Topic Update Durations");
+    tmp260.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
 
-    TMetricDefs.put("palo_be.io_mgr.num_open_files", tmp260);
+    TMetricDefs.put("statestore.topic_update_durations", tmp260);
     TMetricDef tmp262 = new TMetricDef();
     List<String> tmp263 = new ArrayList<String>();
-    tmp263.add("PALO BE");
+    tmp263.add("STATESTORE");
 
     tmp262.setContexts(tmp263);
-    tmp262.setDescription("The number of unused IO buffers. IO buffers are shared by all queries.");
-    tmp262.setKey("palo_be.io_mgr.num_unused_buffers");
+    tmp262.setDescription("The sum of the size of all keys for all topics tracked by the StateStore.");
+    tmp262.setKey("statestore.total_key_size_bytes");
     tmp262.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp262.setLabel("Unused IO Buffers");
+    tmp262.setLabel("Topic Key Size");
     tmp262.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.io_mgr.num_unused_buffers", tmp262);
+    TMetricDefs.put("statestore.total_key_size_bytes", tmp262);
     TMetricDef tmp264 = new TMetricDef();
     List<String> tmp265 = new ArrayList<String>();
-    tmp265.add("PALO BE");
+    tmp265.add("STATESTORE");
 
     tmp264.setContexts(tmp265);
-    tmp264.setDescription("Total number of short_circuit bytes read by the IO manager.");
-    tmp264.setKey("palo_be.io_mgr.short_circuit_bytes_read");
-    tmp264.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp264.setLabel("Palo Be Io Mgr Short Circuit Bytes Read");
-    tmp264.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp264.setDescription("The sum of the size of all keys and all values for all topics tracked by the StateStore.");
+    tmp264.setKey("statestore.total_topic_size_bytes");
+    tmp264.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp264.setLabel("Topic Size");
+    tmp264.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.io_mgr.short_circuit_bytes_read", tmp264);
+    TMetricDefs.put("statestore.total_topic_size_bytes", tmp264);
     TMetricDef tmp266 = new TMetricDef();
     List<String> tmp267 = new ArrayList<String>();
-    tmp267.add("PALO BE");
+    tmp267.add("STATESTORE");
 
     tmp266.setContexts(tmp267);
-    tmp266.setDescription("Number of bytes used by IO buffers (used and unused).");
-    tmp266.setKey("palo_be.io_mgr.total_bytes");
+    tmp266.setDescription("The sum of the size of all values for all topics tracked by the StateStore.");
+    tmp266.setKey("statestore.total_value_size_bytes");
     tmp266.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp266.setLabel("IO Buffers Total Size");
-    tmp266.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp266.setLabel("Topic Value Size");
+    tmp266.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.io_mgr.total_bytes", tmp266);
+    TMetricDefs.put("statestore.total_value_size_bytes", tmp266);
     TMetricDef tmp268 = new TMetricDef();
     List<String> tmp269 = new ArrayList<String>();
-    tmp269.add("PALO BE");
+    tmp269.add("STATESTORE");
 
     tmp268.setContexts(tmp269);
-    tmp268.setDescription("Number of cache hits for cached HDFS file handles");
-    tmp268.setKey("palo_be.io_mgr.cached_file_handles_hit_count");
-    tmp268.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp268.setLabel("HDFS cached file handles hit count");
+    tmp268.setDescription("The full version string of the Statestore Server.");
+    tmp268.setKey("statestore.version");
+    tmp268.setKind(com.baidu.palo.thrift.TMetricKind.PROPERTY);
+    tmp268.setLabel("Statestore Version");
     tmp268.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.io_mgr.cached_file_handles_hit_count", tmp268);
+    TMetricDefs.put("statestore.version", tmp268);
     TMetricDef tmp270 = new TMetricDef();
     List<String> tmp271 = new ArrayList<String>();
-    tmp271.add("PALO BE");
+    tmp271.add("STATESTORE");
 
     tmp270.setContexts(tmp271);
-    tmp270.setDescription("HDFS file handle cache hit ratio, between 0 and 1, where 1 means all reads were served from cached file handles.");
-    tmp270.setKey("palo_be.io_mgr.cached_file_handles_hit_ratio");
-    tmp270.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
-    tmp270.setLabel("HDFS file handle cache hit ratio");
+    tmp270.setDescription("The number of clients in use by the Statestore heartbeat client cache.");
+    tmp270.setKey("subscriber_heartbeat.client_cache.clients_in_use");
+    tmp270.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp270.setLabel("Subscriber Heartbeat Client Cache Clients In Use");
     tmp270.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.io_mgr.cached_file_handles_hit_ratio", tmp270);
+    TMetricDefs.put("subscriber_heartbeat.client_cache.clients_in_use", tmp270);
     TMetricDef tmp272 = new TMetricDef();
     List<String> tmp273 = new ArrayList<String>();
-    tmp273.add("PALO BE");
+    tmp273.add("STATESTORE");
 
     tmp272.setContexts(tmp273);
-    tmp272.setDescription("Number of cache misses for cached HDFS file handles");
-    tmp272.setKey("palo_be.io_mgr.cached_file_handles_miss_count");
+    tmp272.setDescription("The total number of clients in the Statestore heartbeat client cache.");
+    tmp272.setKey("subscriber_heartbeat.client_cache.total_clients");
     tmp272.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp272.setLabel("HDFS cached file handles miss count");
+    tmp272.setLabel("Subscriber Heartbeat Client Cache Total Clients");
     tmp272.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.io_mgr.cached_file_handles_miss_count", tmp272);
+    TMetricDefs.put("subscriber_heartbeat.client_cache.total_clients", tmp272);
     TMetricDef tmp274 = new TMetricDef();
-    tmp274.setKey("palo_be.io_mgr.num_cached_file_handles");
-    tmp274.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp274.setLabel("Number of cached HDFS file handles");
-    tmp274.setUnits(com.baidu.palo.thrift.TUnit.NONE);
     List<String> tmp275 = new ArrayList<String>();
-    tmp275.add("PALO BE");
+    tmp275.add("STATESTORE");
 
     tmp274.setContexts(tmp275);
-    tmp274.setDescription("Number of currently cached HDFS file handles in the IO manager.");
+    tmp274.setDescription("The number of clients in use by the Statestore update state client cache.");
+    tmp274.setKey("subscriber_update_state.client_cache.clients_in_use");
+    tmp274.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp274.setLabel("Subscriber Update State Client Cache Clients In Use");
+    tmp274.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("palo_be.io_mgr.num_cached_file_handles", tmp274);
+    TMetricDefs.put("subscriber_update_state.client_cache.clients_in_use", tmp274);
     TMetricDef tmp276 = new TMetricDef();
     List<String> tmp277 = new ArrayList<String>();
-    tmp277.add("PALO BE");
+    tmp277.add("STATESTORE");
 
     tmp276.setContexts(tmp277);
-    tmp276.setDescription("The total number of Beeswax API connections made to this Impala Daemon over its lifetime.");
-    tmp276.setKey("impala.thrift_server.beeswax_frontend.total_connections");
-    tmp276.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp276.setLabel("Beeswax API Total Connections");
-    tmp276.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp276.setDescription("The total number of clients in the Statestore update state client cache.");
+    tmp276.setKey("subscriber_update_state.client_cache.total_clients");
+    tmp276.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp276.setLabel("Subscriber Update State Client Cache Total Clients");
+    tmp276.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("impala.thrift_server.beeswax_frontend.total_connections", tmp276);
+    TMetricDefs.put("subscriber_update_state.client_cache.total_clients", tmp276);
     TMetricDef tmp278 = new TMetricDef();
     List<String> tmp279 = new ArrayList<String>();
+    tmp279.add("STATESTORE");
+    tmp279.add("CATALOGSERVER");
     tmp279.add("PALO BE");
 
     tmp278.setContexts(tmp279);
-    tmp278.setDescription("The number of active HiveServer2 API connections to this Impala Daemon.");
-    tmp278.setKey("impala.thrift_server.hiveserver2_frontend.connections_in_use");
+    tmp278.setDescription("Number of bytes used by the application. This will not typically match the memory use reported by the OS, because it does not include TCMalloc overhead or memory fragmentation.");
+    tmp278.setKey("tcmalloc.bytes_in_use");
     tmp278.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp278.setLabel("HiveServer2 API Active Connections");
-    tmp278.setUnits(com.baidu.palo.thrift.TUnit.NONE);
+    tmp278.setLabel("TCMalloc Bytes in Use");
+    tmp278.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("impala.thrift_server.hiveserver2_frontend.connections_in_use", tmp278);
+    TMetricDefs.put("tcmalloc.bytes_in_use", tmp278);
     TMetricDef tmp280 = new TMetricDef();
     List<String> tmp281 = new ArrayList<String>();
+    tmp281.add("STATESTORE");
+    tmp281.add("CATALOGSERVER");
     tmp281.add("PALO BE");
 
     tmp280.setContexts(tmp281);
-    tmp280.setDescription("The total number of HiveServer2 API connections made to this Impala Daemon over its lifetime.");
-    tmp280.setKey("impala.thrift_server.hiveserver2_frontend.total_connections");
-    tmp280.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
-    tmp280.setLabel("HiveServer2 API Total Connections");
-    tmp280.setUnits(com.baidu.palo.thrift.TUnit.UNIT);
+    tmp280.setDescription("Number of bytes in free, mapped pages in page heap. These bytes can be used to fulfill allocation requests. They always count towards virtual memory usage, and unless the underlying memory is swapped out by the OS, they also count towards physical memory usage.");
+    tmp280.setKey("tcmalloc.pageheap_free_bytes");
+    tmp280.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp280.setLabel("TCMalloc Pageheap Free");
+    tmp280.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("impala.thrift_server.hiveserver2_frontend.total_connections", tmp280);
+    TMetricDefs.put("tcmalloc.pageheap_free_bytes", tmp280);
     TMetricDef tmp282 = new TMetricDef();
     List<String> tmp283 = new ArrayList<String>();
+    tmp283.add("STATESTORE");
     tmp283.add("CATALOGSERVER");
     tmp283.add("PALO BE");
 
     tmp282.setContexts(tmp283);
-    tmp282.setDescription("Jvm $0 Committed Usage Bytes");
-    tmp282.setKey("jvm.$0.committed_usage_bytes");
+    tmp282.setDescription("Number of bytes in free, unmapped pages in page heap. These are bytes that have been released back to the OS, possibly by one of the MallocExtension \"Release\" calls. They can be used to fulfill allocation requests, but typically incur a page fault. They always count towards virtual memory usage, and depending on the OS, typically do not count towards physical memory usage.");
+    tmp282.setKey("tcmalloc.pageheap_unmapped_bytes");
     tmp282.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp282.setLabel("Jvm $0 Committed Usage Bytes");
+    tmp282.setLabel("TCMalloc Pageheap Unmapped");
     tmp282.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("jvm.$0.committed_usage_bytes", tmp282);
+    TMetricDefs.put("tcmalloc.pageheap_unmapped_bytes", tmp282);
     TMetricDef tmp284 = new TMetricDef();
     List<String> tmp285 = new ArrayList<String>();
+    tmp285.add("STATESTORE");
     tmp285.add("CATALOGSERVER");
     tmp285.add("PALO BE");
 
     tmp284.setContexts(tmp285);
-    tmp284.setDescription("Jvm $0 Current Usage Bytes");
-    tmp284.setKey("jvm.$0.current_usage_bytes");
+    tmp284.setDescription("Derived metric computing the amount of physical memory (in bytes) used by the process, including that actually in use and free bytes reserved by tcmalloc. Does not include the tcmalloc metadata.");
+    tmp284.setKey("tcmalloc.physical_bytes_reserved");
     tmp284.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp284.setLabel("Jvm $0 Current Usage Bytes");
+    tmp284.setLabel("TCMalloc Physical Bytes Reserved");
     tmp284.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("jvm.$0.current_usage_bytes", tmp284);
+    TMetricDefs.put("tcmalloc.physical_bytes_reserved", tmp284);
     TMetricDef tmp286 = new TMetricDef();
     List<String> tmp287 = new ArrayList<String>();
+    tmp287.add("STATESTORE");
     tmp287.add("CATALOGSERVER");
     tmp287.add("PALO BE");
 
     tmp286.setContexts(tmp287);
-    tmp286.setDescription("Jvm $0 Init Usage Bytes");
-    tmp286.setKey("jvm.$0.init_usage_bytes");
+    tmp286.setDescription("Bytes of system memory reserved by TCMalloc.");
+    tmp286.setKey("tcmalloc.total_bytes_reserved");
     tmp286.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp286.setLabel("Jvm $0 Init Usage Bytes");
+    tmp286.setLabel("TCMalloc Total Bytes Reserved");
     tmp286.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
 
-    TMetricDefs.put("jvm.$0.init_usage_bytes", tmp286);
+    TMetricDefs.put("tcmalloc.total_bytes_reserved", tmp286);
     TMetricDef tmp288 = new TMetricDef();
     List<String> tmp289 = new ArrayList<String>();
+    tmp289.add("STATESTORE");
     tmp289.add("CATALOGSERVER");
     tmp289.add("PALO BE");
 
     tmp288.setContexts(tmp289);
-    tmp288.setDescription("Jvm $0 Max Usage Bytes");
-    tmp288.setKey("jvm.$0.max_usage_bytes");
+    tmp288.setDescription("The number of running threads in this process.");
+    tmp288.setKey("thread_manager.running_threads");
     tmp288.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp288.setLabel("Jvm $0 Max Usage Bytes");
-    tmp288.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
+    tmp288.setLabel("Running Threads");
+    tmp288.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("jvm.$0.max_usage_bytes", tmp288);
+    TMetricDefs.put("thread_manager.running_threads", tmp288);
     TMetricDef tmp290 = new TMetricDef();
-    tmp290.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp290.setLabel("Jvm $0 Peak Committed Usage Bytes");
-    tmp290.setUnits(com.baidu.palo.thrift.TUnit.BYTES);
     List<String> tmp291 = new ArrayList<String>();
+    tmp291.add("STATESTORE");
     tmp291.add("CATALOGSERVER");
     tmp291.add("PALO BE");
 
     tmp290.setContexts(tmp291);
-    tmp290.setDescription("Jvm $0 Peak Committed Usage Bytes");
-    tmp290.setKey("jvm.$0.peak_committed_usage_bytes");
+    tmp290.setDescription("Threads created over the lifetime of the process.");
+    tmp290.setKey("thread_manager.total_threads_created");
+    tmp290.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp290.setLabel("Threads Created");
+    tmp290.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("jvm.$0.peak_committed_usage_bytes", tmp290);
+    TMetricDefs.put("thread_manager.total_threads_created", tmp290);
     TMetricDef tmp292 = new TMetricDef();
     List<String> tmp293 = new ArrayList<String>();
-    tmp293.add("STATESTORE");
+    tmp293.add("PALO BE");
 
     tmp292.setContexts(tmp293);
-    tmp292.setDescription("The time (sec) spent sending heartbeat RPCs. Includes subscriber_side processing time and network transmission time.");
-    tmp292.setKey("statestore.heartbeat_durations");
-    tmp292.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
-    tmp292.setLabel("Statestore Heartbeat Durations");
-    tmp292.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
+    tmp292.setDescription("The number of active scratch directories for spilling to disk.");
+    tmp292.setKey("tmp_file_mgr.active_scratch_dirs");
+    tmp292.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
+    tmp292.setLabel("Active scratch directories");
+    tmp292.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore.heartbeat_durations", tmp292);
+    TMetricDefs.put("tmp_file_mgr.active_scratch_dirs", tmp292);
     TMetricDef tmp294 = new TMetricDef();
     List<String> tmp295 = new ArrayList<String>();
-    tmp295.add("STATESTORE");
+    tmp295.add("PALO BE");
 
     tmp294.setContexts(tmp295);
-    tmp294.setDescription("The number of registered Statestore subscribers.");
-    tmp294.setKey("statestore.live_backends");
-    tmp294.setKind(com.baidu.palo.thrift.TMetricKind.GAUGE);
-    tmp294.setLabel("Statestore Live Backends");
+    tmp294.setDescription("The set of all active scratch directories for spilling to disk.");
+    tmp294.setKey("tmp_file_mgr.active_scratch_dirs.list");
+    tmp294.setKind(com.baidu.palo.thrift.TMetricKind.SET);
+    tmp294.setLabel("Active scratch directories list");
     tmp294.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore.live_backends", tmp294);
+    TMetricDefs.put("tmp_file_mgr.active_scratch_dirs.list", tmp294);
     TMetricDef tmp296 = new TMetricDef();
     List<String> tmp297 = new ArrayList<String>();
-    tmp297.add("STATESTORE");
+    tmp297.add("PALO BE");
 
     tmp296.setContexts(tmp297);
-    tmp296.setDescription("The set of all live Statestore subscribers.");
-    tmp296.setKey("statestore.live_backends.list");
-    tmp296.setKind(com.baidu.palo.thrift.TMetricKind.SET);
-    tmp296.setLabel("Statestore Live Backends List");
+    tmp296.setDescription("Total number of senders that have been blocked waiting for receiving fragment to initialize.");
+    tmp296.setKey("total_senders_blocked_on_recvr_creation");
+    tmp296.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp296.setLabel("Total senders waiting for receiving fragment to initialize");
     tmp296.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore.live_backends.list", tmp296);
+    TMetricDefs.put("total_senders_blocked_on_recvr_creation", tmp296);
     TMetricDef tmp298 = new TMetricDef();
-    tmp298.setLabel("Statestore Topic Update Durations");
-    tmp298.setUnits(com.baidu.palo.thrift.TUnit.TIME_S);
     List<String> tmp299 = new ArrayList<String>();
-    tmp299.add("STATESTORE");
+    tmp299.add("PALO BE");
 
     tmp298.setContexts(tmp299);
-    tmp298.setDescription("The time (sec) spent sending topic update RPCs. Includes subscriber_side processing time and network transmission time.");
-    tmp298.setKey("statestore.topic_update_durations");
-    tmp298.setKind(com.baidu.palo.thrift.TMetricKind.STATS);
+    tmp298.setDescription("Total number of senders that timed_out waiting for receiving fragment to initialize.");
+    tmp298.setKey("total_senders_timedout_waiting_for_recvr_creation");
+    tmp298.setKind(com.baidu.palo.thrift.TMetricKind.COUNTER);
+    tmp298.setLabel("Total senders timed_out waiting for receiving fragment to initialize");
+    tmp298.setUnits(com.baidu.palo.thrift.TUnit.NONE);
 
-    TMetricDefs.put("statestore.topic_update_durations", tmp298);
+    TMetricDefs.put("total_senders_timedout_waiting_for_recvr_creation", tmp298);
   }
 
 }

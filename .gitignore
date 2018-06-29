@@ -57,3 +57,5 @@ target/
 *.zip
 idea/
 .idea/
+*.tar
+*.sh

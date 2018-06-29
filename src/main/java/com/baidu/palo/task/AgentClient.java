@@ -34,6 +34,8 @@ import com.baidu.palo.thrift.TUniqueId;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 public class AgentClient {
     private static final Logger LOG = LogManager.getLogger(AgentClient.class);
 
@@ -195,4 +197,31 @@ public class AgentClient {
             ClientPool.backendPool.invalidateObject(address, client);
         }
     }
+
+    public List<String> get_streaming_etl_file_path(String path,int cnt) {
+        List<String>  file = null;
+        try {
+            borrowClient();
+            file =  client.get_streaming_etl_file_path(path,cnt);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            returnClient();
+        }
+        return file;
+    }
+
+    public void mark_etl_file_done(List<String> fileUrls) {
+        try {
+            borrowClient();
+            client.mark_etl_file_done(fileUrls);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            returnClient();
+        }
+    }
+
 }

@@ -23,11 +23,14 @@ import com.baidu.palo.load.LoadJob;
 import com.baidu.palo.thrift.TEtlState;
 
 import com.google.common.collect.Maps;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
 // Used to process pull load etl task
 public class PullLoadEtlTask extends LoadEtlTask {
+    private static final Logger LOG = LogManager.getLogger(PullLoadEtlTask.class);
     private PullLoadJobMgr mgr;
 
     public PullLoadEtlTask(LoadJob job) {
@@ -111,15 +114,16 @@ public class PullLoadEtlTask extends LoadEtlTask {
 
     @Override
     protected Map<String, Pair<String, Long>> getFilePathMap() throws LoadException {
-        Map<String, Long> fileMap = job.getEtlJobStatus().getFileMap();
+        Map<String, Long> fileMap = job.getEtlJobStatus().getFileMap();  // jungle comment:
         if (fileMap == null) {
             throw new LoadException("get etl files error");
         }
 
         Map<String, Pair<String, Long>> filePathMap = Maps.newHashMap();
-        for (Map.Entry<String, Long> entry : fileMap.entrySet()) {
+        for (Map.Entry<String, Long> entry : fileMap.entrySet()) {    //jungle comment: key is file path, value is file size
             String partitionIndexBucket = getPartitionIndexBucketString(entry.getKey());
             // http://host:8000/data/dir/file
+            LOG.info("download path :partitionIndexBucket:" + partitionIndexBucket ,",key:" + entry.getKey() + ",value:" + entry.getValue());
             filePathMap.put(partitionIndexBucket, Pair.create(entry.getKey(), entry.getValue()));
         }
 

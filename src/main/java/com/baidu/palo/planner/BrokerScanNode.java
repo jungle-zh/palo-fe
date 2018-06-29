@@ -42,6 +42,7 @@ import com.baidu.palo.common.AnalysisException;
 import com.baidu.palo.common.Config;
 import com.baidu.palo.common.InternalException;
 import com.baidu.palo.common.util.BrokerUtil;
+import com.baidu.palo.common.util.Util;
 import com.baidu.palo.load.BrokerFileGroup;
 import com.baidu.palo.system.Backend;
 import com.baidu.palo.thrift.TBrokerFileStatus;
@@ -139,6 +140,7 @@ public class BrokerScanNode extends ScanNode {
 
     @Override
     public void init(Analyzer analyzer) throws InternalException {
+        LOG.info("BrokerScanNode::init()");
         super.init(analyzer);
 
         this.analyzer = analyzer;
@@ -402,7 +404,7 @@ public class BrokerScanNode extends ScanNode {
             }
 
             expr = castToSlot(destSlotDesc, expr);
-            context.params.putToExpr_of_dest_slot(destSlotDesc.getId().asInt(), expr.treeToThrift());
+            context.params.putToExpr_of_dest_slot(destSlotDesc.getId().asInt(), expr.treeToThrift()); //jungle comment:the cast  expr
         }
         context.params.setDest_tuple_id(desc.getId().asInt());
         // Need re compute memory layout after set some slot descriptor to nullable
@@ -449,7 +451,7 @@ public class BrokerScanNode extends ScanNode {
             BrokerMgr.BrokerAddress brokerAddress = null;
             try {
                 brokerAddress = Catalog.getInstance().getBrokerMgr().getBroker(
-                        brokerName, candidateBes.get(i).getHost());
+                        brokerName, candidateBes.get(i).getHost());  // jungle comment :one broker to one  backend ?
             } catch (AnalysisException e) {
                 throw new InternalException(e.getMessage());
             }
@@ -462,12 +464,12 @@ public class BrokerScanNode extends ScanNode {
 
         // Locations
         TScanRangeLocations locations = new TScanRangeLocations();
-        locations.setScan_range(scanRange);
+        locations.setScan_range(scanRange);           //jungle comment : broker scan range
         for (Backend be : candidateBes) {
             TScanRangeLocation location = new TScanRangeLocation();
             location.setBackend_id(be.getId());
             location.setServer(new TNetworkAddress(be.getHost(), be.getBePort()));
-            locations.addToLocations(location);
+            locations.addToLocations(location);        //jungle comment: broker scan add all be here
         }
 
         return locations;
@@ -507,7 +509,7 @@ public class BrokerScanNode extends ScanNode {
         for (List<TBrokerFileStatus> fileStatuses : fileStatusesList) {
             Collections.sort(fileStatuses, T_BROKER_FILE_STATUS_COMPARATOR);
             for (TBrokerFileStatus fileStatus : fileStatuses) {
-                totalBytes += fileStatus.size;
+                totalBytes += fileStatus.size;     //jungle comment : total byte of the hdfs scan for one olap table
             }
         }
 
@@ -517,9 +519,12 @@ public class BrokerScanNode extends ScanNode {
         numInstances = Math.max(1, numInstances);
 
         bytesPerInstance = totalBytes / numInstances + 1;
+
+        LOG.info("bytesPerInstance :" + bytesPerInstance + ",totalBytes :" + totalBytes + " ,numInstances:" + numInstances);
     }
 
     private void assignBackends() throws InternalException {
+        LOG.info("BrokerScanNode::assignBackends()");
         backends = Lists.newArrayList();
         for (Backend be : Catalog.getCurrentSystemInfo().getIdToBackend().values()) {
             if (be.isAlive()) {
@@ -528,6 +533,9 @@ public class BrokerScanNode extends ScanNode {
         }
         if (backends.isEmpty()) {
             throw new InternalException("No Alive backends");
+        }
+        for(Backend be : backends){
+            LOG.info("be id :  " + be.getId() , ",host: " + be.getHost() + ", port:"+be.getBePort());
         }
         Collections.shuffle(backends, random);
     }
@@ -549,7 +557,7 @@ public class BrokerScanNode extends ScanNode {
 
     private void processFileGroup(
             TBrokerScanRangeParams params,
-            List<TBrokerFileStatus> fileStatuses)
+            List<TBrokerFileStatus> fileStatuses)   //jungle comment List<TBrokerFileStatus> is one file group thus DATA INFILE ...
             throws InternalException {
         if (fileStatuses == null || fileStatuses.isEmpty()) {
             return;
@@ -563,7 +571,7 @@ public class BrokerScanNode extends ScanNode {
             long leftBytes = fileStatus.size - curFileOffset;
             long tmpBytes = curInstanceBytes + leftBytes;
             TFileFormatType formatType = formatType(fileStatus.path);
-            if (tmpBytes > bytesPerInstance) {
+            if (tmpBytes > bytesPerInstance) {         //jungle comment: what if bytesPerInstance is larger than backend memory?
                 // Now only support split plain text
                 if (formatType == TFileFormatType.FORMAT_CSV_PLAIN && fileStatus.isSplitable) {
                     long rangeBytes = bytesPerInstance - curInstanceBytes;
@@ -586,14 +594,15 @@ public class BrokerScanNode extends ScanNode {
                     rangeDesc.setSplittable(fileStatus.isSplitable);
                     rangeDesc.setStart_offset(curFileOffset);
                     rangeDesc.setSize(leftBytes);
-                    brokerScanRange(curLocations).addToRanges(rangeDesc);
+                    brokerScanRange(curLocations).addToRanges(rangeDesc); //jungle comment: add broker desc
 
                     curFileOffset = 0;
                     i++;
                 }
 
                 // New one scan
-                locationsList.add(curLocations);
+                locationsList.add(curLocations);  //TBrokerRangeDesc in  curLocations.scan_range.broker_scan_range.ranges size will not larger than bytesPerInstance
+                LOG.info("new one scan ,locationsList size :" + locationsList.size() );
                 curLocations = newLocations(params, brokerDesc.getName());
                 curInstanceBytes = 0;
 
@@ -621,9 +630,12 @@ public class BrokerScanNode extends ScanNode {
 
     @Override
     public void finalize(Analyzer analyzer) throws InternalException {
+
+        LOG.info("BrokerScanNode::finalize");
+        Util.printStack();
         locationsList = Lists.newArrayList();
 
-        for (int i = 0; i < fileGroups.size(); ++i) {
+        for (int i = 0; i < fileGroups.size(); ++i) {   //jungle comment : fileGroup correspond to one DataDescription of input
             List<TBrokerFileStatus> fileStatuses = fileStatusesList.get(i);
             if (fileStatuses.isEmpty()) {
                 continue;
@@ -636,11 +648,17 @@ public class BrokerScanNode extends ScanNode {
             }
             processFileGroup(context.params, fileStatuses);
         }
+
+        for (TScanRangeLocations locations : locationsList) {
+            LOG.info(" TScanRangeLocation  is {}", locations);
+        }
+        /*
         if (LOG.isDebugEnabled()) {
             for (TScanRangeLocations locations : locationsList) {
                 LOG.debug("Scan range is {}", locations);
             }
         }
+        */
     }
 
     @Override

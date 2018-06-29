@@ -111,14 +111,7 @@ import com.baidu.palo.http.meta.MetaBaseAction;
 import com.baidu.palo.journal.JournalCursor;
 import com.baidu.palo.journal.JournalEntity;
 import com.baidu.palo.journal.bdbje.Timestamp;
-import com.baidu.palo.load.DeleteInfo;
-import com.baidu.palo.load.ExportChecker;
-import com.baidu.palo.load.ExportJob;
-import com.baidu.palo.load.ExportMgr;
-import com.baidu.palo.load.Load;
-import com.baidu.palo.load.LoadChecker;
-import com.baidu.palo.load.LoadErrorHub;
-import com.baidu.palo.load.LoadJob;
+import com.baidu.palo.load.*;
 import com.baidu.palo.load.LoadJob.JobState;
 import com.baidu.palo.master.Checkpoint;
 import com.baidu.palo.master.MetaHelper;
@@ -226,6 +219,7 @@ public class Catalog {
     private Map<String, Cluster> nameToCluster;
 
     private Load load;
+    private StreamingLoad streamingLoad;
     private ExportMgr exportMgr;
     private Clone clone;
     private Alter alter;
@@ -344,6 +338,7 @@ public class Catalog {
         this.idToDb = new HashMap<Long, Database>();
         this.fullNameToDb = new HashMap<String, Database>();
         this.load = new Load();
+        this.streamingLoad  = new StreamingLoad();
         this.exportMgr = new ExportMgr();
         this.clone = new Clone();
         this.alter = new Alter();
@@ -1882,7 +1877,7 @@ public class Catalog {
         };
     }
 
-    public synchronized boolean replayJournal(long toJournalId) {
+    public synchronized boolean replayJournal(long toJournalId) {   //jungle comment: flower read Journal info from file and deserilize ,see getJournalEntity
         long newToJournalId = toJournalId;
         if (newToJournalId == -1) {
             newToJournalId = getMaxJournalId();
@@ -2892,7 +2887,7 @@ public class Catalog {
 
             // create tablets
             int schemaHash = indexIdToSchemaHash.get(indexId);
-            TabletMeta tabletMeta = new TabletMeta(dbId, tableId, partitionId, indexId, schemaHash);
+            TabletMeta tabletMeta = new TabletMeta(dbId, tableId, partitionId, indexId, schemaHash);  //jungle comment ,see the relation layer
             createTablets(clusterName, index, ReplicaState.NORMAL, distributionInfo, version, versionHash,
                     replicationNum, tabletMeta, tabletIdSet);
 
@@ -2967,7 +2962,7 @@ public class Catalog {
     // Create olap table and related base index synchronously.
     private Table createOlapTable(Database db, CreateTableStmt stmt, boolean isRestore) throws DdlException {
         String tableName = stmt.getTableName();
-        LOG.debug("begin create olap table: {}", tableName);
+        LOG.info("begin create olap table: {}", tableName);
 
         // create columns
         List<Column> baseSchema = stmt.getColumns();
@@ -3036,7 +3031,7 @@ public class Catalog {
         }
 
         Preconditions.checkNotNull(baseIndexStorageType);
-        long baseIndexId = olapTable.getId();
+        long baseIndexId = olapTable.getId();    //jungle comment: baseIndex is table id
         olapTable.setStorageTypeToIndex(baseIndexId, baseIndexStorageType);
 
         // analyze bloom filter columns
@@ -3130,7 +3125,7 @@ public class Catalog {
                                                                  replicationNum,
                                                                  versionInfo, bfColumns, bfFpp,
                                                                  tabletIdSet, isRestore);
-                olapTable.addPartition(partition);
+                olapTable.addPartition(partition);      //jungle comment : add the partition info here
             } else if (partitionInfo.getType() == PartitionType.RANGE) {
                 try {
                     // just for remove entries in stmt.getProperties(),
@@ -3567,13 +3562,14 @@ public class Catalog {
     private void createTablets(String clusterName, MaterializedIndex index, ReplicaState replicaState,
             DistributionInfo distributionInfo, long version, long versionHash, short replicationNum,
             TabletMeta tabletMeta, Set<Long> tabletIdSet) throws DdlException {
+        LOG.info("createTablets ,tabletMeta :" + tabletMeta.toString());
         Preconditions.checkArgument(replicationNum > 0);
 
         DistributionInfoType distributionInfoType = distributionInfo.getType();
         if (distributionInfoType == DistributionInfoType.RANDOM || distributionInfoType == DistributionInfoType.HASH) {
             for (int i = 0; i < distributionInfo.getBucketNum(); ++i) {
                 // create a new tablet with random chosen backends
-                Tablet tablet = new Tablet(getNextId());
+                Tablet tablet = new Tablet(getNextId());    //jungle comment: tablet cronspond to the bucket
 
                 // add tablet to inverted index first
                 index.addTablet(tablet, tabletMeta);
@@ -3589,6 +3585,7 @@ public class Catalog {
                 for (long backendId : chosenBackendIds) {
                     long replicaId = getNextId();
                     Replica replica = new Replica(replicaId, backendId, replicaState, version, versionHash);
+                    LOG.info("tablet id :{} , create replica , replicaId : {} , backendId : {}",tablet.getId(), replicaId,backendId);
                     tablet.addReplica(replica);
                 }
             }
@@ -4036,6 +4033,9 @@ public class Catalog {
 
     public Load getLoadInstance() {
         return this.load;
+    }
+    public StreamingLoad getStreamingLoadInstance(){
+        return this.streamingLoad;
     }
 
     public ExportMgr getExportMgr() {

@@ -15,15 +15,9 @@
 
 package com.baidu.palo.load;
 
-import com.baidu.palo.catalog.Catalog;
-import com.baidu.palo.catalog.Database;
-import com.baidu.palo.catalog.Replica;
-import com.baidu.palo.catalog.Replica.ReplicaState;
+import com.baidu.palo.catalog.*;
 import com.baidu.palo.catalog.MaterializedIndex.IndexState;
-import com.baidu.palo.catalog.OlapTable;
-import com.baidu.palo.catalog.Tablet;
-import com.baidu.palo.catalog.MaterializedIndex;
-import com.baidu.palo.catalog.Partition;
+import com.baidu.palo.catalog.Replica.ReplicaState;
 import com.baidu.palo.clone.Clone;
 import com.baidu.palo.clone.CloneJob.JobPriority;
 import com.baidu.palo.clone.CloneJob.JobType;
@@ -34,28 +28,13 @@ import com.baidu.palo.load.FailMsg.CancelType;
 import com.baidu.palo.load.LoadJob.EtlJobType;
 import com.baidu.palo.load.LoadJob.JobState;
 import com.baidu.palo.persist.ReplicaPersistInfo;
-import com.baidu.palo.task.AgentBatchTask;
-import com.baidu.palo.task.AgentTask;
-import com.baidu.palo.task.AgentTaskExecutor;
-import com.baidu.palo.task.AgentTaskQueue;
-import com.baidu.palo.task.HadoopLoadEtlTask;
-import com.baidu.palo.task.MiniLoadEtlTask;
-import com.baidu.palo.task.MiniLoadPendingTask;
-import com.baidu.palo.task.HadoopLoadPendingTask;
-import com.baidu.palo.task.InsertLoadEtlTask;
-import com.baidu.palo.task.MasterTask;
-import com.baidu.palo.task.MasterTaskExecutor;
-import com.baidu.palo.task.PullLoadEtlTask;
-import com.baidu.palo.task.PullLoadPendingTask;
-import com.baidu.palo.task.PushTask;
+import com.baidu.palo.task.*;
 import com.baidu.palo.thrift.TPriority;
 import com.baidu.palo.thrift.TPushType;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.List;
@@ -111,7 +90,7 @@ public class LoadChecker extends Daemon {
     
     @Override
     protected void runOneCycle() {
-        LOG.debug("start check load jobs. job state: {}", jobState.name());
+        //LOG.info(jobState.name() + " checker start check load jobs." );
         switch (jobState) {
             case PENDING:
                 runPendingJobs();
@@ -173,7 +152,7 @@ public class LoadChecker extends Daemon {
                 }
                 if (task != null) {
                     if (executors.get(JobState.PENDING).get(job.getPriority()).submit(task)) {
-                        LOG.info("run pending job. job: {}", job);
+                        LOG.info("start run pending job. job: {} ,type is {}", job.getId(),etlJobType.name());
                     }
                 }
             } catch (Exception e) {
@@ -207,7 +186,7 @@ public class LoadChecker extends Daemon {
                 }
                 if (task != null) {
                     if (executors.get(JobState.ETL).get(job.getPriority()).submit(task)) {
-                        LOG.info("run etl job. job: {}", job);
+                        LOG.info("start run etl job. job: {} , type is {}", job.getId(),etlJobType.name() );
                     }
                 }
             } catch (Exception e) {
@@ -220,10 +199,10 @@ public class LoadChecker extends Daemon {
         List<LoadJob> loadingJobs = Catalog.getInstance().getLoadInstance().getLoadJobs(JobState.LOADING);
         for (LoadJob job : loadingJobs) {
             try {
-                LOG.info("run loading job. job: {}", job);
+                LOG.info("start run loading job. job: {}", job.getId());
                 runOneLoadingJob(job);
             } catch (Exception e) {
-                LOG.warn("run loading job error", e);
+                LOG.warn("start run loading job error", e);
             }
         }
     }
@@ -264,6 +243,7 @@ public class LoadChecker extends Daemon {
     }
 
     private Set<Long> submitPushTasks(LoadJob job, Database db) {
+        LOG.info("submitPushTasks()");
         Map<Long, TabletLoadInfo> tabletLoadInfos = job.getIdToTabletLoadInfo();
         boolean needDecompress = (job.getEtlJobType() == EtlJobType.HADOOP) ? true : false;
         AgentBatchTask batchTask = new AgentBatchTask();
@@ -273,6 +253,7 @@ public class LoadChecker extends Daemon {
         Map<Long, TableLoadInfo> idToTableLoadInfo = job.getIdToTableLoadInfo();
         for (Entry<Long, TableLoadInfo> tableEntry : idToTableLoadInfo.entrySet()) {
             long tableId = tableEntry.getKey();
+            LOG.info("1 -> table Id:" + tableId);
             OlapTable table = null;
             db.readLock();
             try {
@@ -312,6 +293,7 @@ public class LoadChecker extends Daemon {
                     short replicationNum = table.getPartitionInfo().getReplicationNum(partition.getId());
                     long version = partitionLoadInfo.getVersion();
                     long versionHash = partitionLoadInfo.getVersionHash();
+                    LOG.info("2 -> partitionId :{} , partition version: {} , versionHash : {} " ,partitionId, version ,versionHash );
                     // check all indices (base + roll up (not include ROLLUP state index))
                     List<MaterializedIndex> indices = partition.getMaterializedIndices();
                     for (MaterializedIndex index : indices) {
@@ -334,6 +316,7 @@ public class LoadChecker extends Daemon {
                         // so here we check if rollup index is push finished before sending push task
                         // to base index.
                         long rollupIndexId = index.getRollupIndexId();
+
                         if (rollupIndexId != -1L) {
                             MaterializedIndex rollupIndex = partition.getIndex(rollupIndexId);
                             if (rollupIndex != null) {
@@ -403,14 +386,15 @@ public class LoadChecker extends Daemon {
                         } // end for handling rollup
                         
                         int schemaHash = tableLoadInfo.getIndexSchemaHash(indexId);
+                        LOG.info("3 -> index id : {}  rollupIndexId : {} ,schemaHash : {}  " , index.getId(), rollupIndexId,schemaHash);
                         short quorumNum = (short) (replicationNum / 2 + 1);
                         for (Tablet tablet : index.getTablets()) {
                             long tabletId = tablet.getId();
-                            
                             // get tablet file path
                             TabletLoadInfo tabletLoadInfo = tabletLoadInfos.get(tabletId);
                             String filePath = tabletLoadInfo.getFilePath();
                             long fileSize = tabletLoadInfo.getFileSize();
+                            LOG.info("4 -> tabletId id : {} , tabletLoadInfo.filePath : {} ,size :{} " ,tabletId, filePath , fileSize);
 
                             // get push type
                             TPushType type = TPushType.LOAD;
@@ -431,6 +415,7 @@ public class LoadChecker extends Daemon {
                                         || state == ReplicaState.SCHEMA_CHANGE);
                                 long replicaVersion = replica.getVersion();
                                 long replicaVersionHash = replica.getVersionHash();
+
                                 boolean checkByVersion = (replicaVersion == version - 1
                                         || (replicaVersion == version && replicaVersionHash != versionHash));
 
@@ -443,6 +428,7 @@ public class LoadChecker extends Daemon {
                                                                           version, versionHash, filePath, fileSize, 0,
                                                                           job.getId(), type, null,
                                                                           needDecompress, job.getPriority());
+                                        LOG.info("5 -> replicaId id :{}  , replicaVersion  :{} ,replicaVersionHash {} ,replica.getBackendId : {}" ,replicaId,replicaVersion, replicaVersionHash,replica.getBackendId() );
                                         if (AgentTaskQueue.addTask(pushTask)) {
                                             batchTask.addTask(pushTask);
                                             job.addPushTask((PushTask) pushTask);
@@ -494,7 +480,7 @@ public class LoadChecker extends Daemon {
         } // end for tables
 
         if (batchTask.getTaskNum() > 0) {
-            AgentTaskExecutor.submit(batchTask);
+            AgentTaskExecutor.submit(batchTask); //jungle comment :
         }
         return jobTotalTablets;
     }
@@ -504,7 +490,7 @@ public class LoadChecker extends Daemon {
                 JobState.QUORUM_FINISHED);
         for (LoadJob job : quorumFinishedJobs) {
             try {
-                LOG.info("run quorum finished job. job: {}", job);
+                LOG.info("start run quorum finished job. job: {}", job.getId());
                 runOneQuorumFinishedJob(job);
             } catch (Exception e) {
                 LOG.warn("run quorum job error", e);
@@ -608,7 +594,7 @@ public class LoadChecker extends Daemon {
                     } // end for partitions
                 } // end for tables
 
-                if (allReplicaFinished) {
+                if (allReplicaFinished) {    //jungle comment:here all finish
                     if (load.updateLoadJobState(job, JobState.FINISHED)) {
                         isJobFinished = true;
                         LOG.info("load job finished. job: {}", job);

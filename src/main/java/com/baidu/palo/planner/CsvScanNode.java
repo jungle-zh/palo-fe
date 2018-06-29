@@ -15,13 +15,6 @@
 
 package com.baidu.palo.planner;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.baidu.palo.analysis.Analyzer;
 import com.baidu.palo.analysis.TupleDescriptor;
 import com.baidu.palo.catalog.Column;
@@ -33,24 +26,26 @@ import com.baidu.palo.load.LoadJob;
 import com.baidu.palo.load.PartitionLoadInfo;
 import com.baidu.palo.load.Source;
 import com.baidu.palo.load.TableLoadInfo;
-import com.baidu.palo.thrift.TMiniLoadEtlFunction;
-import com.baidu.palo.thrift.TColumnType;
-import com.baidu.palo.thrift.TCsvScanNode;
-import com.baidu.palo.thrift.TPlanNode;
-import com.baidu.palo.thrift.TPlanNodeType;
-import com.baidu.palo.thrift.TScanRangeLocations;
+import com.baidu.palo.thrift.*;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class CsvScanNode extends ScanNode {
     private static final Logger LOG = LogManager.getLogger(CsvScanNode.class);
 
     private final OlapTable table;
-    private final LoadJob job;
+    private LoadJob job;
+    private Source source;
 
     private List<String> filePaths = Lists.newArrayList();
 
@@ -70,6 +65,12 @@ public class CsvScanNode extends ScanNode {
         super(id, desc, "Scan CSV");
         this.table = table;
         this.job = job;
+    }
+
+    public CsvScanNode(PlanNodeId id, TupleDescriptor desc, OlapTable table, Source source) {
+        super(id, desc, "Scan CSV");
+        this.table = table;
+        this.source = source;
     }
 
     @Override
@@ -106,14 +107,19 @@ public class CsvScanNode extends ScanNode {
     public void finalize(Analyzer analyzer) throws InternalException {
         // get file paths
         // file paths in different partitions are same in mini load
-        TableLoadInfo tableLoadInfo = job.getTableLoadInfo(table.getId());
-        Collection<PartitionLoadInfo> partitionLoadInfos = tableLoadInfo.getIdToPartitionLoadInfo().values();
-        Preconditions.checkState(!partitionLoadInfos.isEmpty());
-        PartitionLoadInfo partitionLoadInfo = (PartitionLoadInfo) partitionLoadInfos.toArray()[0];
-        List<Source> sources = partitionLoadInfo.getSources();
-        Preconditions.checkState(sources.size() == 1);
-        Source source = sources.get(0);
-        filePaths = source.getFileUrls();
+        if(source == null){
+            TableLoadInfo tableLoadInfo = job.getTableLoadInfo(table.getId());
+            Collection<PartitionLoadInfo> partitionLoadInfos = tableLoadInfo.getIdToPartitionLoadInfo().values();
+            Preconditions.checkState(!partitionLoadInfos.isEmpty());
+            PartitionLoadInfo partitionLoadInfo = (PartitionLoadInfo) partitionLoadInfos.toArray()[0];
+            List<Source> sources = partitionLoadInfo.getSources();
+            Preconditions.checkState(sources.size() == 1);
+            source = sources.get(0);
+            filePaths = source.getFileUrls();
+        }else {
+            filePaths = source.getFileUrls();
+        }
+
 
         // column separator
         columnSeparator = source.getColumnSeparator();
@@ -181,7 +187,7 @@ public class CsvScanNode extends ScanNode {
         } 
         // max filter ratio
         // TODO: remove!!
-        maxFilterRatio = job.getMaxFilterRatio();
+        //maxFilterRatio = job.getMaxFilterRatio();
     }
 
     @Override

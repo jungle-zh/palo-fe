@@ -15,30 +15,17 @@
 
 package com.baidu.palo.task;
 
-import com.baidu.palo.catalog.Catalog;
-import com.baidu.palo.catalog.Database;
-import com.baidu.palo.catalog.DistributionInfo;
+import com.baidu.palo.catalog.*;
 import com.baidu.palo.catalog.DistributionInfo.DistributionInfoType;
-import com.baidu.palo.catalog.MaterializedIndex;
-import com.baidu.palo.catalog.OlapTable;
-import com.baidu.palo.catalog.Partition;
-import com.baidu.palo.catalog.Tablet;
 import com.baidu.palo.common.LoadException;
 import com.baidu.palo.common.MetaNotFoundException;
 import com.baidu.palo.common.Pair;
 import com.baidu.palo.load.FailMsg.CancelType;
-import com.baidu.palo.load.Load;
-import com.baidu.palo.load.LoadChecker;
-import com.baidu.palo.load.LoadJob;
+import com.baidu.palo.load.*;
 import com.baidu.palo.load.LoadJob.JobState;
-import com.baidu.palo.load.PartitionLoadInfo;
-import com.baidu.palo.load.TableLoadInfo;
-import com.baidu.palo.load.TabletLoadInfo;
 import com.baidu.palo.thrift.TEtlState;
-
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -107,6 +94,7 @@ public abstract class LoadEtlTask extends MasterTask {
 
         // check partition is loading
         if (job.getProgress() == 100) {
+            LOG.info("etl finished ");
             tryUpdateLoading();
         }
     }
@@ -220,7 +208,7 @@ public abstract class LoadEtlTask extends MasterTask {
         
         // update job to loading
         if (load.updateLoadJobState(job, JobState.LOADING)) {
-            LOG.info("update job state to loading success. job: {}", job);
+            LOG.info("update job state to loading . job: {}", job);
         } else {
             // remove loading partitions
             load.removeLoadingPartitions(partitionIds);
@@ -281,7 +269,7 @@ public abstract class LoadEtlTask extends MasterTask {
                         long indexId = materializedIndex.getId();
                         int tabletIndex = 0;
                         for (Tablet tablet : materializedIndex.getTablets()) {
-                            long bucket = tabletIndex++;
+                            long bucket = tabletIndex++;  //jungle comment : one tablet is one bucket ?
                             String tableViewBucket = String.format("%d.%d.%d", partitionId, indexId, bucket);
                             String filePath = null;
                             long fileSize = -1;

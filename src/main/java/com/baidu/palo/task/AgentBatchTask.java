@@ -15,35 +15,17 @@
 
 package com.baidu.palo.task;
 
+import com.baidu.palo.catalog.Catalog;
+import com.baidu.palo.common.ClientPool;
+import com.baidu.palo.system.Backend;
+import com.baidu.palo.thrift.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
-import com.baidu.palo.catalog.Catalog;
-import com.baidu.palo.common.ClientPool;
-import com.baidu.palo.system.Backend;
-import com.baidu.palo.thrift.BackendService;
-import com.baidu.palo.thrift.TAgentServiceVersion;
-import com.baidu.palo.thrift.TAgentTaskRequest;
-import com.baidu.palo.thrift.TAlterTabletReq;
-import com.baidu.palo.thrift.TCancelDeleteDataReq;
-import com.baidu.palo.thrift.TCheckConsistencyReq;
-import com.baidu.palo.thrift.TCloneReq;
-import com.baidu.palo.thrift.TCreateTabletReq;
-import com.baidu.palo.thrift.TDropTabletReq;
-import com.baidu.palo.thrift.TNetworkAddress;
-import com.baidu.palo.thrift.TPushReq;
-import com.baidu.palo.thrift.TPushType;
-import com.baidu.palo.thrift.TReleaseSnapshotRequest;
-import com.baidu.palo.thrift.TRestoreReq;
-import com.baidu.palo.thrift.TSnapshotRequest;
-import com.baidu.palo.thrift.TStorageMediumMigrateReq;
-import com.baidu.palo.thrift.TTaskType;
-import com.baidu.palo.thrift.TUploadReq;
 
 /*
  * This class group tasks by backend 
@@ -137,6 +119,7 @@ public class AgentBatchTask implements Runnable {
     }
 
     private TAgentTaskRequest toAgentTaskRequest(AgentTask task) {
+        LOG.info("toAgentTaskRequest ,task type:"+ task.getTaskType().name());
         TAgentTaskRequest tAgentTaskRequest = new TAgentTaskRequest();
         tAgentTaskRequest.setProtocol_version(TAgentServiceVersion.V1);
         tAgentTaskRequest.setSignature(task.getSignature());
@@ -158,7 +141,8 @@ public class AgentBatchTask implements Runnable {
                 tAgentTaskRequest.setDrop_tablet_req(request);
                 return tAgentTaskRequest;
             }
-            case PUSH: {
+            case PUSH:
+            case STREAMING_PUSH:{
                 PushTask pushTask = (PushTask) task;
                 TPushReq request = pushTask.toThrift();
                 LOG.debug(request.toString());

@@ -25,7 +25,9 @@ public enum TTaskType implements org.apache.thrift.TEnum {
   CHECK_CONSISTENCY(10),
   UPLOAD(11),
   RESTORE(12),
-  CLEAR_REMOTE_FILE(13);
+  CLEAR_REMOTE_FILE(13),
+  STREAMING_ETL(14),
+  STREAMING_PUSH(15);
 
   private final int value;
 
@@ -74,6 +76,10 @@ public enum TTaskType implements org.apache.thrift.TEnum {
         return RESTORE;
       case 13:
         return CLEAR_REMOTE_FILE;
+      case 14:
+        return STREAMING_ETL;
+      case 15:
+        return STREAMING_PUSH;
       default:
         return null;
     }

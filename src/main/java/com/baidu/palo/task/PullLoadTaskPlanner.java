@@ -38,6 +38,7 @@ import com.baidu.palo.planner.PlanNodeId;
 import com.baidu.palo.planner.ScanNode;
 import com.baidu.palo.thrift.TBrokerFileStatus;
 
+import com.baidu.palo.thrift.TExplainLevel;
 import com.google.common.collect.Lists;
 
 import org.apache.logging.log4j.LogManager;
@@ -73,6 +74,7 @@ public class PullLoadTaskPlanner {
 
     // NOTE: DB lock need hold when call this function.
     public void plan(List<List<TBrokerFileStatus>> fileStatusesList, int filesAdded) throws InternalException {
+        LOG.info("PullLoadTaskPlanner::plan");
         // Tuple descriptor used for all nodes in plan.
         OlapTable table = task.table;
 
@@ -153,5 +155,19 @@ public class PullLoadTaskPlanner {
 
     public List<ScanNode> getScanNodes() {
         return scanNodes;
+    }
+
+    public String getExplainString(List<PlanFragment> fragments, TExplainLevel explainLevel) {
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < fragments.size(); ++i) {
+            PlanFragment fragment = fragments.get(i);
+            if (i > 0) {
+                // a blank line between plan fragments
+                str.append("\n");
+            }
+            str.append("PLAN FRAGMENT " + i + "\n");
+            str.append(fragment.getExplainString(explainLevel));
+        }
+        return str.toString();
     }
 }

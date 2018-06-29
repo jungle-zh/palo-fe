@@ -16,69 +16,22 @@
 package com.baidu.palo.service;
 
 import com.baidu.palo.analysis.SetType;
-import com.baidu.palo.catalog.AccessPrivilege;
-import com.baidu.palo.catalog.Catalog;
-import com.baidu.palo.catalog.Column;
-import com.baidu.palo.catalog.Database;
-import com.baidu.palo.catalog.Table;
-import com.baidu.palo.catalog.UserPropertyMgr;
+import com.baidu.palo.catalog.*;
 import com.baidu.palo.cluster.ClusterNamespace;
-import com.baidu.palo.common.AnalysisException;
-import com.baidu.palo.common.AuditLog;
-import com.baidu.palo.common.Config;
-import com.baidu.palo.common.DdlException;
-import com.baidu.palo.common.PatternMatcher;
-import com.baidu.palo.common.ThriftServerContext;
-import com.baidu.palo.common.ThriftServerEventProcessor;
+import com.baidu.palo.common.*;
 import com.baidu.palo.load.EtlStatus;
 import com.baidu.palo.load.LoadJob;
 import com.baidu.palo.load.MiniEtlTaskInfo;
 import com.baidu.palo.master.MasterImpl;
 import com.baidu.palo.mysql.MysqlPassword;
-import com.baidu.palo.qe.AuditBuilder;
-import com.baidu.palo.qe.ConnectContext;
-import com.baidu.palo.qe.ConnectProcessor;
-import com.baidu.palo.qe.QeProcessor;
-import com.baidu.palo.qe.VariableMgr;
+import com.baidu.palo.qe.*;
 import com.baidu.palo.system.Frontend;
 import com.baidu.palo.system.SystemInfoService;
-import com.baidu.palo.thrift.FrontendService;
-import com.baidu.palo.thrift.FrontendServiceVersion;
-import com.baidu.palo.thrift.TColumnDef;
-import com.baidu.palo.thrift.TColumnDesc;
-import com.baidu.palo.thrift.TDescribeTableParams;
-import com.baidu.palo.thrift.TDescribeTableResult;
-import com.baidu.palo.thrift.TFeResult;
-import com.baidu.palo.thrift.TFetchResourceResult;
-import com.baidu.palo.thrift.TFinishTaskRequest;
-import com.baidu.palo.thrift.TGetDbsParams;
-import com.baidu.palo.thrift.TGetDbsResult;
-import com.baidu.palo.thrift.TGetTablesParams;
-import com.baidu.palo.thrift.TGetTablesResult;
-import com.baidu.palo.thrift.TListTableStatusResult;
-import com.baidu.palo.thrift.TLoadCheckRequest;
-import com.baidu.palo.thrift.TMasterOpRequest;
-import com.baidu.palo.thrift.TMasterOpResult;
-import com.baidu.palo.thrift.TMasterResult;
-import com.baidu.palo.thrift.TMiniLoadEtlStatusResult;
-import com.baidu.palo.thrift.TMiniLoadRequest;
-import com.baidu.palo.thrift.TNetworkAddress;
-import com.baidu.palo.thrift.TReportExecStatusParams;
-import com.baidu.palo.thrift.TReportExecStatusResult;
-import com.baidu.palo.thrift.TReportRequest;
-import com.baidu.palo.thrift.TShowVariableRequest;
-import com.baidu.palo.thrift.TShowVariableResult;
-import com.baidu.palo.thrift.TStatus;
-import com.baidu.palo.thrift.TStatusCode;
-import com.baidu.palo.thrift.TTableStatus;
-import com.baidu.palo.thrift.TUniqueId;
-import com.baidu.palo.thrift.TUpdateExportTaskStatusRequest;
-import com.baidu.palo.thrift.TUpdateMiniEtlTaskStatusRequest;
-
+import com.baidu.palo.task.AgentStreamingJob;
+import com.baidu.palo.thrift.*;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.thrift.TException;
@@ -354,6 +307,12 @@ public class FrontendServiceImpl implements FrontendService.Iface {
 
     @Override
     public TFeResult updateMiniEtlTaskStatus(TUpdateMiniEtlTaskStatusRequest request) throws TException {
+        LOG.info("1updateMiniEtlTaskStatus ");
+        if(request.getEtlTaskType() == TTaskType.STREAMING_ETL){
+
+            AgentStreamingJob job = Catalog.getInstance().getStreamingLoadInstance().getLoadJob(request.getJobId());
+            return job.updateMiniEtlTaskStatus(request);
+        }
         TFeResult result = new TFeResult();
         result.setProtocolVersion(FrontendServiceVersion.V1);
         TStatus status = new TStatus(TStatusCode.OK);

@@ -551,7 +551,7 @@ public class EditLog {
     /**
      * Write an operation to the edit log. Do not sync to persistent store yet.
      */
-    private synchronized void logEdit(short op, Writable writable) {
+    private synchronized void logEdit(short op, Writable writable) {    //jungle comment:write to edit log file
         if (this.getNumEditStreams() == 0) {
             LOG.error("Fatal Error : no editLog stream");
             throw new Error("Fatal Error : no editLog stream");

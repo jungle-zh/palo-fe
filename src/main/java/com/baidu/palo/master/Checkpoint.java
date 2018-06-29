@@ -106,7 +106,7 @@ public class Checkpoint extends Daemon {
         catalog.setEditLog(editLog);
         try {
             catalog.loadImage(imageDir);
-            catalog.replayJournal(checkPointVersion);
+            catalog.replayJournal(checkPointVersion);     //jungle comment:replay the journal log ，save to memory
             if (catalog.getReplayedJournalId() != checkPointVersion) {
                 LOG.error("checkpoint version should be {}, actual replayed journal id is {}",
                           checkPointVersion, catalog.getReplayedJournalId());

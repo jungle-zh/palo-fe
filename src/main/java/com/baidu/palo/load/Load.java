@@ -15,48 +15,17 @@
 
 package com.baidu.palo.load;
 
-import com.baidu.palo.analysis.BinaryPredicate;
-import com.baidu.palo.analysis.CancelLoadStmt;
-import com.baidu.palo.analysis.ColumnSeparator;
-import com.baidu.palo.analysis.DataDescription;
-import com.baidu.palo.analysis.DeleteStmt;
-import com.baidu.palo.analysis.IsNullPredicate;
-import com.baidu.palo.analysis.LabelName;
-import com.baidu.palo.analysis.LiteralExpr;
-import com.baidu.palo.analysis.LoadStmt;
-import com.baidu.palo.analysis.Predicate;
-import com.baidu.palo.analysis.SlotRef;
-import com.baidu.palo.catalog.Catalog;
-import com.baidu.palo.catalog.Column;
-import com.baidu.palo.catalog.Database;
-import com.baidu.palo.catalog.KeysType;
-import com.baidu.palo.catalog.MaterializedIndex;
-import com.baidu.palo.catalog.OlapTable;
+import com.baidu.palo.analysis.*;
+import com.baidu.palo.catalog.*;
 import com.baidu.palo.catalog.OlapTable.OlapTableState;
-import com.baidu.palo.catalog.Partition;
 import com.baidu.palo.catalog.Partition.PartitionState;
-import com.baidu.palo.catalog.PrimitiveType;
-import com.baidu.palo.catalog.Replica;
-import com.baidu.palo.catalog.Table;
 import com.baidu.palo.catalog.Table.TableType;
-import com.baidu.palo.catalog.Tablet;
-import com.baidu.palo.catalog.TabletInvertedIndex;
-import com.baidu.palo.catalog.TabletMeta;
-import com.baidu.palo.catalog.Type;
 import com.baidu.palo.cluster.ClusterNamespace;
-import com.baidu.palo.common.AnalysisException;
-import com.baidu.palo.common.Config;
-import com.baidu.palo.common.DdlException;
-import com.baidu.palo.common.ErrorCode;
-import com.baidu.palo.common.ErrorReport;
-import com.baidu.palo.common.FeMetaVersion;
-import com.baidu.palo.common.FeNameFormat;
-import com.baidu.palo.common.LoadException;
-import com.baidu.palo.common.MarkedCountDownLatch;
-import com.baidu.palo.common.Pair;
+import com.baidu.palo.common.*;
 import com.baidu.palo.common.util.ListComparator;
 import com.baidu.palo.common.util.OrderByPair;
 import com.baidu.palo.common.util.TimeUtils;
+import com.baidu.palo.common.util.Util;
 import com.baidu.palo.load.AsyncDeleteJob.DeleteState;
 import com.baidu.palo.load.FailMsg.CancelType;
 import com.baidu.palo.load.LoadJob.EtlJobType;
@@ -65,19 +34,8 @@ import com.baidu.palo.metric.MetricRepo;
 import com.baidu.palo.persist.ReplicaPersistInfo;
 import com.baidu.palo.qe.ConnectContext;
 import com.baidu.palo.system.Backend;
-import com.baidu.palo.task.AgentBatchTask;
-import com.baidu.palo.task.AgentClient;
-import com.baidu.palo.task.AgentTask;
-import com.baidu.palo.task.AgentTaskExecutor;
-import com.baidu.palo.task.AgentTaskQueue;
-import com.baidu.palo.task.CancelDeleteTask;
-import com.baidu.palo.task.PushTask;
-import com.baidu.palo.thrift.TEtlState;
-import com.baidu.palo.thrift.TMiniLoadRequest;
-import com.baidu.palo.thrift.TNetworkAddress;
-import com.baidu.palo.thrift.TPriority;
-import com.baidu.palo.thrift.TPushType;
-
+import com.baidu.palo.task.*;
+import com.baidu.palo.thrift.*;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -85,23 +43,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -329,13 +276,13 @@ public class Load {
     public void addLoadJob(LoadStmt stmt, EtlJobType etlJobType, long timestamp) throws DdlException {
         // get db
         String dbName = stmt.getLabel().getDbName();
-        Database db = Catalog.getInstance().getDb(dbName);
+        Database db = Catalog.getInstance().getDb(dbName);  //jungle comment:get db of olap here
         if (db == null) {
             throw new DdlException("Database[" + dbName + "] does not exist");
         }
 
         // create job
-        LoadJob job = createLoadJob(stmt, etlJobType, db, timestamp);
+        LoadJob job = createLoadJob(stmt, etlJobType, db, timestamp); //jungle comment:create LoadJob ,determine the
         addLoadJob(job, db);
     }
 
@@ -392,6 +339,8 @@ public class Load {
     }
 
     private void addLoadJob(LoadJob job, Database db) throws DdlException {
+        LOG.info("Load::addLoadJob()");
+        //com.baidu.palo.common.util.Util.printStack();
         // check cluster capacity
         Catalog.getCurrentSystemInfo().checkClusterCapacity(db.getClusterName());
         // check db quota
@@ -410,6 +359,7 @@ public class Load {
 
     private LoadJob createLoadJob(LoadStmt stmt, EtlJobType etlJobType, 
                 Database db, long timestamp) throws DdlException {
+        LOG.info("Load.createLoadJob()");
         // get params
         String label = stmt.getLabel().getLabelName();
         List<DataDescription> dataDescriptions = stmt.getDataDescriptions();
@@ -482,10 +432,25 @@ public class Load {
             // create source
             createSource(db, dataDescription, tableToPartitionSources, job.getDeleteFlag());
         }
+        //jungle comment :add print for debug
         for (Entry<Long, Map<Long, List<Source>>> tableEntry : tableToPartitionSources.entrySet()) {
             long tableId = tableEntry.getKey();
             Map<Long, List<Source>> partitionToSources = tableEntry.getValue();
-            
+            LOG.info("tableId : " + tableId);
+            for(Entry<Long,List<Source>> en : partitionToSources.entrySet()){
+                LOG.info("parititonId : " + en.getKey());
+                for(Source s : en.getValue()){
+                    String ss ="";
+                    for(String name : s.getColumnNames()){
+                        ss += name;
+                    }
+                    LOG.info("Source :" +  ss);
+                }
+            }
+        }
+        for (Entry<Long, Map<Long, List<Source>>> tableEntry : tableToPartitionSources.entrySet()) {
+            long tableId = tableEntry.getKey();
+            Map<Long, List<Source>> partitionToSources = tableEntry.getValue();
             Map<Long, PartitionLoadInfo>  idToPartitionLoadInfo = Maps.newHashMap();
             for (Entry<Long, List<Source>> partitionEntry : partitionToSources.entrySet()) {
                 PartitionLoadInfo info = new PartitionLoadInfo(partitionEntry.getValue());
@@ -496,9 +461,10 @@ public class Load {
         job.setIdToTableLoadInfo(idToTableLoadInfo);
 
         if (etlJobType == EtlJobType.BROKER) {
+            LOG.info("etlJobType is BROKER");
             PullLoadSourceInfo sourceInfo = new PullLoadSourceInfo();
             for (DataDescription dataDescription : dataDescriptions) {
-                BrokerFileGroup fileGroup = new BrokerFileGroup(dataDescription, stmt.getBrokerDesc());
+                BrokerFileGroup fileGroup = new BrokerFileGroup(dataDescription, stmt.getBrokerDesc()); //jungle comment: from user input
                 fileGroup.parse(db);
                 sourceInfo.addFileGroup(fileGroup);
             }
@@ -507,6 +473,7 @@ public class Load {
         }
         
         if (etlJobType == EtlJobType.MINI) {
+            LOG.info("etlJobType is MINI");
             // mini etl tasks
             Map<Long, MiniEtlTaskInfo> idToEtlTask = Maps.newHashMap();
             long etlTaskId = 0;
@@ -659,7 +626,7 @@ public class Load {
                     }
                 }
             }
-            source.setColumnNames(columnNames);
+            source.setColumnNames(columnNames);   //jungle comment : source is the  hdfs
 
             // check default value
             Map<String, Pair<String, List<String>>> assignColumnToFunction = dataDescription.getColumnMapping();
@@ -725,8 +692,8 @@ public class Load {
             }
 
             // partitions of this source
-            OlapTable olapTable = (OlapTable) table;
-            List<String> partitionNames = dataDescription.getPartitionNames();
+            OlapTable olapTable = (OlapTable) table;     //jungle comment: the table to insert data
+            List<String> partitionNames = dataDescription.getPartitionNames(); //jungle comment:user define the insert partition
             if (partitionNames == null || partitionNames.isEmpty()) {
                 partitionNames = new ArrayList<String>();
                 for (Partition partition : olapTable.getPartitions()) {
@@ -785,6 +752,7 @@ public class Load {
     }
 
     public void unprotectAddLoadJob(LoadJob job) throws DdlException {
+        LOG.info("Load.unprotectAddLoadJob job state:" + job.getState().name());
         long jobId = job.getId();
         long dbId = job.getDbId();
         String label = job.getLabel();
@@ -1565,10 +1533,11 @@ public class Load {
         }
     }
   
-    public void unprotectQuorumLoadJob(LoadJob job, Database db) {
+    public void unprotectQuorumLoadJob(LoadJob job, Database db) {   //jungle comment: useful when saveDb
+        LOG.info("unprotectQuorumLoadJob ,job id : " + job.getId());
         // remove loading partitions
         removeLoadingPartitions(job);
-
+        //jungle comment : update the tablet info corresponding to the be
         // Update database information first
         Map<Long, ReplicaPersistInfo> replicaInfos = job.getReplicaPersistInfos();
         if (replicaInfos != null) {
@@ -1603,7 +1572,7 @@ public class Load {
                                    info.getDataSize(), info.getRowCount());
             }
         }
-
+        //jungle comment : update the partition info and the materializedIndex info
         long jobId = job.getId();
         Map<Long, TableLoadInfo> idToTableLoadInfo = job.getIdToTableLoadInfo();
         if (idToTableLoadInfo != null) {
@@ -1929,6 +1898,8 @@ public class Load {
     }
    
     public boolean updateLoadJobState(LoadJob job, JobState destState, CancelType cancelType, String msg) {
+        LOG.info("updateLoadJobState to  " + destState.name() + " and write edit log  , job id:" + job.getId());
+        Util.printStack();
         boolean result = true;
         JobState srcState = null;
 
@@ -2029,6 +2000,7 @@ public class Load {
     }
     
     private boolean processQuorumFinished(LoadJob job, Database db) {
+        LOG.info("processQuorumFinished ,job id :" + job.getId());
         long jobId = job.getId();
         // remove partition from loading set
         removeLoadingPartitions(job);

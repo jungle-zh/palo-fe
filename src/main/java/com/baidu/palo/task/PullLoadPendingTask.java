@@ -20,11 +20,13 @@ import com.baidu.palo.catalog.OlapTable;
 import com.baidu.palo.common.DdlException;
 import com.baidu.palo.common.InternalException;
 import com.baidu.palo.common.util.BrokerUtil;
+import com.baidu.palo.common.util.Util;
 import com.baidu.palo.load.BrokerFileGroup;
 import com.baidu.palo.load.EtlSubmitResult;
 import com.baidu.palo.load.LoadJob;
 import com.baidu.palo.load.TableLoadInfo;
 import com.baidu.palo.thrift.TBrokerFileStatus;
+import com.baidu.palo.thrift.TExplainLevel;
 import com.baidu.palo.thrift.TStatus;
 import com.baidu.palo.thrift.TStatusCode;
 
@@ -49,6 +51,8 @@ public class PullLoadPendingTask extends LoadPendingTask {
 
     @Override
     protected void createEtlRequest() throws Exception {
+        LOG.info("PullLoadPendingTask::createEtlRequest()");
+        Util.printStack();
         long jobDeadlineMs = -1;
         if (job.getTimeoutSecond() > 0) {
             jobDeadlineMs = job.getCreateTimeMs() + job.getTimeoutSecond() * 1000;
@@ -71,16 +75,22 @@ public class PullLoadPendingTask extends LoadPendingTask {
             for (Map.Entry<Long, List<BrokerFileGroup>> entry :
                     job.getPullLoadSourceInfo().getIdToFileGroups().entrySet()) {
                 long tableId = entry.getKey();
+                LOG.info("gen PullLoadTask ,tableId is : " + tableId);
+                for(BrokerFileGroup bg : entry.getValue()){
+                    LOG.info(bg.toString());
+                }
+
                 OlapTable table  = (OlapTable) db.getTable(tableId);
                 if (table == null) {
                     throw new DdlException("Unknown table(" + tableId + ") in database(" + db.getFullName() + ")");
                 }
 
-                // Generate pull load task, one
+                // Generate pull load task, for one table
                 PullLoadTask task = new PullLoadTask(
                         job.getId(), nextTaskId, db, table,
                         job.getBrokerDesc(), entry.getValue(), jobDeadlineMs, job.getExecMemLimit());
                 task.init(fileStatusMap.get(tableId), fileNumMap.get(tableId));
+                LOG.info("PullLoadTask explain: \n" + task.planner.getExplainString(task.planner.getFragments(), TExplainLevel.VERBOSE));
                 pullLoadTaskList.add(task);
                 nextTaskId++;
 
@@ -97,6 +107,7 @@ public class PullLoadPendingTask extends LoadPendingTask {
 
     @Override
     protected EtlSubmitResult submitEtlJob(int retry) {
+        LOG.info("PullLoadPendingTask::submitEtlJob");
         Catalog.getInstance().getPullLoadJobMgr().submit(pullLoadJob);
         return new EtlSubmitResult(new TStatus(TStatusCode.OK), null);
     }
@@ -107,7 +118,7 @@ public class PullLoadPendingTask extends LoadPendingTask {
         for (Map.Entry<Long, List<BrokerFileGroup>> entry : job.getPullLoadSourceInfo().getIdToFileGroups().entrySet()) {
             long tableId = entry.getKey();
 
-            List<List<TBrokerFileStatus>> fileStatusList = Lists.newArrayList();
+            List<List<TBrokerFileStatus>> fileStatusList = Lists.newArrayList(); //jungle comment : two level first is DATA INFILE
             int filesAdded = 0;
             List<BrokerFileGroup> fileGroups = entry.getValue();
             for (BrokerFileGroup fileGroup : fileGroups) {

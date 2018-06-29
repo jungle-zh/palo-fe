@@ -299,7 +299,7 @@ public final class LocalJournalCursor implements JournalCursor {
             case OperationType.OP_LOAD_DONE:
             case OperationType.OP_LOAD_CANCEL: {
                 LoadJob job = new LoadJob();
-                job.readFields(in);
+                job.readFields(in);         //jungle comment: unserilze the LoadJob
                 ret.setData(job);
                 break;
             }

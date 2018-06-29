@@ -51,7 +51,7 @@ public class PullLoadTask {
     public final long jobDeadlineMs;
 
     // s
-    private PullLoadTaskPlanner planner;
+    public PullLoadTaskPlanner planner;
 
     // Useful things after executed
     private Map<String, Long> fileMap;
@@ -176,7 +176,7 @@ public class PullLoadTask {
         } catch (Exception e) {
             onFailed(executeId, new Status(TStatusCode.INTERNAL_ERROR, "Coordinator execute failed."));
         }
-        if (curCoordinator.join(waitSecond)) {
+        if (curCoordinator.join(waitSecond)) {    //jungle comment:  default 4 hours ,wait be pull fragment done
             Status status = curCoordinator.getExecStatus();
             if (status.ok()) {
                 Map<String, Long> resultFileMap = Maps.newHashMap();

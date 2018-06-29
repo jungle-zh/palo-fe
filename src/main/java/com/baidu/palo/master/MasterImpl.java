@@ -34,17 +34,7 @@ import com.baidu.palo.load.AsyncDeleteJob;
 import com.baidu.palo.load.LoadJob;
 import com.baidu.palo.persist.ReplicaPersistInfo;
 import com.baidu.palo.system.Backend;
-import com.baidu.palo.task.AgentTask;
-import com.baidu.palo.task.AgentTaskQueue;
-import com.baidu.palo.task.CheckConsistencyTask;
-import com.baidu.palo.task.CloneTask;
-import com.baidu.palo.task.CreateReplicaTask;
-import com.baidu.palo.task.CreateRollupTask;
-import com.baidu.palo.task.PushTask;
-import com.baidu.palo.task.RestoreTask;
-import com.baidu.palo.task.SchemaChangeTask;
-import com.baidu.palo.task.SnapshotTask;
-import com.baidu.palo.task.UploadTask;
+import com.baidu.palo.task.*;
 import com.baidu.palo.thrift.TBackend;
 import com.baidu.palo.thrift.TFetchResourceResult;
 import com.baidu.palo.thrift.TFinishTaskRequest;
@@ -74,6 +64,12 @@ public class MasterImpl {
     }
     
     public TMasterResult finishTask(TFinishTaskRequest request) throws TException {
+        LOG.info("finishTask :" + request.getJob_id() +" ,type :" + request.getTask_type());
+        if(request.getTask_type() == TTaskType.STREAMING_PUSH){
+            AgentStreamingJob job =  Catalog.getInstance().getStreamingLoadInstance().getLoadJob(request.getJob_id());
+            return  job.updateMiniPushTaskStatus(request);
+
+        }
         TMasterResult result = new TMasterResult();
         TStatus tStatus = new TStatus(TStatusCode.OK);
         result.setStatus(tStatus);
@@ -303,7 +299,7 @@ public class MasterImpl {
                 
                 Preconditions.checkState(!infos.isEmpty());
                 for (ReplicaPersistInfo info : infos) {
-                    job.addReplicaPersistInfos(info);
+                    job.addReplicaPersistInfos(info);       //jungle comment:add the ReplicaPersistInfo ,use when replay
                 }
             } else if (pushTask.getPushType() == TPushType.DELETE) {
                 // report delete task must match version and version hash

@@ -20,33 +20,20 @@
 
 package com.baidu.palo.planner;
 
-import com.baidu.palo.analysis.AnalyticInfo;
-import com.baidu.palo.analysis.Analyzer;
-import com.baidu.palo.analysis.Expr;
-import com.baidu.palo.analysis.InsertStmt;
-import com.baidu.palo.analysis.QueryStmt;
-import com.baidu.palo.analysis.SelectStmt;
-import com.baidu.palo.analysis.SlotDescriptor;
-import com.baidu.palo.analysis.SlotId;
-import com.baidu.palo.analysis.StatementBase;
-import com.baidu.palo.analysis.TupleDescriptor;
-import com.baidu.palo.analysis.TupleId;
+import com.baidu.palo.analysis.*;
 import com.baidu.palo.catalog.PrimitiveType;
 import com.baidu.palo.common.AnalysisException;
 import com.baidu.palo.common.InternalException;
 import com.baidu.palo.common.NotImplementedException;
 import com.baidu.palo.thrift.TExplainLevel;
 import com.baidu.palo.thrift.TQueryOptions;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -130,6 +117,7 @@ public class Planner {
      */
     public void createPlanFragments(StatementBase statment, Analyzer analyzer, TQueryOptions queryOptions)
             throws NotImplementedException, InternalException, AnalysisException {
+        LOG.info("Planner::createPlanFragments");
         QueryStmt queryStmt;
         if (statment instanceof InsertStmt) {
             queryStmt = ((InsertStmt) statment).getQueryStmt();
@@ -160,13 +148,17 @@ public class Planner {
         // compute mem layout *before* finalize(); finalize() may reference
         // TupleDescriptor.avgSerializedSize
         analyzer.getDescTbl().computeMemLayout();
+        LOG.info("singleNodePlan.finalize() ");
         singleNodePlan.finalize(analyzer);
+
         if (queryOptions.num_nodes == 1) {
+            LOG.info("queryOptions.num_nodes = 1");
             // single-node execution; we're almost done
             singleNodePlan = addUnassignedConjuncts(analyzer, singleNodePlan);
             fragments.add(new PlanFragment(plannerContext.getNextFragmentId(), singleNodePlan,
                     DataPartition.UNPARTITIONED));
         } else {
+            LOG.info("queryOptions.num_nodes = " + queryOptions.num_nodes);
             // all select query are unpartitioned.
             distributedPlanner = new DistributedPlanner(plannerContext);
             fragments = distributedPlanner.createPlanFragments(singleNodePlan);
@@ -187,7 +179,7 @@ public class Planner {
             rootFragment.setOutputExprs(resExprs);
         }
         // rootFragment.setOutputExprs(exprs);
-        LOG.debug("finalize plan fragments");
+        LOG.info("finalize plan fragments");
         for (PlanFragment fragment : fragments) {
             fragment.finalize(analyzer, !queryOptions.allow_unsupported_formats);
         }
