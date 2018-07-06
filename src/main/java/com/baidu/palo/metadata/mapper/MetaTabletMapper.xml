@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baidu.palo.metadata.dao.MetaTabletMapper">
+  <resultMap id="BaseResultMap" type="com.baidu.palo.metadata.pojo.MetaTablet">
+    <id column="tablet_id" jdbcType="BIGINT" property="tabletId" />
+    <result column="checked_version" jdbcType="BIGINT" property="checkedVersion" />
+    <result column="checked_version_hash" jdbcType="BIGINT" property="checkedVersionHash" />
+    <result column="is_consistent" jdbcType="INTEGER" property="isConsistent" />
+    <result column="replica_id_list" jdbcType="VARCHAR" property="replicaIdList" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    tablet_id, checked_version, checked_version_hash, is_consistent, replica_id_list
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from meta_tablet
+    where tablet_id = #{tabletId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from meta_tablet
+    where tablet_id = #{tabletId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.baidu.palo.metadata.pojo.MetaTablet">
+    insert into meta_tablet (tablet_id, checked_version, checked_version_hash, 
+      is_consistent, replica_id_list)
+    values (#{tabletId,jdbcType=BIGINT}, #{checkedVersion,jdbcType=BIGINT}, #{checkedVersionHash,jdbcType=BIGINT}, 
+      #{isConsistent,jdbcType=INTEGER}, #{replicaIdList,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into meta_tablet (tablet_id, checked_version, checked_version_hash,
+    is_consistent, replica_id_list)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.tabletId,jdbcType=BIGINT}, #{item.checkedVersion,jdbcType=BIGINT}, #{item.checkedVersionHash,jdbcType=BIGINT},
+      #{item.isConsistent,jdbcType=INTEGER}, #{item.replicaIdList,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.baidu.palo.metadata.pojo.MetaTablet">
+    insert into meta_tablet
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="tabletId != null">
+        tablet_id,
+      </if>
+      <if test="checkedVersion != null">
+        checked_version,
+      </if>
+      <if test="checkedVersionHash != null">
+        checked_version_hash,
+      </if>
+      <if test="isConsistent != null">
+        is_consistent,
+      </if>
+      <if test="replicaIdList != null">
+        replica_id_list,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="tabletId != null">
+        #{tabletId,jdbcType=BIGINT},
+      </if>
+      <if test="checkedVersion != null">
+        #{checkedVersion,jdbcType=BIGINT},
+      </if>
+      <if test="checkedVersionHash != null">
+        #{checkedVersionHash,jdbcType=BIGINT},
+      </if>
+      <if test="isConsistent != null">
+        #{isConsistent,jdbcType=INTEGER},
+      </if>
+      <if test="replicaIdList != null">
+        #{replicaIdList,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.baidu.palo.metadata.pojo.MetaTablet">
+    update meta_tablet
+    <set>
+      <if test="checkedVersion != null">
+        checked_version = #{checkedVersion,jdbcType=BIGINT},
+      </if>
+      <if test="checkedVersionHash != null">
+        checked_version_hash = #{checkedVersionHash,jdbcType=BIGINT},
+      </if>
+      <if test="isConsistent != null">
+        is_consistent = #{isConsistent,jdbcType=INTEGER},
+      </if>
+      <if test="replicaIdList != null">
+        replica_id_list = #{replicaIdList,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where tablet_id = #{tabletId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.baidu.palo.metadata.pojo.MetaTablet">
+    update meta_tablet
+    set checked_version = #{checkedVersion,jdbcType=BIGINT},
+      checked_version_hash = #{checkedVersionHash,jdbcType=BIGINT},
+      is_consistent = #{isConsistent,jdbcType=INTEGER},
+      replica_id_list = #{replicaIdList,jdbcType=VARCHAR}
+    where tablet_id = #{tabletId,jdbcType=BIGINT}
+  </update>
+</mapper>

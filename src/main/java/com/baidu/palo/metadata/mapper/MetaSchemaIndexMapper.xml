@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baidu.palo.metadata.dao.MetaSchemaIndexMapper">
+  <resultMap id="BaseResultMap" type="com.baidu.palo.metadata.pojo.MetaSchemaIndex">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="schema_version" jdbcType="INTEGER" property="schemaVersion" />
+    <result column="schema_hash" jdbcType="INTEGER" property="schemaHash" />
+    <result column="short_key_column_count" jdbcType="SMALLINT" property="shortKeyColumnCount" />
+    <result column="storage_type" jdbcType="INTEGER" property="storageType" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.baidu.palo.metadata.pojo.MetaSchemaIndex">
+    <result column="schema_column" jdbcType="LONGVARCHAR" property="schemaColumn" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, schema_version, schema_hash, short_key_column_count, storage_type
+  </sql>
+  <sql id="Blob_Column_List">
+    schema_column
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from meta_schema_index
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from meta_schema_index
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.baidu.palo.metadata.pojo.MetaSchemaIndex">
+    insert into meta_schema_index (id, schema_version, schema_hash, 
+      short_key_column_count, storage_type, schema_column
+      )
+    values (#{id,jdbcType=BIGINT}, #{schemaVersion,jdbcType=INTEGER}, #{schemaHash,jdbcType=INTEGER}, 
+      #{shortKeyColumnCount,jdbcType=SMALLINT}, #{storageType,jdbcType=INTEGER}, #{schemaColumn,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into meta_schema_index (id, schema_version, schema_hash,
+    short_key_column_count, storage_type, schema_column
+    )
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.schemaVersion,jdbcType=INTEGER}, #{item.schemaHash,jdbcType=INTEGER},
+      #{item.shortKeyColumnCount,jdbcType=SMALLINT}, #{item.storageType,jdbcType=INTEGER}, #{item.schemaColumn,jdbcType=LONGVARCHAR}
+      )
+    </foreach>
+  </insert>
+
+
+  <insert id="insertSelective" parameterType="com.baidu.palo.metadata.pojo.MetaSchemaIndex">
+    insert into meta_schema_index
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="schemaVersion != null">
+        schema_version,
+      </if>
+      <if test="schemaHash != null">
+        schema_hash,
+      </if>
+      <if test="shortKeyColumnCount != null">
+        short_key_column_count,
+      </if>
+      <if test="storageType != null">
+        storage_type,
+      </if>
+      <if test="schemaColumn != null">
+        schema_column,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="schemaVersion != null">
+        #{schemaVersion,jdbcType=INTEGER},
+      </if>
+      <if test="schemaHash != null">
+        #{schemaHash,jdbcType=INTEGER},
+      </if>
+      <if test="shortKeyColumnCount != null">
+        #{shortKeyColumnCount,jdbcType=SMALLINT},
+      </if>
+      <if test="storageType != null">
+        #{storageType,jdbcType=INTEGER},
+      </if>
+      <if test="schemaColumn != null">
+        #{schemaColumn,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.baidu.palo.metadata.pojo.MetaSchemaIndex">
+    update meta_schema_index
+    <set>
+      <if test="schemaVersion != null">
+        schema_version = #{schemaVersion,jdbcType=INTEGER},
+      </if>
+      <if test="schemaHash != null">
+        schema_hash = #{schemaHash,jdbcType=INTEGER},
+      </if>
+      <if test="shortKeyColumnCount != null">
+        short_key_column_count = #{shortKeyColumnCount,jdbcType=SMALLINT},
+      </if>
+      <if test="storageType != null">
+        storage_type = #{storageType,jdbcType=INTEGER},
+      </if>
+      <if test="schemaColumn != null">
+        schema_column = #{schemaColumn,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.baidu.palo.metadata.pojo.MetaSchemaIndex">
+    update meta_schema_index
+    set schema_version = #{schemaVersion,jdbcType=INTEGER},
+      schema_hash = #{schemaHash,jdbcType=INTEGER},
+      short_key_column_count = #{shortKeyColumnCount,jdbcType=SMALLINT},
+      storage_type = #{storageType,jdbcType=INTEGER},
+      schema_column = #{schemaColumn,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.baidu.palo.metadata.pojo.MetaSchemaIndex">
+    update meta_schema_index
+    set schema_version = #{schemaVersion,jdbcType=INTEGER},
+      schema_hash = #{schemaHash,jdbcType=INTEGER},
+      short_key_column_count = #{shortKeyColumnCount,jdbcType=SMALLINT},
+      storage_type = #{storageType,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

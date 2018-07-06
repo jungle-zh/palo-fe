@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource='jdbc.properties'/>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driverClassName}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+                <!--<property name="driver" value="com.mysql.jdbc.Driver"/>-->
+                <!--<property name="url" value="jdbc:mysql://localhost:3306/fe_meta"/>-->
+                <!--<property name="username" value="root"/>-->
+                <!--<property name="password" value="123456"/>-->
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="com/baidu/palo/metadata/mapper/MetaOlapTableMapper.xml"/>
+        <mapper resource="com/baidu/palo/metadata/mapper/MetaSchemaIndexMapper.xml"/>
+        <mapper resource="com/baidu/palo/metadata/mapper/MetaPartitionMapper.xml"/>
+        <mapper resource="com/baidu/palo/metadata/mapper/MetaMaterializedIndexMapper.xml"/>
+        <mapper resource="com/baidu/palo/metadata/mapper/MetaTabletMapper.xml"/>
+        <mapper resource="com/baidu/palo/metadata/mapper/MetaReplicaMapper.xml"/>
+
+        <mapper resource="com/baidu/palo/metadata/mapper/UserDaoMapper.xml"/>
+    </mappers>
+</configuration>
