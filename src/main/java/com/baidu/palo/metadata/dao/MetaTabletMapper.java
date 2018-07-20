@@ -1,9 +1,8 @@
 package com.baidu.palo.metadata.dao;
 
 import com.baidu.palo.metadata.pojo.MetaTablet;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.type.JdbcType;
 
 import java.util.List;
 
@@ -30,6 +29,13 @@ public interface MetaTabletMapper {
 
     int insertSelective(MetaTablet record);
 
+    @Select("select tablet_id, checked_version, checked_version_hash, is_consistent, replica_id_list from meta_tablet " +
+            "where tablet_id = #{tabletId,jdbcType=BIGINT}")
+    @Results(value = {@Result(column="tablet_id",property="tabletId"),
+            @Result(column="checked_version",property="checkedVersion"),
+            @Result(column="checked_version_hash",property="checkedVersionHash"),
+            @Result(column="is_consistent",property="isConsistent"),
+            @Result(column="replica_id_list",property="replicaIdList",javaType = String.class, jdbcType = JdbcType.VARCHAR)})
     MetaTablet selectByPrimaryKey(Long tabletId);
 
     int updateByPrimaryKeySelective(MetaTablet record);

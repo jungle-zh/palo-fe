@@ -1,8 +1,7 @@
 package com.baidu.palo.metadata.dao;
 
 import com.baidu.palo.metadata.pojo.MetaOlapTable;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.*;
 
 public interface MetaOlapTableMapper {
 
@@ -21,11 +20,24 @@ public interface MetaOlapTableMapper {
 
     int insertSelective(MetaOlapTable record);
 
-    MetaOlapTable selectByPrimaryKey(Long tableId);
+    @Select("select table_id as tableId, table_name as tableName, table_type as tableType, olap_table_state as olapTableState, keys_type as keysType, partition_info as partitionInfo, distribution_info as distributionInfo, " +
+            "partition_id_list as partitionIdList, schema_index_id_list as schemaIndexIdList, bf_fpp as bfFpp, bf_columns as bfColumns from meta_olap_table where table_id = #{tableId,jdbcType=BIGINT}")
+    MetaOlapTable selectByPrimaryKey(@Param("tableId") Long tableId);
 
     int updateByPrimaryKeySelective(MetaOlapTable record);
 
     int updateByPrimaryKeyWithBLOBs(MetaOlapTable record);
 
+    @Update("update meta_olap_table " +
+            "set table_name = #{tableName,jdbcType=VARCHAR}," +
+            "table_type = #{tableType,jdbcType=VARCHAR}," +
+            "olap_table_state = #{olapTableState,jdbcType=VARCHAR}," +
+            "keys_type = #{keysType,jdbcType=VARCHAR}," +
+            "partition_info = #{partitionInfo,jdbcType=LONGVARCHAR}," +
+            "distribution_info = #{distributionInfo,jdbcType=LONGVARCHAR}," +
+            "partition_id_list = #{partitionIdList,jdbcType=VARCHAR}," +
+            "schema_index_id_list = #{schemaIndexIdList,jdbcType=VARCHAR}," +
+            "bf_fpp = #{bfFpp,jdbcType=DOUBLE}" +
+            "where table_id = #{tableId,jdbcType=BIGINT}")
     int updateByPrimaryKey(MetaOlapTable record);
 }

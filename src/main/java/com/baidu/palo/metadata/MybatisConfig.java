@@ -2,7 +2,6 @@ package com.baidu.palo.metadata;
 
 import com.baidu.palo.metadata.dao.*;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
-import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
@@ -34,7 +33,7 @@ public class MybatisConfig {
         return SingletonHolder.INSTANCE;
     }
 
-    public SqlSession getSessionFactory() throws IOException {
+    public SqlSession getSessionFactory() {
 
         // java api版本
         DataSource dataSource = new PooledDataSource(driver, url, username, password);
