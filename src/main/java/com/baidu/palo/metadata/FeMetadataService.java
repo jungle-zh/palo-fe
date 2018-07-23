@@ -356,7 +356,6 @@ public class FeMetadataService {
 
 
     public void updateRollupTable(OlapTable olapTable) {
-
         SqlSession session = null;
 
         try {
@@ -413,10 +412,13 @@ public class FeMetadataService {
             List<MetaTablet> metaTabletList = toMetaTabletList(olapTable);
             metaTabletMapper.batchInsert(metaTabletList);
 
+            metaOlapTableMapper.deleteByPrimaryKey(olapTable.getId());
+            MetaOlapTable newMetaOlapTable = toMetaOlapTable(olapTable);
+            metaOlapTableMapper.insert(newMetaOlapTable);
+
             // replica的信息已经更新结束，不需要再更新了。
-
-
             session.commit();
+
         } finally {
 
             if (null != session) {
@@ -474,9 +476,10 @@ public class FeMetadataService {
      */
     public void deleteRollupTable(OlapTable olapTable, Long rollupIndexId) {
 
+
         SqlSession session = null;
         try {
-
+            session = MybatisConfig.getInstance().getSessionFactory();
             MetaOlapTableMapper olapTablePojoMapper = session.getMapper(MetaOlapTableMapper.class);
 
             // 备注，这里删除了schema index之后，还要更新olap table表的相关字段
@@ -529,7 +532,6 @@ public class FeMetadataService {
             // 删除 SchemaIndex
             metaSchemaIndexMapper.deleteByPrimaryKey(rollupIndexId);
 
-
             // 更新 olapTable
             MetaOlapTable metaOlapTable = olapTablePojoMapper.selectByPrimaryKey(olapTable.getId());
             List<Long> schemaIndexIds = JsonHelper.fromJsonArray(metaOlapTable.getSchemaIndexIdList(), Long.class);
@@ -571,7 +573,7 @@ public class FeMetadataService {
             if (null != session) {
                 session.close();
             }
-         }
+        }
 
 
 
