@@ -323,7 +323,7 @@ public class Coordinator {
         if (topParams.fragment.getSink() instanceof ResultSink) {
             TPlanFragmentDestination rootSource = new TPlanFragmentDestination();
             rootSource.fragment_instance_id = topParams.instanceIds.get(0);
-            rootSource.server = topParams.hosts.get(0);
+            rootSource.server = topParams.hosts.get(0);          //jungle comment : only one host have the fragment with the resultSink
             receiver = new ResultReceiver(rootSource, addressToBackendID.get(rootSource.server),
                     queryOptions.query_timeout * 1000);
         } else {
@@ -651,6 +651,11 @@ public class Coordinator {
         for (FragmentExecParams params : fragmentExecParams.values()) {
             PlanFragment destFragment = params.fragment.getDestFragment();
             if (destFragment == null) {
+
+                LOG.info( "### root FragmentId : " +  params.fragment.getFragmentId() );
+                for(int i=0; i< params.hosts.size() ;++i){
+                    LOG.info("host :" + params.hosts.get(i).getHostname());
+                }
                 // root plan fragment
                 continue;
             }
@@ -678,7 +683,22 @@ public class Coordinator {
                 dest.fragment_instance_id = destParams.instanceIds.get(j);
                 dest.server = toRpcHost(destParams.hosts.get(j));
                 params.destinations.add(dest);
+
             }
+
+            // for dbg
+
+            LOG.info( "### FragmentId : " +  params.fragment.getFragmentId() );
+            for(int i=0; i< params.hosts.size() ;++i){
+                LOG.info("host :" + params.hosts.get(i).getHostname());
+            }
+            for(int i=0; i< params.destinations.size() ;++i){
+                LOG.info( "destinations  fragmentId : " +  destParams.fragment.getFragmentId());
+                LOG.info( "destinations  server host: " +  params.destinations.get(i).server.getHostname());
+            }
+
+
+
         }
     }
 
@@ -731,6 +751,8 @@ public class Coordinator {
                 this.addressToBackendID.put(execHostport, backendIdRef.getRef());
 
                 params.hosts.add(execHostport);
+                LOG.info("FragmentId" + fragments.get(i).getFragmentId() + " => " + fragments.get(i).getExplainString(TExplainLevel.VERBOSE));
+                LOG.info("UNPARTITIONED node host :" +  execHostport.getHostname());
                 continue;
             }
 

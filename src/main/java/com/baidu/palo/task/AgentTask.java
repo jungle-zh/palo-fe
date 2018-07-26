@@ -50,6 +50,23 @@ public abstract class AgentTask {
         this.failedTimes = 0;
     }
 
+    public AgentTask(TResourceInfo resourceInfo, long backendId, TTaskType taskType,
+                     long dbId, long tableId, long partitionId, long indexId, long tabletId,long signatureId) {
+        this.backendId = backendId;
+        this.signature = signatureId;
+        this.taskType = taskType;
+
+        this.dbId = dbId;
+        this.tableId = tableId;
+        this.partitionId = partitionId;
+        this.indexId = indexId;
+        this.tabletId = tabletId;
+
+        this.resourceInfo = resourceInfo;
+
+        this.failedTimes = 0;
+    }
+
     public long getSignature() {
         return this.signature;
     }

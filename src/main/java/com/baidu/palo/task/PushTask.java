@@ -65,8 +65,8 @@ public class PushTask extends AgentTask {
     public PushTask(TResourceInfo resourceInfo, long backendId, long dbId, long tableId, long partitionId,
                     long indexId, long tabletId, long replicaId, int schemaHash, long version, long versionHash,
                     String filePath, long fileSize, int timeoutSecond, long loadJobId, TPushType pushType,
-                    List<Predicate> conditions, boolean needDecompress, TPriority priority ,TTaskType taskType ,long task_id) {
-        super(resourceInfo, backendId, taskType, dbId, tableId, partitionId, indexId, tabletId);
+                    List<Predicate> conditions, boolean needDecompress, TPriority priority ,TTaskType taskType ,long task_id,long signatureId) {
+        super(resourceInfo, backendId, taskType, dbId, tableId, partitionId, indexId, tabletId,signatureId);
         this.replicaId = replicaId;
         this.schemaHash = schemaHash;
         this.version = version;

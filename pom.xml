@@ -284,6 +284,13 @@
                 <directory>${project.build.directory}/extra-resources</directory>
                 <filtering>true</filtering>
             </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.dat</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
         </resources>
         <plugins>
             <plugin>
@@ -366,6 +373,7 @@
             <name>Nexus Releases</name>
             <url>http://nexus.emergya.es/nexus/content/repositories/releases</url>
         </repository>
+
         <!-- use the following if you ARE using a snapshot version. -->
         <repository>
             <id>nexus.snapshots</id>

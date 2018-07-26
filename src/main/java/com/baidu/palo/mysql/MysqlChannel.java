@@ -44,7 +44,7 @@ public class MysqlChannel {
     private ByteBuffer headerByteBuffer = ByteBuffer.allocate(PACKET_HEADER_LEN);
     // default packet byte buffer for most packet
     private ByteBuffer defaultBuffer = ByteBuffer.allocate(16 * 1024);
-    private ByteBuffer sendBuffer;
+    private ByteBuffer sendBuffer;   //jungle comment : send data to client
     private String remoteHostString;
     private String remoteIp;
     private boolean isSend;

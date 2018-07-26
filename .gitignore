@@ -59,3 +59,6 @@ idea/
 .idea/
 *.tar
 *.sh
+*.bak
+*.jar
+jars

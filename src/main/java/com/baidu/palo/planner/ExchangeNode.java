@@ -29,14 +29,14 @@ import com.baidu.palo.thrift.TExchangeNode;
 import com.baidu.palo.thrift.TPlanNode;
 import com.baidu.palo.thrift.TPlanNodeType;
 import com.baidu.palo.thrift.TSortInfo;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import static com.baidu.palo.common.util.Util.printStack;
 
 /**
  * Receiver side of a 1:n data stream. Logically, an ExchangeNode consumes the data
@@ -68,6 +68,8 @@ public class ExchangeNode extends PlanNode {
      */
     public ExchangeNode(PlanNodeId id, PlanNode inputNode, boolean copyConjuncts) {
         super(id, inputNode, "EXCHANGE");
+        LOG.info("create exchange node");
+        printStack();
         offset = 0;
         children.add(inputNode);
         if (!copyConjuncts) {

@@ -221,8 +221,16 @@ public class DistributedPlanner {
         fragments.add(result);
 
         if (!isPartitioned && result.isPartitioned() && result.getPlanRoot().getNumInstances() > 1) {
-            result = createMergeFragment(result);
+
+
+            LOG.info("1root plan node:" + result.getPlanRoot().getExplainString() );
+            LOG.info("1root plan node num instance :" + result.getPlanRoot().getNumInstances() );
+            result = createMergeFragment(result);    //jungle comment : create the result sink in this fragment?
             fragments.add(result);
+
+            LOG.info("2root plan node:" + result.getPlanRoot().getExplainString());
+
+            //jungle todo :  merge fragment may have more than one exec hosts
         }
 
         return result;
