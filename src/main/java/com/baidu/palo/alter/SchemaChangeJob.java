@@ -34,6 +34,7 @@ import com.baidu.palo.common.FeMetaVersion;
 import com.baidu.palo.common.MetaNotFoundException;
 import com.baidu.palo.common.io.Text;
 import com.baidu.palo.load.Load;
+import com.baidu.palo.metadata.FeMetadataService;
 import com.baidu.palo.persist.ReplicaPersistInfo;
 import com.baidu.palo.task.AgentTask;
 import com.baidu.palo.task.AgentTaskQueue;
@@ -525,6 +526,15 @@ public class SchemaChangeJob extends AlterJob {
             long dataSize = finishTabletInfo.getData_size();
             long rowCount = finishTabletInfo.getRow_count();
             replica.updateInfo(version, versionHash, dataSize, rowCount);
+
+            /**
+             * 更新replica，过程中需考虑出错的情况
+              */
+            LOG.info(">>>>>>>>>>>>>>>> " + replica.toString());
+            FeMetadataService feMetadataService = new FeMetadataService();
+            feMetadataService.saveOrUpdateMetaReplica(replica);
+
+
         } finally {
             db.writeUnlock();
         }
@@ -717,6 +727,13 @@ public class SchemaChangeJob extends AlterJob {
 
                 this.finishedTime = System.currentTimeMillis();
                 this.state = JobState.FINISHED;
+
+                LOG.info(">>>>>>>>>>>>>> Begin update SchemaChange Table.");
+                FeMetadataService feMetadataService = new FeMetadataService();
+                feMetadataService.updateSchemaChangeTable(olapTable);
+
+                LOG.info(">>>>>>>>>>>>>> end update SchemaChange Table. spend the time : " + (System.currentTimeMillis()-finishedTime));
+
             }
         } finally {
             db.writeUnlock();

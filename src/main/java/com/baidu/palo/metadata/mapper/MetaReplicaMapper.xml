@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baidu.palo.metadata.dao.MetaReplicaMapper">
+  <resultMap id="BaseResultMap" type="com.baidu.palo.metadata.pojo.MetaReplica">
+    <id column="replica_id" jdbcType="BIGINT" property="replicaId" />
+    <result column="backend_id" jdbcType="BIGINT" property="backendId" />
+    <result column="version" jdbcType="BIGINT" property="version" />
+    <result column="version_hash" jdbcType="BIGINT" property="versionHash" />
+    <result column="data_size" jdbcType="BIGINT" property="dataSize" />
+    <result column="row_count" jdbcType="BIGINT" property="rowCount" />
+    <result column="replica_state" jdbcType="VARCHAR" property="replicaState" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    replica_id, backend_id, version, version_hash, data_size, row_count, replica_state
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from meta_replica
+    where replica_id = #{replicaId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from meta_replica
+    where replica_id = #{replicaId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.baidu.palo.metadata.pojo.MetaReplica">
+    insert into meta_replica (replica_id, backend_id, version, 
+      version_hash, data_size, row_count, 
+      replica_state)
+    values (#{replicaId,jdbcType=BIGINT}, #{backendId,jdbcType=BIGINT}, #{version,jdbcType=BIGINT}, 
+      #{versionHash,jdbcType=BIGINT}, #{dataSize,jdbcType=BIGINT}, #{rowCount,jdbcType=BIGINT}, 
+      #{replicaState,jdbcType=VARCHAR})
+  </insert>
+
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into meta_replica (replica_id, backend_id, version,
+    version_hash, data_size, row_count,
+    replica_state)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.replicaId,jdbcType=BIGINT}, #{item.backendId,jdbcType=BIGINT}, #{item.version,jdbcType=BIGINT},
+      #{item.versionHash,jdbcType=BIGINT}, #{item.dataSize,jdbcType=BIGINT}, #{item.rowCount,jdbcType=BIGINT},
+      #{item.replicaState,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.baidu.palo.metadata.pojo.MetaReplica">
+    insert into meta_replica
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="replicaId != null">
+        replica_id,
+      </if>
+      <if test="backendId != null">
+        backend_id,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+      <if test="versionHash != null">
+        version_hash,
+      </if>
+      <if test="dataSize != null">
+        data_size,
+      </if>
+      <if test="rowCount != null">
+        row_count,
+      </if>
+      <if test="replicaState != null">
+        replica_state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="replicaId != null">
+        #{replicaId,jdbcType=BIGINT},
+      </if>
+      <if test="backendId != null">
+        #{backendId,jdbcType=BIGINT},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=BIGINT},
+      </if>
+      <if test="versionHash != null">
+        #{versionHash,jdbcType=BIGINT},
+      </if>
+      <if test="dataSize != null">
+        #{dataSize,jdbcType=BIGINT},
+      </if>
+      <if test="rowCount != null">
+        #{rowCount,jdbcType=BIGINT},
+      </if>
+      <if test="replicaState != null">
+        #{replicaState,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.baidu.palo.metadata.pojo.MetaReplica">
+    update meta_replica
+    <set>
+      <if test="backendId != null">
+        backend_id = #{backendId,jdbcType=BIGINT},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=BIGINT},
+      </if>
+      <if test="versionHash != null">
+        version_hash = #{versionHash,jdbcType=BIGINT},
+      </if>
+      <if test="dataSize != null">
+        data_size = #{dataSize,jdbcType=BIGINT},
+      </if>
+      <if test="rowCount != null">
+        row_count = #{rowCount,jdbcType=BIGINT},
+      </if>
+      <if test="replicaState != null">
+        replica_state = #{replicaState,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where replica_id = #{replicaId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.baidu.palo.metadata.pojo.MetaReplica">
+    update meta_replica
+    set backend_id = #{backendId,jdbcType=BIGINT},
+      version = #{version,jdbcType=BIGINT},
+      version_hash = #{versionHash,jdbcType=BIGINT},
+      data_size = #{dataSize,jdbcType=BIGINT},
+      row_count = #{rowCount,jdbcType=BIGINT},
+      replica_state = #{replicaState,jdbcType=VARCHAR}
+    where replica_id = #{replicaId,jdbcType=BIGINT}
+  </update>
+</mapper>

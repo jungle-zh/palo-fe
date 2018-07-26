@@ -47,6 +47,7 @@ import com.baidu.palo.common.util.ListComparator;
 import com.baidu.palo.common.util.PropertyAnalyzer;
 import com.baidu.palo.common.util.TimeUtils;
 import com.baidu.palo.common.util.Util;
+import com.baidu.palo.metadata.FeMetadataService;
 import com.baidu.palo.persist.DropInfo;
 import com.baidu.palo.persist.EditLog;
 import com.baidu.palo.qe.ConnectContext;
@@ -485,6 +486,14 @@ public class RollupHandler extends AlterHandler {
                   dropInfo.getTableId());
 
         LOG.info("finished drop rollup index[{}] in table[{}]", rollupIndexName, olapTable.getName());
+
+
+        /**
+         * 更新数据库
+         */
+        FeMetadataService feMetadataService = new FeMetadataService();
+        feMetadataService.deleteRollupTable(olapTable, rollupIndexId);
+
     }
 
     public void replayDropRollup(DropInfo dropInfo, Catalog catalog) {

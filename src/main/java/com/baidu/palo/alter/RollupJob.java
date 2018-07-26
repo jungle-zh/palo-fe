@@ -33,6 +33,7 @@ import com.baidu.palo.common.MetaNotFoundException;
 import com.baidu.palo.common.io.Text;
 import com.baidu.palo.common.util.ListComparator;
 import com.baidu.palo.load.Load;
+import com.baidu.palo.metadata.FeMetadataService;
 import com.baidu.palo.persist.ReplicaPersistInfo;
 import com.baidu.palo.task.AgentTask;
 import com.baidu.palo.task.AgentTaskQueue;
@@ -506,6 +507,12 @@ public class RollupJob extends AlterJob {
         setReplicaFinished(partitionId, rollupReplicaId);
         rollupReplica.setState(ReplicaState.NORMAL);
 
+        /**
+         * 更新副本信息：
+         */
+        FeMetadataService feMetadataService = new FeMetadataService();
+        feMetadataService.saveOrUpdateMetaReplica(rollupReplica);
+
         LOG.info("finished rollup replica[{}]. index[{}]. tablet[{}]. backend[{}]",
                  rollupReplicaId, rollupIndexId, rollupTabletId, task.getBackendId());
     }
@@ -558,17 +565,25 @@ public class RollupJob extends AlterJob {
                     // check version and versionHash
                     long committedVersion = partition.getCommittedVersion();
                     long committedVersionHash = partition.getCommittedVersionHash();
+
                     MaterializedIndex rollupIndex = entry.getValue();
+
                     for (Tablet rollupTablet : rollupIndex.getTablets()) {
+
                         Iterator<Replica> iterator = rollupTablet.getReplicas().iterator();
+
                         boolean isCatchUp = true;
                         while (iterator.hasNext()) {
+
                             Replica replica = iterator.next();
+
                             if (!this.backendIdToReplicaIds.get(replica.getBackendId()).contains(replica.getId())) {
+
                                 // replica is dead, remove it
                                 LOG.warn("rollup job[{}] find dead replica[{}] in backend[{}]. remove it",
                                          tableId, replica.getId(), replica.getBackendId());
                                 iterator.remove();
+
                                 continue;
                             }
 
@@ -676,6 +691,13 @@ public class RollupJob extends AlterJob {
 
                 this.finishedTime = System.currentTimeMillis();
                 this.state = JobState.FINISHED;
+
+                LOG.info(">>>>>>>>>>>>>> Begin update Rollup Table.");
+                FeMetadataService feMetadataService = new FeMetadataService();
+                feMetadataService.updateRollupTable(olapTable);
+
+                LOG.info(">>>>>>>>>>>>>> end update Rollup Table. spend the time : " + (System.currentTimeMillis()-finishedTime));
+
             }
         } finally {
             db.writeUnlock();

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baidu.palo.metadata.dao.MetaOlapTableMapper">
+  <resultMap id="BaseResultMap" type="com.baidu.palo.metadata.pojo.MetaOlapTable">
+    <id column="table_id" jdbcType="BIGINT" property="tableId" />
+    <result column="table_name" jdbcType="VARCHAR" property="tableName" />
+    <result column="table_type" jdbcType="VARCHAR" property="tableType" />
+    <result column="olap_table_state" jdbcType="VARCHAR" property="olapTableState" />
+    <result column="keys_type" jdbcType="VARCHAR" property="keysType" />
+    <result column="partition_id_list" jdbcType="VARCHAR" property="partitionIdList" />
+    <result column="schema_index_id_list" jdbcType="VARCHAR" property="schemaIndexIdList" />
+    <result column="bf_fpp" jdbcType="DOUBLE" property="bfFpp" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.baidu.palo.metadata.pojo.MetaOlapTable">
+    <result column="partition_info" jdbcType="LONGVARCHAR" property="partitionInfo" />
+    <result column="distribution_info" jdbcType="LONGVARCHAR" property="distributionInfo" />
+    <result column="bf_columns" jdbcType="LONGVARCHAR" property="bfColumns" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    table_id, table_name, table_type, olap_table_state, keys_type, partition_info, distribution_info, 
+    partition_id_list, schema_index_id_list, bf_fpp
+  </sql>
+  <sql id="Blob_Column_List">
+    bf_columns
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from meta_olap_table
+    where table_id = #{tableId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from meta_olap_table
+    where table_id = #{tableId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.baidu.palo.metadata.pojo.MetaOlapTable">
+    insert into meta_olap_table (table_id, table_name, table_type, 
+      olap_table_state, keys_type, partition_info, 
+      distribution_info, partition_id_list, schema_index_id_list, 
+      bf_fpp, bf_columns)
+    values (#{tableId,jdbcType=BIGINT}, #{tableName,jdbcType=VARCHAR}, #{tableType,jdbcType=VARCHAR}, 
+      #{olapTableState,jdbcType=VARCHAR}, #{keysType,jdbcType=VARCHAR}, #{partitionInfo,jdbcType=LONGVARCHAR},
+      #{distributionInfo,jdbcType=LONGVARCHAR}, #{partitionIdList,jdbcType=VARCHAR}, #{schemaIndexIdList,jdbcType=VARCHAR},
+      #{bfFpp,jdbcType=DOUBLE}, #{bfColumns,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.baidu.palo.metadata.pojo.MetaOlapTable">
+    insert into meta_olap_table
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="tableId != null">
+        table_id,
+      </if>
+      <if test="tableName != null">
+        table_name,
+      </if>
+      <if test="tableType != null">
+        table_type,
+      </if>
+      <if test="olapTableState != null">
+        olap_table_state,
+      </if>
+      <if test="keysType != null">
+        keys_type,
+      </if>
+      <if test="partitionInfo != null">
+        partition_info,
+      </if>
+      <if test="distributionInfo != null">
+        distribution_info,
+      </if>
+      <if test="partitionIdList != null">
+        partition_id_list,
+      </if>
+      <if test="schemaIndexIdList != null">
+        schema_index_id_list,
+      </if>
+      <if test="bfFpp != null">
+        bf_fpp,
+      </if>
+      <if test="bfColumns != null">
+        bf_columns,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="tableId != null">
+        #{tableId,jdbcType=BIGINT},
+      </if>
+      <if test="tableName != null">
+        #{tableName,jdbcType=VARCHAR},
+      </if>
+      <if test="tableType != null">
+        #{tableType,jdbcType=VARCHAR},
+      </if>
+      <if test="olapTableState != null">
+        #{olapTableState,jdbcType=VARCHAR},
+      </if>
+      <if test="keysType != null">
+        #{keysType,jdbcType=VARCHAR},
+      </if>
+      <if test="partitionInfo != null">
+        #{partitionInfo,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="distributionInfo != null">
+        #{distributionInfo,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="partitionIdList != null">
+        #{partitionIdList,jdbcType=VARCHAR},
+      </if>
+      <if test="schemaIndexIdList != null">
+        #{schemaIndexIdList,jdbcType=VARCHAR},
+      </if>
+      <if test="bfFpp != null">
+        #{bfFpp,jdbcType=DOUBLE},
+      </if>
+      <if test="bfColumns != null">
+        #{bfColumns,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.baidu.palo.metadata.pojo.MetaOlapTable">
+    update meta_olap_table
+    <set>
+      <if test="tableName != null">
+        table_name = #{tableName,jdbcType=VARCHAR},
+      </if>
+      <if test="tableType != null">
+        table_type = #{tableType,jdbcType=VARCHAR},
+      </if>
+      <if test="olapTableState != null">
+        olap_table_state = #{olapTableState,jdbcType=VARCHAR},
+      </if>
+      <if test="keysType != null">
+        keys_type = #{keysType,jdbcType=VARCHAR},
+      </if>
+      <if test="partitionInfo != null">
+        partition_info = #{partitionInfo,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="distributionInfo != null">
+        distribution_info = #{distributionInfo,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="partitionIdList != null">
+        partition_id_list = #{partitionIdList,jdbcType=VARCHAR},
+      </if>
+      <if test="schemaIndexIdList != null">
+        schema_index_id_list = #{schemaIndexIdList,jdbcType=VARCHAR},
+      </if>
+      <if test="bfFpp != null">
+        bf_fpp = #{bfFpp,jdbcType=DOUBLE},
+      </if>
+      <if test="bfColumns != null">
+        bf_columns = #{bfColumns,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where table_id = #{tableId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.baidu.palo.metadata.pojo.MetaOlapTable">
+    update meta_olap_table
+    set table_name = #{tableName,jdbcType=VARCHAR},
+      table_type = #{tableType,jdbcType=VARCHAR},
+      olap_table_state = #{olapTableState,jdbcType=VARCHAR},
+      keys_type = #{keysType,jdbcType=VARCHAR},
+      partition_info = #{partitionInfo,jdbcType=LONGVARCHAR},
+      distribution_info = #{distributionInfo,jdbcType=LONGVARCHAR},
+      partition_id_list = #{partitionIdList,jdbcType=VARCHAR},
+      schema_index_id_list = #{schemaIndexIdList,jdbcType=VARCHAR},
+      bf_fpp = #{bfFpp,jdbcType=DOUBLE},
+      bf_columns = #{bfColumns,jdbcType=LONGVARCHAR}
+    where table_id = #{tableId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.baidu.palo.metadata.pojo.MetaOlapTable">
+    update meta_olap_table
+    set table_name = #{tableName,jdbcType=VARCHAR},
+      table_type = #{tableType,jdbcType=VARCHAR},
+      olap_table_state = #{olapTableState,jdbcType=VARCHAR},
+      keys_type = #{keysType,jdbcType=VARCHAR},
+      partition_info = #{partitionInfo,jdbcType=LONGVARCHAR},
+      distribution_info = #{distributionInfo,jdbcType=LONGVARCHAR},
+      partition_id_list = #{partitionIdList,jdbcType=VARCHAR},
+      schema_index_id_list = #{schemaIndexIdList,jdbcType=VARCHAR},
+      bf_fpp = #{bfFpp,jdbcType=DOUBLE}
+    where table_id = #{tableId,jdbcType=BIGINT}
+  </update>
+</mapper>

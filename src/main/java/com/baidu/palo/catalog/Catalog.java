@@ -115,6 +115,7 @@ import com.baidu.palo.load.*;
 import com.baidu.palo.load.LoadJob.JobState;
 import com.baidu.palo.master.Checkpoint;
 import com.baidu.palo.master.MetaHelper;
+import com.baidu.palo.metadata.FeMetadataService;
 import com.baidu.palo.metric.MetricRepo;
 import com.baidu.palo.persist.BackendIdsUpdateInfo;
 import com.baidu.palo.persist.ClusterInfo;
@@ -3173,6 +3174,13 @@ public class Catalog {
                 if (!db.createTableWithLock(olapTable, false, stmt.isSetIfNotExists())) {
                     ErrorReport.reportDdlException(ErrorCode.ERR_CANT_CREATE_TABLE, tableName, "table already exists");
                 }
+
+                /**
+                 * 新建时，保存metadata信息到数据库：
+                 */
+                FeMetadataService feMetadataService = new FeMetadataService();
+                feMetadataService.save(olapTable);
+
                 LOG.info("successfully create table[{};{}]", tableName, tableId);
             }
         } catch (DdlException e) {
@@ -3678,6 +3686,14 @@ public class Catalog {
 
         db.dropTable(table.getName());
         Catalog.getCurrentRecycleBin().recycleTable(db.getId(), table);
+
+        /**
+         * 删除数据库中的表
+         */
+        if (table.getType() == TableType.OLAP) {
+            FeMetadataService feMetadataService = new FeMetadataService();
+            feMetadataService.delete((OlapTable) table);
+        }
 
         LOG.info("finished dropping table[{}] in db[{}]", table.getName(), db.getFullName());
         return true;

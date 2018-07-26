@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baidu.palo.metadata.dao.MetaPartitionMapper">
+  <resultMap id="BaseResultMap" type="com.baidu.palo.metadata.pojo.MetaPartition">
+    <id column="partition_id" jdbcType="BIGINT" property="partitionId" />
+    <result column="partition_name" jdbcType="VARCHAR" property="partitionName" />
+    <result column="partition_state" jdbcType="VARCHAR" property="partitionState" />
+    <result column="committed_version" jdbcType="BIGINT" property="committedVersion" />
+    <result column="committed_version_hash" jdbcType="BIGINT" property="committedVersionHash" />
+    <result column="distribution_info" jdbcType="LONGVARCHAR" property="distributionInfo" />
+    <result column="materialized_index_id_list" jdbcType="VARCHAR" property="materializedIndexIdList" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    partition_id, partition_name, partition_state, committed_version, committed_version_hash, 
+    distribution_info, materialized_index_id_list
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from meta_partition
+    where partition_id = #{partitionId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from meta_partition
+    where partition_id = #{partitionId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.baidu.palo.metadata.pojo.MetaPartition">
+    insert into meta_partition (partition_id, partition_name, partition_state, 
+      committed_version, committed_version_hash, distribution_info, 
+      materialized_index_id_list)
+    values (#{partitionId,jdbcType=BIGINT}, #{partitionName,jdbcType=VARCHAR}, #{partitionState,jdbcType=VARCHAR}, 
+      #{committedVersion,jdbcType=BIGINT}, #{committedVersionHash,jdbcType=BIGINT}, #{distributionInfo,jdbcType=LONGVARCHAR},
+      #{materializedIndexIdList,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into meta_partition (partition_id, partition_name, partition_state,
+    committed_version, committed_version_hash, distribution_info,
+    materialized_index_id_list)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.partitionId,jdbcType=BIGINT}, #{item.partitionName,jdbcType=VARCHAR}, #{item.partitionState,jdbcType=VARCHAR},
+      #{item.committedVersion,jdbcType=BIGINT}, #{item.committedVersionHash,jdbcType=BIGINT}, #{item.distributionInfo,jdbcType=LONGVARCHAR},
+      #{item.materializedIndexIdList,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.baidu.palo.metadata.pojo.MetaPartition">
+    insert into meta_partition
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="partitionId != null">
+        partition_id,
+      </if>
+      <if test="partitionName != null">
+        partition_name,
+      </if>
+      <if test="partitionState != null">
+        partition_state,
+      </if>
+      <if test="committedVersion != null">
+        committed_version,
+      </if>
+      <if test="committedVersionHash != null">
+        committed_version_hash,
+      </if>
+      <if test="distributionInfo != null">
+        distribution_info,
+      </if>
+      <if test="materializedIndexIdList != null">
+        materialized_index_id_list,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="partitionId != null">
+        #{partitionId,jdbcType=BIGINT},
+      </if>
+      <if test="partitionName != null">
+        #{partitionName,jdbcType=VARCHAR},
+      </if>
+      <if test="partitionState != null">
+        #{partitionState,jdbcType=VARCHAR},
+      </if>
+      <if test="committedVersion != null">
+        #{committedVersion,jdbcType=BIGINT},
+      </if>
+      <if test="committedVersionHash != null">
+        #{committedVersionHash,jdbcType=BIGINT},
+      </if>
+      <if test="distributionInfo != null">
+        #{distributionInfo,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="materializedIndexIdList != null">
+        #{materializedIndexIdList,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.baidu.palo.metadata.pojo.MetaPartition">
+    update meta_partition
+    <set>
+      <if test="partitionName != null">
+        partition_name = #{partitionName,jdbcType=VARCHAR},
+      </if>
+      <if test="partitionState != null">
+        partition_state = #{partitionState,jdbcType=VARCHAR},
+      </if>
+      <if test="committedVersion != null">
+        committed_version = #{committedVersion,jdbcType=BIGINT},
+      </if>
+      <if test="committedVersionHash != null">
+        committed_version_hash = #{committedVersionHash,jdbcType=BIGINT},
+      </if>
+      <if test="distributionInfo != null">
+        distribution_info = #{distributionInfo,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="materializedIndexIdList != null">
+        materialized_index_id_list = #{materializedIndexIdList,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where partition_id = #{partitionId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.baidu.palo.metadata.pojo.MetaPartition">
+    update meta_partition
+    set partition_name = #{partitionName,jdbcType=VARCHAR},
+      partition_state = #{partitionState,jdbcType=VARCHAR},
+      committed_version = #{committedVersion,jdbcType=BIGINT},
+      committed_version_hash = #{committedVersionHash,jdbcType=BIGINT},
+      distribution_info = #{distributionInfo,jdbcType=LONGVARCHAR},
+      materialized_index_id_list = #{materializedIndexIdList,jdbcType=VARCHAR}
+    where partition_id = #{partitionId,jdbcType=BIGINT}
+  </update>
+</mapper>

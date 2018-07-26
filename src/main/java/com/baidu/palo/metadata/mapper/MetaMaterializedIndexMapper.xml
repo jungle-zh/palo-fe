@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baidu.palo.metadata.dao.MetaMaterializedIndexMapper">
+  <resultMap id="BaseResultMap" type="com.baidu.palo.metadata.pojo.MetaMaterializedIndex">
+    <id column="materialized_index_id" jdbcType="BIGINT" property="materializedIndexId" />
+    <result column="partition_id" jdbcType="BIGINT" property="partitionId" />
+    <result column="materialized_index_state" jdbcType="VARCHAR" property="materializedIndexState" />
+    <result column="row_count" jdbcType="BIGINT" property="rowCount" />
+    <result column="rollup_index_id" jdbcType="BIGINT" property="rollupIndexId" />
+    <result column="rollup_finished_version" jdbcType="BIGINT" property="rollupFinishedVersion" />
+    <result column="tablet_id_list" jdbcType="VARCHAR" property="tabletIdList" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    materialized_index_id, partition_id, materialized_index_state, row_count, rollup_index_id, 
+    rollup_finished_version, tablet_id_list
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from meta_materialized_index
+    where materialized_index_id = #{materializedIndexId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from meta_materialized_index
+    where materialized_index_id = #{materializedIndexId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.baidu.palo.metadata.pojo.MetaMaterializedIndex">
+    insert into meta_materialized_index (materialized_index_id, partition_id, materialized_index_state, 
+      row_count, rollup_index_id, rollup_finished_version, 
+      tablet_id_list)
+    values (#{materializedIndexId,jdbcType=BIGINT}, #{partitionId,jdbcType=BIGINT}, #{materializedIndexState,jdbcType=VARCHAR}, 
+      #{rowCount,jdbcType=BIGINT}, #{rollupIndexId,jdbcType=BIGINT}, #{rollupFinishedVersion,jdbcType=BIGINT}, 
+      #{tabletIdList,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into meta_materialized_index (materialized_index_id, partition_id, materialized_index_state,
+    row_count, rollup_index_id, rollup_finished_version,
+    tablet_id_list)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.materializedIndexId,jdbcType=BIGINT}, #{item.partitionId,jdbcType=BIGINT}, #{item.materializedIndexState,jdbcType=VARCHAR},
+      #{item.rowCount,jdbcType=BIGINT}, #{item.rollupIndexId,jdbcType=BIGINT}, #{item.rollupFinishedVersion,jdbcType=BIGINT},
+      #{item.tabletIdList,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.baidu.palo.metadata.pojo.MetaMaterializedIndex">
+    insert into meta_materialized_index
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="materializedIndexId != null">
+        materialized_index_id,
+      </if>
+      <if test="partitionId != null">
+        partition_id,
+      </if>
+      <if test="materializedIndexState != null">
+        materialized_index_state,
+      </if>
+      <if test="rowCount != null">
+        row_count,
+      </if>
+      <if test="rollupIndexId != null">
+        rollup_index_id,
+      </if>
+      <if test="rollupFinishedVersion != null">
+        rollup_finished_version,
+      </if>
+      <if test="tabletIdList != null">
+        tablet_id_list,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="materializedIndexId != null">
+        #{materializedIndexId,jdbcType=BIGINT},
+      </if>
+      <if test="partitionId != null">
+        #{partitionId,jdbcType=BIGINT},
+      </if>
+      <if test="materializedIndexState != null">
+        #{materializedIndexState,jdbcType=VARCHAR},
+      </if>
+      <if test="rowCount != null">
+        #{rowCount,jdbcType=BIGINT},
+      </if>
+      <if test="rollupIndexId != null">
+        #{rollupIndexId,jdbcType=BIGINT},
+      </if>
+      <if test="rollupFinishedVersion != null">
+        #{rollupFinishedVersion,jdbcType=BIGINT},
+      </if>
+      <if test="tabletIdList != null">
+        #{tabletIdList,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.baidu.palo.metadata.pojo.MetaMaterializedIndex">
+    update meta_materialized_index
+    <set>
+      <if test="partitionId != null">
+        partition_id = #{partitionId,jdbcType=BIGINT},
+      </if>
+      <if test="materializedIndexState != null">
+        materialized_index_state = #{materializedIndexState,jdbcType=VARCHAR},
+      </if>
+      <if test="rowCount != null">
+        row_count = #{rowCount,jdbcType=BIGINT},
+      </if>
+      <if test="rollupIndexId != null">
+        rollup_index_id = #{rollupIndexId,jdbcType=BIGINT},
+      </if>
+      <if test="rollupFinishedVersion != null">
+        rollup_finished_version = #{rollupFinishedVersion,jdbcType=BIGINT},
+      </if>
+      <if test="tabletIdList != null">
+        tablet_id_list = #{tabletIdList,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where materialized_index_id = #{materializedIndexId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.baidu.palo.metadata.pojo.MetaMaterializedIndex">
+    update meta_materialized_index
+    set partition_id = #{partitionId,jdbcType=BIGINT},
+      materialized_index_state = #{materializedIndexState,jdbcType=VARCHAR},
+      row_count = #{rowCount,jdbcType=BIGINT},
+      rollup_index_id = #{rollupIndexId,jdbcType=BIGINT},
+      rollup_finished_version = #{rollupFinishedVersion,jdbcType=BIGINT},
+      tablet_id_list = #{tabletIdList,jdbcType=VARCHAR}
+    where materialized_index_id = #{materializedIndexId,jdbcType=BIGINT}
+  </update>
+</mapper>
