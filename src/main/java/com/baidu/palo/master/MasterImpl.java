@@ -67,7 +67,7 @@ public class MasterImpl {
         LOG.info("finishTask :" + request.getJob_id() +" ,type :" + request.getTask_type());
         if(request.getTask_type() == TTaskType.STREAMING_PUSH){
             AgentStreamingJob job =  Catalog.getInstance().getStreamingLoadInstance().getLoadJob(request.getJob_id());
-            return  job.updateMiniPushTaskStatus(request);
+            return  job.getPush().updateMiniPushTaskStatus(request);
 
         }
         TMasterResult result = new TMasterResult();

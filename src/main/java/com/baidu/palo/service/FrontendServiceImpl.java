@@ -311,7 +311,7 @@ public class FrontendServiceImpl implements FrontendService.Iface {
         if(request.getEtlTaskType() == TTaskType.STREAMING_ETL){
 
             AgentStreamingJob job = Catalog.getInstance().getStreamingLoadInstance().getLoadJob(request.getJobId());
-            return job.updateMiniEtlTaskStatus(request);
+            return job.getEtl().updateMiniEtlTaskStatus(request);
         }
         TFeResult result = new TFeResult();
         result.setProtocolVersion(FrontendServiceVersion.V1);

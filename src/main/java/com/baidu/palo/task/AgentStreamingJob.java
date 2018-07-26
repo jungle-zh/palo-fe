@@ -15,29 +15,16 @@
 
 package com.baidu.palo.task;
 
-import com.baidu.palo.analysis.BrokerDesc;
-import com.baidu.palo.analysis.DescriptorTable;
-import com.baidu.palo.analysis.SlotDescriptor;
-import com.baidu.palo.analysis.TupleDescriptor;
-import com.baidu.palo.catalog.*;
-import com.baidu.palo.common.*;
+import com.baidu.palo.catalog.Database;
+import com.baidu.palo.catalog.OlapTable;
 import com.baidu.palo.load.PartitionLoadInfo;
-import com.baidu.palo.load.Source;
-import com.baidu.palo.persist.ReplicaPersistInfo;
-import com.baidu.palo.planner.*;
-import com.baidu.palo.system.Backend;
-import com.baidu.palo.thrift.*;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.baidu.palo.thrift.TPriority;
+import com.baidu.palo.thrift.TResourceInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /*
  * This class group tasks by backend 
@@ -55,7 +42,6 @@ public class AgentStreamingJob {
     private  final  Database db;
     private  OlapTable table;
 
-    private BrokerDesc brokerDesc ;
 
 
     private static final Logger LOG = LogManager.getLogger(AgentStreamingJob.class);
@@ -66,16 +52,69 @@ public class AgentStreamingJob {
     private TPriority priority;
     private long execMemLimit;
     private Map<Long, PartitionLoadInfo> idToPartitionLoadInfo;
-    private Long id;
+    private long id;
+    private long etlbackendId;
 
-    private BatchLoadHelper loadHelper = new BatchLoadHelper();
+    private ConcurrentLinkedQueue<Map<String,Long>> deltaFileQueue = new ConcurrentLinkedQueue<>();
+
+
+    private AgentStreamingEtl etl ;
+    private AgentStreamingPush push ;
+
+
+
+
 
     public AgentStreamingJob(Database db) {
 
         this.db = db;
 
+
+    }
+    public void  init(){
+        etlbackendId = 10002;
+        etl = new AgentStreamingEtl(db,table,idToPartitionLoadInfo,id,etlbackendId,deltaFileQueue);
+        push  = new AgentStreamingPush(db,table,id,deltaFileQueue);
     }
 
+    public void setTimestamp(long timestamp) {
+        this.startTime = timestamp;
+    }
+
+
+    public void setResourceInfo(TResourceInfo resourceInfo) {
+        this.resourceInfo = resourceInfo;
+    }
+
+    public void setExecMemLimit(long execMemLimit) {
+        this.execMemLimit = execMemLimit;
+    }
+
+    public void setIdToPartitionLoadInfo(Map<Long,PartitionLoadInfo> idToPartitionLoadInfo) {
+        this.idToPartitionLoadInfo = idToPartitionLoadInfo;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setTable(OlapTable table) {
+        this.table = table;
+    }
+
+    public AgentStreamingEtl getEtl() {
+        return etl;
+    }
+
+    public AgentStreamingPush getPush() {
+        return push;
+    }
+
+    /***
 
     public TFeResult updateMiniEtlTaskStatus(TUpdateMiniEtlTaskStatusRequest request) {  //be call this
 
@@ -93,6 +132,7 @@ public class AgentStreamingJob {
         long taskId = etlTaskId.getLo();
 
 
+        etlUpdateLock.lock();
         loadHelper.addFinshEtlTaskAndUpdate(backendId,statusResult.getFile_map());
         if(loadHelper.etlJobFinsh()){  // add source alreay update
             LOG.info(" etl job finished ");
@@ -101,6 +141,7 @@ public class AgentStreamingJob {
             loadHelper.submitPushJob();
 
         }
+        etlUpdateLock.unlock();
 
         return result;
 
@@ -120,30 +161,33 @@ public class AgentStreamingJob {
         List<TTabletInfo> finishTabletInfos = request.getFinish_tablet_infos();
         TTabletInfo tabletInfo = finishTabletInfos.get(0);
 
-        loadHelper.addFinishPushTaskAndUpdate(request.getTask_id(),tabletInfo);
-        if(loadHelper.pushJobFinsh()){
-            LOG.info(" push job finished ");
-            loadHelper.updateFinishPushInfo();
-            try {
+        //lock
+
+        pushUpdateLock.lock();
+        try {
+            loadHelper.addFinishPushTaskAndUpdate(request.getTask_id(),tabletInfo);
+            if(loadHelper.pushJobFinsh()){
+                LOG.info("push job finished ");
+                loadHelper.updateFinishPushInfo();
+
                 Catalog.getInstance().saveImage();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-            loadHelper.updateEtlFinishedFile();
-            loadHelper.resetPushInfo();
-            loadHelper.resetEtlInfo();
-
-            loadHelper.getBackEndNewSouceFile();
-            try {
+                loadHelper.updateEtlFinishedFile();
+                loadHelper.resetPushInfo();
+                loadHelper.resetEtlInfo();
+                loadHelper.getBackEndNewSouceFile();
                 loadHelper.submitEtlJob();
-            } catch (LoadException e) {
-                e.printStackTrace();
-            } catch (AnalysisException e) {
-                e.printStackTrace();
-            }
 
+
+            }
         }
+        catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            pushUpdateLock.unlock();
+        }
+
+        //unlock
         return result ;
 
 
@@ -180,37 +224,7 @@ public class AgentStreamingJob {
 
 
 
-    public void setTimestamp(long timestamp) {
-        this.startTime = timestamp;
-    }
 
-    public void setBrokerDesc(BrokerDesc brokerDesc) {
-        this.brokerDesc = brokerDesc;
-    }
-
-    public void setResourceInfo(TResourceInfo resourceInfo) {
-        this.resourceInfo = resourceInfo;
-    }
-
-    public void setExecMemLimit(long execMemLimit) {
-        this.execMemLimit = execMemLimit;
-    }
-
-    public void setIdToPartitionLoadInfo(Map<Long,PartitionLoadInfo> idToPartitionLoadInfo) {
-        this.idToPartitionLoadInfo = idToPartitionLoadInfo;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setTable(OlapTable table) {
-        this.table = table;
-    }
 
 
     private class BatchLoadHelper{
@@ -298,7 +312,8 @@ public class AgentStreamingJob {
 
             Source source = backendSourceFile.get(backendId);
 
-            TMiniLoadEtlTaskRequest request = createRequest(System.currentTimeMillis(),backendId,source);
+            Long taskId  = Math.abs(new Random().nextLong()) ;
+            TMiniLoadEtlTaskRequest request = createRequest(taskId,backendId,source);
             Backend backend = Catalog.getCurrentSystemInfo().getBackend(backendId);
 
             LOG.info("submit etl task file path " + source.getFileUrls() + " backend id :" +  backendId );
@@ -322,8 +337,13 @@ public class AgentStreamingJob {
             LOG.info("submitPushJob");
             db.readLock();
 
-            AgentBatchTask batchTask = new AgentBatchTask();
+            //Long versionHash  = Math.abs(new Random().nextLong()) ;  //jungle comment : one push job has one versionHash
+
+
             for(Map<String,Long>  deltaFileMap: backendToFileMap.values()){
+
+                int  taskNum = 0;
+                AgentBatchTask batchTask = new AgentBatchTask();
                 for(Map.Entry<String,Long> deltaFile : deltaFileMap.entrySet()){
 
                     String filePath = deltaFile.getKey();
@@ -354,42 +374,69 @@ public class AgentStreamingJob {
 
                     Tablet  tablet = index.getTablets().get(tabletIndex);
 
+
                    // Long partitionCommitedVersion = partition.getCommittedVersion();
-                    Long version = partition.getCommittedVersion() + 1;
-                    Long versionHash  = Math.abs(new Random().nextLong()) ;
+
+
+                    Long versionHash = getEtlTaskLable(filePath);
+                    VersionHashSet.add(versionHash);
+                    Long version = partition.getCommittedVersion() + VersionHashSet.size();
+
+                    LOG.info("versionHash is :" + versionHash);
+
                     int  schemaHash = table.getIndexIdToSchemaHash().get(index.getId()); //when scheme change ,get the new schemaHash
                     //if push to the old schema table,need to convert to new schema ,else clear the schema change info
 
+                    //
 
+                    partitionIdToPartitionVersion.put(partitionId,new Pair<>(version,versionHash));
                     for(Replica replica : tablet.getReplicas()){
 
                         AgentTask pushTask = new PushTask(null,
                                 replica.getBackendId(), db.getId(), table.getId(),
                                 partitionId, indexId,
-                                tablet.getId(), replica.getId(), schemaHash,
+                                tablet.getId() , replica.getId(), schemaHash,
                                 version, versionHash, filePath, fileSize, 0,
                                 id, TPushType.LOAD, null,
-                                false, priority ,TTaskType.STREAMING_PUSH,pushTaskIndex);
+                                false, priority ,TTaskType.STREAMING_PUSH,pushTaskIndex,System.currentTimeMillis() + pushTaskIndex);
 
                         LOG.info("submit push task id :" + pushTaskIndex  + ",backendId:" +  replica.getBackendId() +
                           ",table id :" + table.getId() + ",partition id:" + partitionId + ",index id:" + indexId +
                           ",tablet id :" + tablet.getId() + ",replica id:" + replica.getId() + ",schemaHash :" + schemaHash +
-                          ",version:" + version + ",versionHash:" + versionHash );
+                          ",version:" + version + ",versionHash:" + versionHash  + ",file path :"+filePath) ;
 
                         //AgentTaskQueue.addTask(pushTask);
                         batchTask.addTask(pushTask);
                        // taskIdToPartitionInfo.put(pushTaskIndex,new Pair<>(partitionId,new Pair<>(version,versionHash)));
 
-                        //partitionIdToPushTaskId.put(partitionId,pushTaskIndex);
-                        partitionIdToPartitionVersion.put(partitionId,new Pair<>(version,versionHash));
+
+
                         addStartPushTask(pushTaskIndex,(PushTask) pushTask);
                         pushTaskIndex ++;
+                        taskNum ++;
 
                     }
                 }
+                AgentTaskExecutor.submit(batchTask);
+                //wait until the delta file all finish
+
+                countDownLatch = new MarkedCountDownLatch(taskNum);
+                long timeout =  1000L ;
+                boolean ok = false;
+                try {
+                    ok = countDownLatch.await(timeout, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    LOG.warn("InterruptedException: ", e);
+                    ok = false;
+                }
+                if(!ok){
+                    LOG.warn("push job timeout ");
+                }
+
+
             }
 
-            AgentTaskExecutor.submit(batchTask);
+
             db.readUnlock();
 
 
@@ -474,9 +521,10 @@ public class AgentStreamingJob {
                         LOG.warn("the replica[{}] is missing", info.getReplicaId());
                         continue;
                     }
-                    LOG.info("replica updateInfo :" + info.getVersion() +"," + info.getVersionHash() + "," + info.getRowCount());
+                    LOG.info("table : "  +  table.getId() + ",partition :" + partition.getId() + ",index:" + index.getId() + ",tablet:" + tablet.getId() +
+                            ",replica:" + replica.getId() + ", replica updateInfo :" + info.getVersion() +"," + info.getVersionHash() + "," + info.getRowCount());
                     replica.updateInfo(info.getVersion(), info.getVersionHash(),
-                            info.getDataSize(), info.getRowCount());
+                             info.getDataSize(), info.getRowCount());
                 }
             }
 
@@ -536,10 +584,12 @@ public class AgentStreamingJob {
                 AgentClient client = new AgentClient(backend.getHost(), backend.getBePort());
                 List<String> newFilePath =  client.get_streaming_etl_file_path(source.getFileUrls().get(0),1);
                 for(String path : newFilePath){
-                    LOG.info("get new File Path :" + path );
+                    LOG.info("backendid get new File Path :" + path );
                 }
                 if(!newFilePath.isEmpty()){
                     backendSourceFile.put(backendId,createNewSource(newFilePath));
+                }else {
+
                 }
 
             }
@@ -615,7 +665,7 @@ public class AgentStreamingJob {
             params.setProtocol_version(PaloInternalServiceVersion.V1);
             params.setFragment(fragment.toThrift());
             params.setDesc_tbl(desc.toThrift());
-            params.setImport_label("stream_1");
+            params.setImport_label("stream_" + taskId);
             params.setDb_name(db.getFullName());
             LOG.info("set load job id :" + id);
             params.setLoad_job_id(id);
@@ -640,10 +690,12 @@ public class AgentStreamingJob {
 
     }
 
+    private Long getEtlTaskLable(String filePath) {
+       String [] vals =  filePath.split("_");
+       return Long.parseLong( vals[vals.length-1].split("\\.")[0]);
+    }
 
-
-
-
+    ****/
 
 
 }

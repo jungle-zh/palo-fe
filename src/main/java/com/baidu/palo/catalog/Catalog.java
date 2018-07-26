@@ -3578,6 +3578,10 @@ public class Catalog {
                 // create replicas for tablet with random chosen backends
                 List<Long> chosenBackendIds = Catalog.getCurrentSystemInfo().seqChooseBackendIds(replicationNum, true,
                         true, clusterName);
+                for(long backendId : chosenBackendIds){
+                    LOG.info("chosenBackendId :" + backendId);
+                }
+
                 if (chosenBackendIds == null) {
                     throw new DdlException("Failed to find enough host in all backends. need: " + replicationNum);
                 }

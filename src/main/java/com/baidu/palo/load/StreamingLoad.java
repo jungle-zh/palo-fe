@@ -165,7 +165,8 @@ public class StreamingLoad {
             idToStreamingLoadJob.put(job.getId(), job);
             LOG.info("add streaming job:" + job.getId());
             MetricRepo.METER_LOAD_ADD.mark();
-            job.start();
+            job.init();
+            //job.start();
             //Catalog.getInstance().getEditLog().logLoadStart(job);
         } finally {
             writeUnlock();
@@ -173,7 +174,7 @@ public class StreamingLoad {
         LOG.info("add load job. job: {}", job);
     }
 
-    private AgentStreamingJob createStreamingLoadJob(LoadStmt stmt,Database db, long timestamp) throws DdlException {
+    private AgentStreamingJob createStreamingLoadJob(LoadStmt stmt, Database db, long timestamp) throws DdlException {
         LOG.info("Load.createLoadJob()");
         // get params
         String label = stmt.getLabel().getLabelName();
@@ -193,7 +194,7 @@ public class StreamingLoad {
         // create job
         AgentStreamingJob job = new AgentStreamingJob(db);
         job.setTimestamp(timestamp);
-        job.setBrokerDesc(stmt.getBrokerDesc());
+
 
         // resource info
         if (ConnectContext.get() != null) {
