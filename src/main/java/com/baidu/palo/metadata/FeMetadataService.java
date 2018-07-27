@@ -18,8 +18,6 @@ public class FeMetadataService {
 
     public void save(OlapTable olapTable) {
 
-//        LOG.info("########################## create olap table : "  + JsonHelper.toJson(olapTable));
-
         MetaOlapTable metaOlapTable = toMetaOlapTable(olapTable);
         List<MetaSchemaIndex> metaSchemaIndexList = toMetaSchemaIndexList(olapTable);
         List<MetaPartition> metaPartitionList = toMetaPartitionList(olapTable);
@@ -37,42 +35,32 @@ public class FeMetadataService {
             if (metaSchemaIndexList.size() > 0) {
                 MetaSchemaIndexMapper metaSchemaIndexMapper = session.getMapper(MetaSchemaIndexMapper.class);
                 metaSchemaIndexMapper.batchInsert(metaSchemaIndexList);
-            } else {
-                LOG.info("=============     metaSchemaIndexList is 0");
             }
 
             if (metaPartitionList.size() > 0) {
                 MetaPartitionMapper metaPartitionMapper = session.getMapper(MetaPartitionMapper.class);
                 metaPartitionMapper.batchInsert(metaPartitionList);
-            } else {
-                LOG.info("=============     metaPartitionList is 0");
             }
 
             if (metaMaterializedIndexList.size()>0) {
                 MetaMaterializedIndexMapper metaMaterializedIndexMapper = session.getMapper(MetaMaterializedIndexMapper.class);
                 metaMaterializedIndexMapper.batchInsert(metaMaterializedIndexList);
-            } else {
-                LOG.info("=============     metaMaterializedIndexList is 0");
             }
 
             if (metaTabletList.size()>0) {
                 MetaTabletMapper metaTabletMapper = session.getMapper(MetaTabletMapper.class);
                 metaTabletMapper.batchInsert(metaTabletList);
-            } else {
-                LOG.info("=============     metaTabletList is 0");
             }
 
             if (metaReplicaList.size()>0) {
                 MetaReplicaMapper metaReplicaMapper = session.getMapper(MetaReplicaMapper.class);
                 metaReplicaMapper.batchInsert(metaReplicaList);
-            } else {
-                LOG.info("=============     metaReplicaList is 0");
             }
 
             session.commit(); // 需要考虑回滚问题
         } catch (Exception e) {
             session.rollback();
-            LOG.error("fe metadata save error : " + e.getMessage());
+            LOG.error("fe meta data save to mysql error : " + e.getMessage());
         } finally {
             if (null != session) {
                 session.close();
@@ -80,7 +68,7 @@ public class FeMetadataService {
         }
 
 
-        LOG.info("fe metadata save sucessful, table[{}].", olapTable.getName());
+        LOG.info("fe meta data save to mysql sucessful, table[{}].", olapTable.getName());
     }
 
     private MetaOlapTable toMetaOlapTable(OlapTable olapTable) {
@@ -300,14 +288,14 @@ public class FeMetadataService {
             session.commit();
         } catch (Exception e) {
             session.rollback();
-            LOG.error("fe metadata delete error : " + e.getMessage());
+            LOG.error("fe meta data delete error : " + e.getMessage());
         } finally {
             if (null != session) {
                 session.close();
             }
         }
 
-        LOG.info("fe metadata, delete sucessful,table[{}].", olapTable.getName());
+        LOG.info("fe meta data, delete sucessful,table[{}].", olapTable.getName());
 
     }
 
@@ -344,6 +332,8 @@ public class FeMetadataService {
             metaSchemaIndexMapper.batchInsert(metaSchemaIndexList);
 
             session.commit();
+
+            LOG.info("update schema change table sucessful. ");
         } finally {
 
             if (null != session) {
@@ -419,6 +409,8 @@ public class FeMetadataService {
             // replica的信息已经更新结束，不需要再更新了。
             session.commit();
 
+            LOG.info("update rollup table to sucessful. ");
+
         } finally {
 
             if (null != session) {
@@ -461,6 +453,8 @@ public class FeMetadataService {
 //            metaReplicaMapper.updateByPrimaryKey(metaReplica);
 
             session.commit();
+
+            LOG.info("modify replica sucessful. ");
         } finally {
             if (null != session) {
                 session.close();
@@ -471,7 +465,7 @@ public class FeMetadataService {
     }
 
     /**
-     * 删除Rollup
+     * 删除Rollup时，修改mysql对应信息
      * @param olapTable
      */
     public void deleteRollupTable(OlapTable olapTable, Long rollupIndexId) {
@@ -540,6 +534,8 @@ public class FeMetadataService {
             olapTablePojoMapper.updateByPrimaryKey(metaOlapTable);
 
             session.commit();
+
+            LOG.info("delete rollup table sucessful. ");
         } finally {
             if (null != session) {
                 session.close();
@@ -547,14 +543,57 @@ public class FeMetadataService {
 
         }
 
-
-
-
-
-
-
     }
 
+
+    public void updatePartition(Partition partition) {
+        SqlSession session = null;
+        try {
+            session = MybatisConfig.getInstance().getSessionFactory();
+
+            MetaPartitionMapper metaPartitionMapper = session.getMapper(MetaPartitionMapper.class);
+
+            MetaPartition metaPartition = metaPartitionMapper.selectByPrimaryKey(partition.getId());
+
+            if (metaPartition != null) {
+                metaPartition.setCommittedVersion(partition.getCommittedVersion());
+                metaPartition.setCommittedVersionHash(partition.getCommittedVersionHash());
+            }
+
+            session.commit();
+            LOG.info("update meta partition table sucessful. ");
+
+        } finally {
+            if (null != session) {
+                session.close();
+            }
+        }
+    }
+
+    public void updateMaterializedIndex(MaterializedIndex materializedIndex, long partitiooId) {
+
+        SqlSession session = null;
+        try {
+            session = MybatisConfig.getInstance().getSessionFactory();
+
+            MetaMaterializedIndexMapper metaMaterializedIndexMapper = session.getMapper(MetaMaterializedIndexMapper.class);
+            MetaMaterializedIndex metaMaterializedIndex = metaMaterializedIndexMapper.selectByPrimaryKey(materializedIndex.getId(), partitiooId);
+
+            if (materializedIndex != null) {
+                materializedIndex.setRowCount(materializedIndex.getRowCount());
+            }
+
+
+            session.commit();
+            LOG.info("update meta MaterializedIndex table sucessful. ");
+
+        } finally {
+            if (null != session) {
+                session.close();
+            }
+        }
+
+    }
 
     public static void main(String[] args) {
 

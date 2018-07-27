@@ -21,6 +21,7 @@ import com.baidu.palo.common.LoadException;
 import com.baidu.palo.common.MetaNotFoundException;
 import com.baidu.palo.common.Pair;
 import com.baidu.palo.load.Source;
+import com.baidu.palo.metadata.FeMetadataService;
 import com.baidu.palo.persist.ReplicaPersistInfo;
 import com.baidu.palo.thrift.*;
 import com.google.common.collect.Maps;
@@ -354,6 +355,9 @@ public class AgentStreamingPush {
 
         db.writeLock();
 
+        // 更新replica到mysql：
+        FeMetadataService feMetadataService = new FeMetadataService();
+
         if (finishPushTaskIdToPersistInfo != null) {
             for (ReplicaPersistInfo info : finishPushTaskIdToPersistInfo.values()) {
                 OlapTable table = (OlapTable) db.getTable(info.getTableId());
@@ -386,6 +390,10 @@ public class AgentStreamingPush {
                         ",replica:" + replica.getId() + ", replica updateInfo :" + info.getVersion() + "," + info.getVersionHash() + "," + info.getRowCount());
                 replica.updateInfo(info.getVersion(), info.getVersionHash(),
                         info.getDataSize(), info.getRowCount());
+
+                // mysql update
+                feMetadataService.saveOrUpdateMetaReplica(replica);
+
             }
         }
 
@@ -397,6 +405,8 @@ public class AgentStreamingPush {
 
             updatePartitionVersion(partition, entry.getValue().first,
                     entry.getValue().second, 0);
+
+            feMetadataService.updatePartition(partition);
 
             // update table row count
             for (MaterializedIndex materializedIndex : partition.getMaterializedIndices()) {
@@ -412,6 +422,10 @@ public class AgentStreamingPush {
                     tableRowCount += tabletRowCount;
                 }
                 materializedIndex.setRowCount(tableRowCount);
+
+                // mysql update
+                feMetadataService.updateMaterializedIndex(materializedIndex, partitionId);
+
             } // end for indices
         } // end for partitions
 
