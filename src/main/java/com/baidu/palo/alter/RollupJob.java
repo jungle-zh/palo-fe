@@ -692,11 +692,11 @@ public class RollupJob extends AlterJob {
                 this.finishedTime = System.currentTimeMillis();
                 this.state = JobState.FINISHED;
 
-                LOG.info(">>>>>>>>>>>>>> Begin update Rollup Table.");
+
+                // 更新mysql中元数据信息
                 FeMetadataService feMetadataService = new FeMetadataService();
                 feMetadataService.updateRollupTable(olapTable);
 
-                LOG.info(">>>>>>>>>>>>>> end update Rollup Table. spend the time : " + (System.currentTimeMillis()-finishedTime));
 
             }
         } finally {
