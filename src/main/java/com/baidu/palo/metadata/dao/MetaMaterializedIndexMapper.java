@@ -47,5 +47,8 @@ public interface MetaMaterializedIndexMapper {
 
     int updateByPrimaryKeySelective(MetaMaterializedIndex record);
 
-    int updateByPrimaryKey(MetaMaterializedIndex record);
+    @Update("update meta_materialized_index " +
+            "set row_count = #{rowCount,jdbcType=BIGINT} " +
+            "where materialized_index_id = #{materializedIndexId,jdbcType=BIGINT} and partition_id = #{partitionId,jdbcType=BIGINT} ")
+    int updateCountByPrimaryKey(MetaMaterializedIndex record);
 }

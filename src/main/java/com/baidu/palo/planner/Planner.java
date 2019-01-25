@@ -139,6 +139,9 @@ public class Planner {
             }
         }
 
+        LOG.debug("######## singleNodePlan is : \n" +  singleNodePlan.getExplainString());
+
+
         // TODO chenhao16 , no used materialization work
         // compute referenced slots before calling computeMemLayout()
         //analyzer.markRefdSlots(analyzer, singleNodePlan, resultExprs, null);
@@ -174,8 +177,18 @@ public class Planner {
                     exprs, rootFragment.getPlanRoot().getOutputSmap(), analyzer, false);
             rootFragment.setOutputExprs(resExprs);
         } else {
+            for(int i=0;i<queryStmt.getBaseTblResultExprs().size();++i){
+
+                LOG.debug(" queryStmt baseTblResultExprs " + i + "  is " + queryStmt.getBaseTblResultExprs().get(i).toSql());
+            }
+
             List<Expr> resExprs = Expr.substituteList(queryStmt.getBaseTblResultExprs(),
                     rootFragment.getPlanRoot().getOutputSmap(), analyzer, false);
+
+            LOG.debug("rootFragment planRoot outputSmap :" + rootFragment.getPlanRoot().getOutputSmap().debugString());
+            for(int i=0;i<resExprs.size();++i){
+                LOG.debug("resExpr " + i  + " is :" + resExprs.get(i).toSql());
+            }
             rootFragment.setOutputExprs(resExprs);
         }
         // rootFragment.setOutputExprs(exprs);

@@ -111,6 +111,11 @@ public class Tablet extends MetaObject implements Writable {
         return delete || !hasBackend;
     }
 
+    public void addReplicaWhenLoad(Replica replica) {
+        if (deleteRedundantReplica(replica.getBackendId(), replica.getVersion())) {
+            replicas.add(replica);
+        }
+    }
     public void addReplica(Replica replica) {
         if (deleteRedundantReplica(replica.getBackendId(), replica.getVersion())) {
             replicas.add(replica);

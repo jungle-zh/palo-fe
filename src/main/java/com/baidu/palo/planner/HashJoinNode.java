@@ -20,14 +20,7 @@
 
 package com.baidu.palo.planner;
 
-import com.baidu.palo.analysis.Analyzer;
-import com.baidu.palo.analysis.Expr;
-import com.baidu.palo.analysis.ExprSubstitutionMap;
-import com.baidu.palo.analysis.JoinOperator;
-import com.baidu.palo.analysis.SlotDescriptor;
-import com.baidu.palo.analysis.SlotId;
-import com.baidu.palo.analysis.SlotRef;
-import com.baidu.palo.analysis.TableRef;
+import com.baidu.palo.analysis.*;
 import com.baidu.palo.catalog.ColumnStats;
 import com.baidu.palo.common.Pair;
 import com.baidu.palo.common.InternalException;
@@ -64,6 +57,7 @@ public class HashJoinNode extends PlanNode {
 
     public HashJoinNode(PlanNodeId id, PlanNode outer, PlanNode inner, TableRef innerRef,
                         List<Pair<Expr, Expr>> eqJoinConjuncts, List<Expr> otherJoinConjuncts) {
+
         super(id, "HASH JOIN");
         Preconditions.checkArgument(eqJoinConjuncts != null);
         Preconditions.checkArgument(otherJoinConjuncts != null);
@@ -71,6 +65,12 @@ public class HashJoinNode extends PlanNode {
         tupleIds.addAll(inner.getTupleIds());
         tblRefIds.addAll(outer.getTblRefIds());
         tblRefIds.addAll(inner.getTblRefIds());
+        String  tblRefIds_s = "";
+        for(TupleId tuple: tblRefIds){
+            tblRefIds_s += tuple.asInt();
+            tblRefIds_s += " ";
+        }
+        LOG.debug("create Hasah Join node , tblRefIds :" + tblRefIds);
         this.innerRef = innerRef;
         this.joinOp = innerRef.getJoinOp();
         this.distrMode = DistributionMode.NONE;
@@ -116,10 +116,11 @@ public class HashJoinNode extends PlanNode {
 
     @Override
     public void init(Analyzer analyzer) throws InternalException {
+        LOG.debug("hash join node init ");
         assignConjuncts(analyzer);
 
         // Set smap to the combined childrens' smaps and apply that to all conjuncts_.
-        createDefaultSmap(analyzer);
+        createDefaultSmap(analyzer); //jungle comment : combine the join sub root outputSmap as the new root's outputSmap
 
         computeStats(analyzer);
         //assignedConjuncts = analyzr.getAssignedConjuncts();

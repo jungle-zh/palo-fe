@@ -57,6 +57,7 @@ public class BaseTableRef extends TableRef {
 
     @Override
     public TupleDescriptor createTupleDescriptor(Analyzer analyzer) {
+        LOG.debug("createTupleDescriptor");
         TupleDescriptor result = analyzer.getDescTbl().createTupleDescriptor();
         result.setTable(table);
         return result;
@@ -67,12 +68,15 @@ public class BaseTableRef extends TableRef {
      */
     @Override
     public void analyze(Analyzer analyzer) throws AnalysisException {
+        LOG.debug("baseTableRef analyze start");
         name = analyzer.getFqTableName(name);
         name.analyze(analyzer);
+        LOG.debug("baseTableRef registerTableRef");
         desc = analyzer.registerTableRef(this);
         isAnalyzed = true;  // true that we have assigned desc
         analyzeJoin(analyzer);
         analyzeSortHints();
+        LOG.debug("baseTableRef analyze end");
     }
 }
 

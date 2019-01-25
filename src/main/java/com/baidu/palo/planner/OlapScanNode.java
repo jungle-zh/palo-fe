@@ -166,7 +166,7 @@ public class OlapScanNode extends ScanNode {
         List<MaterializedIndex> allIndices = Lists.newArrayList();
         allIndices.add(partition.getBaseIndex());
         allIndices.addAll(partition.getRollupIndices());
-        LOG.debug("num of rollup(base included): {}, pre aggr: {}", allIndices.size(), isPreAggregation);
+        LOG.info("num of rollup(base included): {}, pre aggr: {}", allIndices.size(), isPreAggregation);
 
         // 1. find all rollup indexes which contains all tuple columns
         List<MaterializedIndex> containTupleIndexes = Lists.newArrayList();
@@ -182,10 +182,10 @@ public class OlapScanNode extends ScanNode {
                 // or those rollup tables which key columns is the same with base table
                 // (often in different order)
                 if (isPreAggregation) {
-                    LOG.debug("preAggregation is on. add index {} which contains all tuple columns", index.getId());
+                    LOG.info("preAggregation is on. add index {} which contains all tuple columns", index.getId());
                     containTupleIndexes.add(index);
                 } else if (olapTable.getKeyColumnsByIndexId(index.getId()).size() == baseIndexKeyColumns.size()) {
-                    LOG.debug("preAggregation is off, but index {} have same key columns with base index.",
+                    LOG.info("preAggregation is off, but index {} have same key columns with base index.",
                               index.getId());
                     containTupleIndexes.add(index);
                 }
@@ -222,10 +222,10 @@ public class OlapScanNode extends ScanNode {
                 }
             }
             if (prefixMatchCount == maxPrefixMatchCount) {
-                LOG.debug("s2: find a equal prefix match index {}. match count: {}", index.getId(), prefixMatchCount);
+                LOG.info("s2: find a equal prefix match index {}. match count: {}", index.getId(), prefixMatchCount);
                 prefixMatchedIndexes.add(index);
             } else if (prefixMatchCount > maxPrefixMatchCount) {
-                LOG.debug("s2: find a better prefix match index {}. match count: {}", index.getId(), prefixMatchCount);
+                LOG.info("s2: find a better prefix match index {}. match count: {}", index.getId(), prefixMatchCount);
                 maxPrefixMatchCount = prefixMatchCount;
                 prefixMatchedIndexes.clear();
                 prefixMatchedIndexes.add(index);
@@ -246,10 +246,10 @@ public class OlapScanNode extends ScanNode {
                 }
             }
             if (prefixMatchCount == maxPrefixMatchCount) {
-                LOG.debug("s3: find a equal prefix match index {}. match count: {}", index.getId(), prefixMatchCount);
+                LOG.info("s3: find a equal prefix match index {}. match count: {}", index.getId(), prefixMatchCount);
                 eqJoinPrefixMatchedIndexes.add(index);
             } else if (prefixMatchCount > maxPrefixMatchCount) {
-                LOG.debug("s3: find a better prefix match index {}. match count: {}", index.getId(), prefixMatchCount);
+                LOG.info("s3: find a better prefix match index {}. match count: {}", index.getId(), prefixMatchCount);
                 maxPrefixMatchCount = prefixMatchCount;
                 eqJoinPrefixMatchedIndexes.clear();
                 eqJoinPrefixMatchedIndexes.add(index);
@@ -262,7 +262,7 @@ public class OlapScanNode extends ScanNode {
             for (MaterializedIndex oneIndex : eqJoinPrefixMatchedIndexes) {
                 if (oneIndex.getId() == index.getId()) {
                     finalCandidateIndexes.add(index);
-                    LOG.debug("find a matched index {} in intersection of "
+                    LOG.info("find a matched index {} in intersection of "
                             + "prefixMatchIndices and eqJoinPrefixMatchIndices",
                               index.getId());
                 }
@@ -271,6 +271,7 @@ public class OlapScanNode extends ScanNode {
         // maybe there is no intersection between prefixMatchIndices and eqJoinPrefixMatchIndices.
         // in this case, use prefixMatchIndices;
         if (finalCandidateIndexes.isEmpty()) {
+            LOG.info("finalCandidateIndexes is empty");
             finalCandidateIndexes = prefixMatchedIndexes;
         }
 
@@ -283,6 +284,9 @@ public class OlapScanNode extends ScanNode {
                 return (int) (index1.getId() - index2.getId());
             }
         });
+        for(MaterializedIndex  materializedIndex:finalCandidateIndexes){
+            LOG.info("finalCandidateIndexes id :" + materializedIndex.getId());
+        }
         return finalCandidateIndexes;
     }
 
@@ -405,6 +409,8 @@ public class OlapScanNode extends ScanNode {
             paloRange.setVersion_hash(committedVersionHashStr);
             paloRange.setTablet_id(tabletId);
 
+            LOG.info("TPaloScanRange message : " + paloRange.toString());
+
             // random shuffle List && only collect one copy
             List<Replica> replicas =
                     Lists.newArrayList(tablet.getQueryableReplicas(committedVersion, committedVersionHash));
@@ -461,6 +467,7 @@ public class OlapScanNode extends ScanNode {
         int candidateTableSize = 0;
         List<List<MaterializedIndex>> tables = Lists.newArrayList();
         for (Long partitionId : partitionIds) {
+            LOG.info("partitionId :" + partitionId);
             Partition partition = olapTable.getPartition(partitionId);
             List<MaterializedIndex> candidateTables = selectRollupIndex(partition);
             if (candidateTableSize == 0) {
@@ -493,7 +500,7 @@ public class OlapScanNode extends ScanNode {
                 }
                 rowCount += candidateTables.get(i).getRowCount();
             }
-            LOG.debug("rowCount={} for table={}", rowCount, candidateIndex.getId());
+            LOG.info("rowCount={} for table={}", rowCount, candidateIndex.getId());
             if (rowCount < minRowCount) {
                 minRowCount = rowCount;
                 selectedIndexId = tables.get(0).get(i).getId();
@@ -513,16 +520,22 @@ public class OlapScanNode extends ScanNode {
         int j = 0;
         for (Long partitionId : partitionIds) {
             Partition partition = olapTable.getPartition(partitionId);
-            LOG.debug("selected partition: " + partition.getName());
+            LOG.info("selected partition,name :{}, version:{} ,versionHash :{}" ,partition.getName(),partition.getCommittedVersion(),partition.getCommittedVersionHash());
             selectedTable = tables.get(j++).get(partitionPos);
+            LOG.info("selectedTable id :" + selectedTable.getId());
             List<Tablet> tablets = new ArrayList<Tablet>();
             Collection<Long> tabletIds = distributionPrune(selectedTable, partition.getDistributionInfo());
-            LOG.debug("distribution prune tablets: {}", tabletIds);
+            //LOG.info("distribution prune tablets: {}", tabletIds);
             if (tabletIds != null) {
                 for (Long id : tabletIds) {
                     tablets.add(selectedTable.getTablet(id));
+                    LOG.info("1 Tablet : {}", selectedTable.getTablet(id).getId());
                 }
             } else {
+                for(Tablet tablet :selectedTable.getTablets()){
+                    LOG.info("2 Tablet : {}", tablet.getId());
+                }
+
                 tablets.addAll(selectedTable.getTablets());
             }
             totalTabletsNum += selectedTable.getTablets().size();

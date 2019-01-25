@@ -24,7 +24,6 @@ import com.baidu.palo.catalog.Column;
 import com.baidu.palo.catalog.ColumnStats;
 import com.baidu.palo.catalog.Type;
 import com.baidu.palo.thrift.TSlotDescriptor;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
@@ -246,6 +245,7 @@ public class SlotDescriptor {
                 nullIndicatorBit, ((column != null) ? column.getName() : ""), slotIdx, isMaterialized);
     }
 
+    /*
     public String debugString() {
         String colStr = (column == null ? "null" : column.getName());
         String typeStr = (type == null ? "null" : type.toString());
@@ -256,5 +256,28 @@ public class SlotDescriptor {
                 .add("nullIndicatorByte", nullIndicatorByte)
                 .add("nullIndicatorBit", nullIndicatorBit)
                 .add("slotIdx", slotIdx).toString();
+    }
+    */
+    public String debugString() {
+        String res  = "(";
+        if(id!=null){
+            res += "slotId:";
+            res += id.asInt();
+        }
+
+        if(column!=null){
+            res += " ,columnName:";
+            res += column.getName();
+        }
+
+        if(label_!=null){
+            res += " ,label:";
+            res += label_;
+        }
+        res +=")";
+
+        return res;
+
+
     }
 }

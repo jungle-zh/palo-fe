@@ -96,6 +96,11 @@ public class MaterializedIndex extends MetaObject implements Writable {
         return idToTablets.get(tabletId);
     }
 
+    public void addTablet(Tablet tablet ){
+        idToTablets.put(tablet.getId(), tablet);
+        tablets.add(tablet);
+    }
+
     public void addTablet(Tablet tablet, TabletMeta tabletMeta) {
         idToTablets.put(tablet.getId(), tablet);
         tablets.add(tablet);

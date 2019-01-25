@@ -695,7 +695,7 @@ public class RollupJob extends AlterJob {
 
                 // 更新mysql中元数据信息
                 FeMetadataService feMetadataService = new FeMetadataService();
-                feMetadataService.updateRollupTable(olapTable);
+                feMetadataService.updateRollupTable(olapTable,db);
 
 
             }

@@ -20,12 +20,6 @@
 
 package com.baidu.palo.analysis;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
 import com.baidu.palo.catalog.ColumnStats;
 import com.baidu.palo.catalog.PrimitiveType;
 import com.baidu.palo.catalog.Table;
@@ -34,6 +28,11 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TupleDescriptor {
     private static final Logger LOG = LogManager.getLogger(TupleDescriptor.class);
@@ -257,6 +256,7 @@ public class TupleDescriptor {
                    .toString();
     }
 
+    /*
     public String debugString() {
         // TODO(zc):
         // String tblStr = (getTable() == null ? "null" : getTable().getFullName());
@@ -273,5 +273,28 @@ public class TupleDescriptor {
                 .add("is_materialized", isMaterialized)
                 .add("slots", "[" + Joiner.on(", ").join(slotStrings) + "]")
                 .toString();
+    } */
+
+    public String debugString() {
+        String res = "";
+        res += id;
+        res += ":";
+        if(getTable() != null){
+            res += getTable().getName();
+        }
+        res += ":";
+
+        List<String> slotStrings = Lists.newArrayList();
+        for (SlotDescriptor slot : slots) {
+            slotStrings.add(slot.debugString());
+        }
+
+        res += "[" + Joiner.on(",").join(slotStrings) + "]";
+        if( debugName != null){
+            res += "  dgb info :" + debugName;
+        }
+        return  res;
+
     }
+
 }

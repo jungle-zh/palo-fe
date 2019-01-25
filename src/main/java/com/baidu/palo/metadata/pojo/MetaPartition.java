@@ -15,6 +15,8 @@ public class MetaPartition {
 
     private String materializedIndexIdList;
 
+    private Long baseIndexId ;
+
     public Long getPartitionId() {
         return partitionId;
     }
@@ -69,5 +71,13 @@ public class MetaPartition {
 
     public void setMaterializedIndexIdList(String materializedIndexIdList) {
         this.materializedIndexIdList = materializedIndexIdList == null ? null : materializedIndexIdList.trim();
+    }
+
+    public Long getBaseIndexId() {
+        return baseIndexId;
+    }
+
+    public void setBaseIndexId(Long baseIndexId) {
+        this.baseIndexId = baseIndexId;
     }
 }

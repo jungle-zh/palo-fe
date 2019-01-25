@@ -465,6 +465,17 @@ public abstract class QueryStmt extends StatementBase {
         List<SlotId> slotIds = Lists.newArrayList();
         for (Expr e: exprs) {
             e.getIds(null, slotIds);
+
+
+            String slot_ids_s = "";
+            List<SlotId> slotIds_tmp = Lists.newArrayList();
+            e.getIds(null, slotIds_tmp);
+            for(SlotId id :slotIds_tmp){
+                slot_ids_s += id.asInt();
+                slot_ids_s += " ";
+            }
+            LOG.debug("for expr :" + e.toSql() + " include  slot_ids :" + slot_ids_s);
+
         }
         analyzer.getDescTbl().markSlotsMaterialized(slotIds);
     }

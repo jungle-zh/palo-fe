@@ -36,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -166,6 +167,7 @@ public class InlineViewRef extends TableRef {
      */
     @Override
     public void analyze(Analyzer analyzer) throws AnalysisException, InternalException {
+        LOG.info(" inlineViewRef analyze start " );
         if (isAnalyzed) {
             return;
         }
@@ -175,9 +177,12 @@ public class InlineViewRef extends TableRef {
         }
 
         // Analyze the inline view query statement with its own analyzer
+        LOG.info("1  queryStmt analyzer start ,query :" + queryStmt.toSql());
         inlineViewAnalyzer = new Analyzer(analyzer);
 
+
         queryStmt.analyze(inlineViewAnalyzer);
+        LOG.info("1  queryStmt analyzer end ,query :" + queryStmt.toSql());
         correlatedTupleIds_.addAll(queryStmt.getCorrelatedTupleIds(inlineViewAnalyzer));
 
         queryStmt.getMaterializedTupleIds(materializedTupleIds);
@@ -187,9 +192,25 @@ public class InlineViewRef extends TableRef {
         }
         //TODO(chenhao16): fix TableName in Db.Table style
         // name.analyze(analyzer);
+        LOG.debug("2 inlineViewRef registerTableRef start ,query : " + queryStmt.toSql());
+        String all_tuples_dbg0 = "";
+        for(String key : analyzer.getAllTuples().keySet()){
+            all_tuples_dbg0 += key;
+            all_tuples_dbg0 += " --> ";
+            Collection<TupleDescriptor> tuples  = analyzer.getAllTuples().get(key) ;
+            for(TupleDescriptor tupleDescriptor : tuples){
+                all_tuples_dbg0 += tupleDescriptor.debugString();
+                all_tuples_dbg0 += " ";
+            }
+            all_tuples_dbg0 +=   "  ";
+
+        }
+        LOG.debug("before regist this view ref tuple and slots , analyzer  is  " + analyzer.toString() + ",global  tupleByAlias is  : " + all_tuples_dbg0  );
         desc = analyzer.registerTableRef(this);
+        LOG.debug("2 inlineViewRef registerTableRef end ,query : " + queryStmt.toSql());
         isAnalyzed = true;  // true now that we have assigned desc
 
+        inlineViewAnalyzer.beLoneTupleId = getId();
         // For constant selects we materialize its exprs into a tuple.
         if (materializedTupleIds.isEmpty()) {
             Preconditions.checkState(queryStmt instanceof SelectStmt);
@@ -209,24 +230,59 @@ public class InlineViewRef extends TableRef {
         // would alter the results of the analytic functions (see IMPALA-1243)
         // TODO: relax this a bit by allowing propagation out of the inline view (but
         // not into it)
+        LOG.info("3 create smap and baseTblSmap start ,query : " + queryStmt.toSql());
         for (int i = 0; i < getColLabels().size(); ++i) {
-            String colName = getColLabels().get(i);
+            String colName = getColLabels().get(i); //jungle comment : view colName ( after 'as')
+            // jungle comment : regist view slotRef which  will be find in  father SelectStmt selectList analyse
+            LOG.info("inlineViewRef registerColumnRef :" + colName + " to analyzer :" + analyzer.toString());
             SlotDescriptor slotDesc = analyzer.registerColumnRef(getAliasAsName(), colName);
             Expr colExpr = queryStmt.getResultExprs().get(i);
             SlotRef slotRef = new SlotRef(slotDesc);
+            //jungle comment :one  map ,from current view slot to sub query resultExprs ,
+            // if sub query has no agg , resultExprs is the same with sub InlineView slotRefMap value which is registed in registerColumnRef
             sMap.put(slotRef, colExpr);
-            baseTblSmap.put(slotRef, queryStmt.getBaseTblResultExprs().get(i));
+            //jungle comment :maybe mutil map ,to the baseTableRef query or query with agg info
+            baseTblSmap.put(slotRef, queryStmt.getBaseTblResultExprs().get(i)); //jungle comment  ,view  slot name( after 'as') ->  true table column name
             if (createAuxPredicate(colExpr)) {
                 analyzer.createAuxEquivPredicate(new SlotRef(slotDesc), colExpr.clone());
             }
         }
+        LOG.info("3 create smap and baseTblSmap end ,query : " + queryStmt.toSql());
+
+
+        String all_tuples_dbg = "";
+        for(String key : analyzer.getAllTuples().keySet()){
+            all_tuples_dbg += key;
+            all_tuples_dbg += " --> ";
+            Collection<TupleDescriptor> tuples  = analyzer.getAllTuples().get(key) ;
+            for(TupleDescriptor tupleDescriptor : tuples){
+                all_tuples_dbg += tupleDescriptor.debugString();
+                all_tuples_dbg += " ";
+            }
+            all_tuples_dbg +=   "  ";
+
+        }
+        LOG.debug("after regist this view ref tuple and slots, analyzer  is  " + analyzer.toString() + ",global  tupleByAlias is now : "  + all_tuples_dbg );
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("inline view " + getUniqueAlias() + " smap: " + sMap.debugString());
             LOG.debug("inline view " + getUniqueAlias() + " baseTblSmap: " + baseTblSmap.debugString());
         }
 
         // Now do the remaining join analysis
-        analyzeJoin(analyzer);
+        LOG.info("4 analyzeJoin start ,query : " + queryStmt.toSql() + ",analyzer is  " + analyzer.toString());
+        analyzeJoin(analyzer); //jungle comment , join tuple regist to globalState from left to right
+
+        String AllLastOjClause = "";
+        for(TupleId id :analyzer.getAllLastOjClause().keySet()){
+            AllLastOjClause += id ;
+            AllLastOjClause += " -> ";
+            AllLastOjClause +=analyzer.getAllLastOjClause().get(id).desc.debugString();
+            AllLastOjClause += " ";
+        }
+        LOG.debug("after analyzeJoin  analyzer.getQueryGlobals is " +  AllLastOjClause);
+        LOG.info("4 analyzeJoin end ,query : " + queryStmt.toSql());
+        LOG.info(" inlineViewRef analyze end , qurery :" + queryStmt.toSql() + ",analyzer is " + analyzer.toString());
     }
 
     /**
@@ -249,6 +305,7 @@ public class InlineViewRef extends TableRef {
      */
     @Override
     public TupleDescriptor createTupleDescriptor(Analyzer analyzer) throws AnalysisException {
+        LOG.debug("createTupleDescriptor");
         // Create a fake catalog table for the inline view
         int numColLabels = getColLabels().size();
         Preconditions.checkState(numColLabels > 0);
@@ -258,7 +315,7 @@ public class InlineViewRef extends TableRef {
             // inline view select statement has been analyzed. Col label should be filled.
             Expr selectItemExpr = queryStmt.getResultExprs().get(i);
             // String colAlias = queryStmt.getColLabels().get(i);
-            String colAlias = getColLabels().get(i);
+            String colAlias = getColLabels().get(i);  //jungle comment : name after 'as'
 
             // inline view col cannot have duplicate name
             if (columnSet.contains(colAlias)) {

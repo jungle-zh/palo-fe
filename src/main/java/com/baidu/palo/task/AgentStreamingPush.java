@@ -29,7 +29,6 @@ import com.google.common.collect.Sets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -110,11 +109,11 @@ public class AgentStreamingPush {
                         LOG.info("push job wake up");
                         updateFinishPushInfo();
                         resetPushInfo();
-                        Catalog.getInstance().saveImage();
+                        //Catalog.getInstance().saveImage();
 
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
                         pushUpdateLock.unlock();
@@ -140,7 +139,7 @@ public class AgentStreamingPush {
             String filePath = deltaFile.getKey();
             Long fileSize = deltaFile.getValue();
 
-
+            LOG.info("deltaFile :" + filePath);
             String partitionIndexBucket = null;
             try {
                 partitionIndexBucket = getPartitionIndexBucketString(filePath);
@@ -167,7 +166,8 @@ public class AgentStreamingPush {
             Long versionHash = getEtlTaskLable(filePath);
             Long version = partition.getCommittedVersion() + 1;
 
-            LOG.info("versionHash is :" + versionHash +",version is :" + version);
+
+            LOG.info("versionHash is :" + versionHash +",new version is :" + version);
 
             int schemaHash = table.getIndexIdToSchemaHash().get(index.getId()); //when scheme change ,get the new schemaHash
             //if push to the old schema table,need to convert to new schema ,else clear the schema change info
@@ -424,7 +424,7 @@ public class AgentStreamingPush {
                 materializedIndex.setRowCount(tableRowCount);
 
                 // mysql update
-                feMetadataService.updateMaterializedIndex(materializedIndex, partitionId);
+                feMetadataService.updateMaterializedIndex(materializedIndex,partitionId);
 
             } // end for indices
         } // end for partitions

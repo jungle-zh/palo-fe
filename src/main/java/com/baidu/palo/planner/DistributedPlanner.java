@@ -176,32 +176,42 @@ public class DistributedPlanner {
             // Do not fragment the subplan of a SubplanNode since it is executed locally.
             // TODO()
             // if (root instanceof SubplanNode && child == root.getChild(1)) continue;
+
             childFragments.add(
                     createPlanFragments(child, childIsPartitioned, perNodeMemLimit, fragments));
         }
 
         PlanFragment result = null;
         if (root instanceof ScanNode) {
+            LOG.info("root is ScanNode");
             result = createScanFragment(root);
             fragments.add(result);
         } else if (root instanceof HashJoinNode) {
+            LOG.info("root is scan HashJoinNode");
             Preconditions.checkState(childFragments.size() == 2);
             result = createHashJoinFragment((HashJoinNode) root, childFragments.get(1),
                     childFragments.get(0), perNodeMemLimit);
         } else if (root instanceof CrossJoinNode) {
+            LOG.info("root is scan CrossJoinNode");
             result = createCrossJoinFragment((CrossJoinNode) root, childFragments.get(1),
                     childFragments.get(0));
         } else if (root instanceof SelectNode) {
+            LOG.info("root is scan SelectNode");
             result = createSelectNodeFragment((SelectNode) root, childFragments);
         } else if (root instanceof OlapRewriteNode) {
+            LOG.info("root is scan OlapRewriteNode");
             result = createOlapRewriteNodeFragment((OlapRewriteNode) root, childFragments);
         } else if (root instanceof UnionNode) {
+            LOG.info("root is scan UnionNode");
             result = createUnionNodeFragment((UnionNode) root, childFragments, fragments);
         } else if (root instanceof MergeNode) {
+            LOG.info("root is scan MergeNode");
             result = createMergeNodeFragment((MergeNode) root, childFragments, fragments);
         } else if (root instanceof AggregationNode) {
+            LOG.info("root is scan AggregationNode");
             result = createAggregationFragment((AggregationNode) root, childFragments.get(0), fragments);
         } else if (root instanceof SortNode) {
+            LOG.info("root is scan SortNode");
             if (((SortNode) root).isAnalyticSort()) {
                 // don't parallelize this like a regular SortNode
                 result = createAnalyticFragment((SortNode) root, childFragments.get(0), fragments);
@@ -209,8 +219,10 @@ public class DistributedPlanner {
                 result = createOrderByFragment((SortNode) root, childFragments.get(0));
             }
         } else if (root instanceof AnalyticEvalNode) {
+            LOG.info("root is scan AnalyticEvalNode");
             result = createAnalyticFragment(root, childFragments.get(0), fragments);
         } else if (root instanceof EmptySetNode) {
+            LOG.info("root is scan EmptySetNode");
             result = new PlanFragment(ctx_.getNextFragmentId(), root, DataPartition.UNPARTITIONED);
         } else {
             throw new InternalException(
@@ -223,7 +235,7 @@ public class DistributedPlanner {
         if (!isPartitioned && result.isPartitioned() && result.getPlanRoot().getNumInstances() > 1) {
 
 
-            LOG.info("1root plan node:" + result.getPlanRoot().getExplainString() );
+            LOG.info("1root plan node: \n" + result.getPlanRoot().getExplainString() );
             LOG.info("1root plan node num instance :" + result.getPlanRoot().getNumInstances() );
             result = createMergeFragment(result);    //jungle comment : create the result sink in this fragment?
             fragments.add(result);

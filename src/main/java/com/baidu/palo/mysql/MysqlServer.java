@@ -46,6 +46,7 @@ public class MysqlServer {
     // start MySQL protocol service
     // return true if success, otherwise false
     public boolean start() {
+        LOG.info("mysql server start ");
         if (scheduler == null) {
             LOG.warn("scheduler is NULL.");
             return false;
@@ -104,6 +105,7 @@ public class MysqlServer {
                     ConnectContext context = new ConnectContext(clientChannel);
                     // Set catalog here.
                     context.setCatalog(Catalog.getInstance());
+                    LOG.info("# create ConnectContext  ");
                     if (!scheduler.submit(context)) {
                         LOG.warn("Submit one connect request failed. Client=" + clientChannel.toString());
                         // clear up context

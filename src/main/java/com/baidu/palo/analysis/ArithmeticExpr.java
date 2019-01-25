@@ -148,6 +148,12 @@ public class ArithmeticExpr extends Expr {
     }
 
     @Override
+    public String debugString() {
+        return "ArithmeticExpr: " + super.debugString();
+    }
+
+
+    @Override
     public Expr clone() {
         return new ArithmeticExpr(this);
     }
@@ -155,9 +161,9 @@ public class ArithmeticExpr extends Expr {
     @Override
     public String toSql() {
         if (children.size() == 1) {
-            return op.toString() + " " + getChild(0).toSql();
+            return "(" + op.toString() + " " + getChild(0).toSql() + ")";
         } else {
-            return getChild(0).toSql() + " " + op.toString() + " " + getChild(1).toSql();
+            return "(" + getChild(0).toSql() + " " + op.toString() + " " + getChild(1).toSql() + ")";
         }
     }
 
@@ -212,7 +218,7 @@ public class ArithmeticExpr extends Expr {
 
     @Override
     public void analyzeImpl(Analyzer analyzer) throws AnalysisException {
-
+        //LOG.debug("analyzeImpl " );
         // bitnot is the only unary op, deal with it here
         if (op == Operator.BITNOT) {
             type = Type.BIGINT;

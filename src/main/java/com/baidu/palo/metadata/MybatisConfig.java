@@ -11,14 +11,13 @@ import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
 import javax.sql.DataSource;
-import java.io.*;
 
 public class MybatisConfig {
 
     private static String driver = "com.mysql.jdbc.Driver";
-    private static String url = "jdbc:mysql://localhost:3306/fe_meta";
-    private static String username="root";
-    private static String password="123456";
+    private static String url = "jdbc:mysql://172.31.8.1:3306/palo";
+    private static String username="palo";
+    private static String password="n7xkmDU9KXj2Q";
 
 
     private static class SingletonHolder {
@@ -47,6 +46,11 @@ public class MybatisConfig {
         configuration.addMapper(MetaSchemaIndexMapper.class);
         configuration.addMapper(MetaReplicaMapper.class);
         configuration.addMapper(MetaTabletMapper.class);
+
+        configuration.addMapper(MetaDbMapper.class);
+        configuration.addMapper(MetaBackendMapper.class);
+
+        configuration.addMapper(MetaInstanceIdMapper.class);
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
         return sqlSessionFactory.openSession();
 

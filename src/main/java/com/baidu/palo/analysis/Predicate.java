@@ -53,6 +53,11 @@ public abstract class Predicate extends Expr {
         numDistinctValues = 3;
     }
 
+    @Override
+    public String debugString() {
+        return "Predicate: " + super.debugString();
+    }
+
     /**
      * Returns true if one of the children is a slotref (possibly wrapped in a cast)
      * and the other children are all constant. Returns the slotref in 'slotRef' and

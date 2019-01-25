@@ -169,6 +169,7 @@ public final class AggregateInfo extends AggregateInfoBase {
             ArrayList<Expr> groupingExprs, ArrayList<FunctionCallExpr> aggExprs,
             TupleDescriptor tupleDesc, Analyzer analyzer)
             throws AnalysisException {
+        LOG.debug("create AggregateInfo");
         Preconditions.checkState(
                 (groupingExprs != null && !groupingExprs.isEmpty())
                         || (aggExprs != null && !aggExprs.isEmpty()));
@@ -373,13 +374,21 @@ public final class AggregateInfo extends AggregateInfoBase {
      *     aggTupleDesc
      */
     public void substitute(ExprSubstitutionMap smap, Analyzer analyzer) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("before substitute, AggInfo: grouping_exprs=" + Expr.debugString(groupingExprs_));
+        }
         groupingExprs_ = Expr.substituteList(groupingExprs_, smap, analyzer, true);
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("AggInfo: grouping_exprs=" + Expr.debugString(groupingExprs_));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("after substitute, AggInfo: grouping_exprs=" + Expr.debugString(groupingExprs_));
         }
 
         // The smap in this case should not substitute the aggs themselves, only
         // their subexpressions.
+
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("before substitute, AggInfo: agg_exprs=" + Expr.debugString(aggregateExprs_));
+        }
         List<Expr> substitutedAggs =
             Expr.substituteList(aggregateExprs_, smap, analyzer, false);
         aggregateExprs_.clear();
@@ -387,8 +396,8 @@ public final class AggregateInfo extends AggregateInfoBase {
             aggregateExprs_.add((FunctionCallExpr) substitutedAgg);
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("AggInfo: agg_exprs=" + Expr.debugString(aggregateExprs_));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("after substitute, AggInfo: agg_exprs=" + Expr.debugString(aggregateExprs_));
         }
         outputTupleSmap_.substituteLhs(smap, analyzer);
         intermediateTupleSmap_.substituteLhs(smap, analyzer);
@@ -409,6 +418,7 @@ public final class AggregateInfo extends AggregateInfoBase {
      * createAggTupleDesc() must not be called on it.
      */
     private void createMergeAggInfo(Analyzer analyzer)  {
+        LOG.debug("createMergeAggInfo ");
         Preconditions.checkState(mergeAggInfo_ == null);
         TupleDescriptor inputDesc = intermediateTupleDesc_;
         // construct grouping exprs
@@ -428,6 +438,8 @@ public final class AggregateInfo extends AggregateInfoBase {
                     inputExpr, Lists.newArrayList(aggExprParam));
             aggExpr.analyzeNoThrow(analyzer);
             aggExprs.add(aggExpr);
+            LOG.debug("aggExprParam is :" + aggExprParam.toSql());
+            LOG.debug("MergeAggCall expr is :" + aggExpr.toSql());
         }
 
         AggPhase aggPhase =
@@ -681,6 +693,7 @@ public final class AggregateInfo extends AggregateInfoBase {
      */
     @Override
     public void materializeRequiredSlots(Analyzer analyzer, ExprSubstitutionMap smap) {
+
         for (int i = 0; i < groupingExprs_.size(); ++i) {
             outputTupleDesc_.getSlots().get(i).setIsMaterialized(true);
             intermediateTupleDesc_.getSlots().get(i).setIsMaterialized(true);
@@ -725,7 +738,7 @@ public final class AggregateInfo extends AggregateInfoBase {
         // over query statements, if aggregate functions contain count(*), now 
         // materialize all slots this SelectStmt maps.
         // chenhao added.
-        if (hasCountStar && smap != null && smap.size() > 0) {
+        if (hasCountStar && smap != null && smap.size() > 0) {    //jungle comment : expand  star to all column ?
             resolvedExprs.addAll(smap.getRhs());
         } 
         analyzer.materializeSlots(resolvedExprs);

@@ -21,7 +21,6 @@ import com.baidu.palo.catalog.Catalog;
 import com.baidu.palo.common.*;
 import com.baidu.palo.common.util.DebugUtil;
 import com.baidu.palo.common.util.RuntimeProfile;
-import com.baidu.palo.common.util.Util;
 import com.baidu.palo.planner.*;
 import com.baidu.palo.service.FrontendOptions;
 import com.baidu.palo.system.Backend;
@@ -129,6 +128,7 @@ public class Coordinator {
         this.fragments = planner.getFragments();
         this.scanNodes = planner.getScanNodes();
         this.descTable = analyzer.getDescTbl().toThrift();
+        LOG.info("descTable is " + analyzer.getDescTbl().debugString());
         this.returnedAllResults = false;
         this.queryOptions = context.getSessionVariable().toThrift();
         this.queryGlobals.setNow_string(DATE_FORMAT.format(new Date()));
@@ -909,7 +909,7 @@ public class Coordinator {
 
     public void updateFragmentExecStatus(TReportExecStatusParams params) {
         LOG.info("Coordinator::updateFragmentExecStatus");
-        Util.printStack();
+        //Util.printStack();
         if (params.backend_num >= backendExecStates.size()) {
             LOG.error("unknown backend number");
             return;

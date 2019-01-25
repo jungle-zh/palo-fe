@@ -20,26 +20,23 @@
 
 package com.baidu.palo.analysis;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import com.baidu.palo.catalog.Table;
 import com.baidu.palo.common.AnalysisException;
 import com.baidu.palo.common.ErrorCode;
 import com.baidu.palo.common.ErrorReport;
 import com.baidu.palo.common.InternalException;
-import com.baidu.palo.analysis.AnalyticExpr;
 import com.baidu.palo.rewrite.ExprRewriter;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-
 import com.google.common.collect.Sets;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Superclass of all table references, including references to views, base tables
@@ -343,6 +340,7 @@ public class TableRef implements ParseNode {
      * and the TupleDescriptor (desc) of this table has been created.
      */
     public void analyzeJoin(Analyzer analyzer)  throws AnalysisException {
+        LOG.debug("analyzeJoin , this table :" + this.toSql() + " , left table :" + (leftTblRef == null ? "null" : leftTblRef.toSql()));
         Preconditions.checkState(leftTblRef == null || leftTblRef.isAnalyzed);
         Preconditions.checkState(desc != null);
         analyzeJoinHints();
@@ -391,6 +389,7 @@ public class TableRef implements ParseNode {
 
         // at this point, both 'this' and leftTblRef have been analyzed and registered;
         // register the tuple ids of the TableRefs on the nullable side of an outer join
+        LOG.debug("joinOp is :" + ( joinOp == null ? "null" :joinOp.toString()));
         if (joinOp == JoinOperator.LEFT_OUTER_JOIN
                 || joinOp == JoinOperator.FULL_OUTER_JOIN) {
             analyzer.registerOuterJoinedTids(getId().asList(), this);
@@ -450,6 +449,7 @@ public class TableRef implements ParseNode {
             // The exception are conjuncts that only pertain to the nullable side
             // of the outer join; those can be evaluated directly when materializing tuples
             // without violating outer join semantics.
+            LOG.debug(" registerOnClauseConjuncts to analyzer :" + analyzer.toString());
             analyzer.registerOnClauseConjuncts(conjuncts, this);
             for (Expr e: conjuncts) {
                 List<TupleId> tupleIds = Lists.newArrayList();

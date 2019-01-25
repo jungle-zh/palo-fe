@@ -157,6 +157,11 @@ public class CastExpr extends Expr {
     }
 
     @Override
+    public String debugString() {
+        return "CastExpr: " + super.debugString();
+    }
+
+    @Override
     public String toSql() {
         if (isImplicit) {
             return getChild(0).toSql();
@@ -222,6 +227,7 @@ public class CastExpr extends Expr {
 
     @Override
     public void analyzeImpl(Analyzer analyzer) throws AnalysisException {
+        LOG.debug("analyzeImpl");
         type = targetType;
         analyze();
     }

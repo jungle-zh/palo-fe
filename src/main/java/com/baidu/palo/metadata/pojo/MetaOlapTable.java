@@ -23,6 +23,10 @@ public class MetaOlapTable {
 
     private String bfColumns;
 
+    private String baseSchema;
+
+    private String dbName;
+
     public Long getTableId() {
         return tableId;
     }
@@ -109,5 +113,22 @@ public class MetaOlapTable {
 
     public void setBfColumns(String bfColumns) {
         this.bfColumns = bfColumns == null ? null : bfColumns.trim();
+    }
+
+
+    public String getBaseSchema() {
+        return baseSchema;
+    }
+
+    public void setBaseSchema(String baseSchema) {
+        this.baseSchema = baseSchema;
+    }
+
+    public String getDbName() {
+        return dbName;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
     }
 }

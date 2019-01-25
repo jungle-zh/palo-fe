@@ -25,6 +25,7 @@ import com.baidu.palo.common.FeConstants;
 import com.baidu.palo.common.FeMetaVersion;
 import com.baidu.palo.common.Pair;
 import com.baidu.palo.common.util.Daemon;
+import com.baidu.palo.metadata.FeMetadataService;
 import com.baidu.palo.system.Backend.BackendState;
 import com.baidu.palo.system.BackendEvent.BackendEventType;
 import com.baidu.palo.thrift.HeartbeatService;
@@ -174,6 +175,7 @@ public class SystemInfoService extends Daemon {
 
     private void addBackend(String host, int heartbeatPort, boolean isFree, String destCluster) throws DdlException {
         Backend newBackend = new Backend(Catalog.getInstance().getNextId(), host, heartbeatPort);
+        LOG.info("backend next id : " + newBackend.getId());
         // update idToBackend
         Map<Long, Backend> copiedBackends = Maps.newHashMap(idToBackendRef.get());
         copiedBackends.put(newBackend.getId(), newBackend);
@@ -205,7 +207,10 @@ public class SystemInfoService extends Daemon {
         }
 
         // log
-        Catalog.getInstance().getEditLog().logAddBackend(newBackend);
+
+        FeMetadataService metadataService = new FeMetadataService();
+        metadataService.saveBackEnd(newBackend);
+        //Catalog.getInstance().getEditLog().logAddBackend(newBackend);
         LOG.info("add backend[" + newBackend.getId() + ". " + newBackend.getHost() + ":" + newBackend.getHeartbeatPort()
                 + ":" + newBackend.getBePort() + ":" + newBackend.getBePort() + ":" + newBackend.getHttpPort() + "]");
     }
@@ -278,7 +283,10 @@ public class SystemInfoService extends Daemon {
             LOG.error("Cluster " + droppedBackend.getOwnerClusterName() + " no exist.");
         }
         // log
-        Catalog.getInstance().getEditLog().logDropBackend(droppedBackend);
+        // Catalog.getInstance().getEditLog().logDropBackend(droppedBackend);
+
+        Catalog.getInstance().logDropBackend(droppedBackend);
+
         LOG.info("drop {}", droppedBackend);
     }
 
@@ -949,6 +957,11 @@ public class SystemInfoService extends Daemon {
         return checksum;
     }
 
+    public void loadBackends(List<Backend> backends){
+        for(Backend backend : backends){
+            replayAddBackend(backend);
+        }
+    }
     public long loadBackends(DataInputStream dis, long checksum) throws IOException {
         int count = dis.readInt();
         checksum ^= count;

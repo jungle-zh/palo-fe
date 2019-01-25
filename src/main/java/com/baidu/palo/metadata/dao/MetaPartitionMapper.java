@@ -12,28 +12,28 @@ public interface MetaPartitionMapper {
     int deleteByPrimaryKey(Long partitionId);
 
     @Insert("insert into meta_partition (partition_id, partition_name, partition_state," +
-            "committed_version, committed_version_hash, distribution_info,materialized_index_id_list)" +
+            "committed_version, committed_version_hash, distribution_info,materialized_index_id_list,base_index_id)" +
             "values (#{partitionId,jdbcType=BIGINT}, #{partitionName,jdbcType=VARCHAR}, #{partitionState,jdbcType=VARCHAR}," +
             "#{committedVersion,jdbcType=BIGINT}, #{committedVersionHash,jdbcType=BIGINT}, #{distributionInfo,jdbcType=LONGVARCHAR}," +
-            "#{materializedIndexIdList,jdbcType=VARCHAR})")
+            "#{materializedIndexIdList,jdbcType=VARCHAR}, #{baseIndexId,jdbcType=BIGINT})")
     int insert(MetaPartition record);
 
     @Insert("<script>"  +
             "insert into meta_partition (partition_id, partition_name, partition_state," +
             "committed_version, committed_version_hash, distribution_info," +
-            "materialized_index_id_list)" +
+            "materialized_index_id_list,base_index_id)" +
             "values" +
             "<foreach collection=\"list\" item=\"item\" index=\"index\" separator=\",\">" +
                 "(#{item.partitionId,jdbcType=BIGINT}, #{item.partitionName,jdbcType=VARCHAR}, #{item.partitionState,jdbcType=VARCHAR}," +
                 "#{item.committedVersion,jdbcType=BIGINT}, #{item.committedVersionHash,jdbcType=BIGINT}, #{item.distributionInfo,jdbcType=LONGVARCHAR}," +
-                "#{item.materializedIndexIdList,jdbcType=VARCHAR})" +
+                "#{item.materializedIndexIdList,jdbcType=VARCHAR} , #{item.baseIndexId,jdbcType=BIGINT})" +
             "</foreach>" +
             "</script>")
     int batchInsert(@Param("list") List<MetaPartition> lst);
 
     int insertSelective(MetaPartition record);
 
-    @Select("select partition_id, partition_name, partition_state, committed_version, committed_version_hash, distribution_info, materialized_index_id_list " +
+    @Select("select partition_id, partition_name, partition_state, committed_version, committed_version_hash, distribution_info, materialized_index_id_list ,base_index_id " +
             "from meta_partition  where partition_id = #{partitionId,jdbcType=BIGINT}")
     @Results(value = {@Result(column="partition_id",property="partitionId"),
             @Result(column="partition_name",property="partitionName"),
@@ -41,13 +41,14 @@ public interface MetaPartitionMapper {
             @Result(column="committed_version",property="committedVersion"),
             @Result(column="committed_version_hash",property="committedVersionHash"),
             @Result(column="distribution_info",property="distributionInfo"),
-            @Result(column="materialized_index_id_list",property="materializedIndexIdList",javaType = String.class, jdbcType = JdbcType.VARCHAR)})
+            @Result(column="materialized_index_id_list",property="materializedIndexIdList",javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(column="base_index_id",property="baseIndexId")})
     MetaPartition selectByPrimaryKey(Long partitionId);
 
 
     @Select("<script>"
                 + "select partition_id, partition_name, partition_state, "
-                + "committed_version, committed_version_hash, distribution_info, materialized_index_id_list "
+                + "committed_version, committed_version_hash, distribution_info, materialized_index_id_list ,base_index_id "
                 + "from meta_partition where partition_id in "
                 + "<foreach item='id' index='index' collection='ids' open='(' separator=',' close=')'>"
                     + "#{id}"
@@ -59,7 +60,8 @@ public interface MetaPartitionMapper {
             @Result(column="committed_version",property="committedVersion"),
             @Result(column="committed_version_hash",property="committedVersionHash"),
             @Result(column="distribution_info",property="distributionInfo"),
-            @Result(column="materialized_index_id_list",property="materializedIndexIdList",javaType = String.class, jdbcType = JdbcType.VARCHAR)})
+            @Result(column="materialized_index_id_list",property="materializedIndexIdList",javaType = String.class, jdbcType = JdbcType.VARCHAR),
+            @Result(column="base_index_id",property="baseIndexId")})
     //     @Results(value = { @Result(property = "userName", column = "user_name", javaType = String.class, jdbcType = JdbcType.VARCHAR) })
     List<MetaPartition> selectByIds(@Param("ids") List<Long> ids);
 
@@ -71,7 +73,8 @@ public interface MetaPartitionMapper {
             "committed_version = #{committedVersion,jdbcType=BIGINT}," +
             "committed_version_hash = #{committedVersionHash,jdbcType=BIGINT}," +
             "distribution_info = #{distributionInfo,jdbcType=LONGVARCHAR}," +
-            "materialized_index_id_list = #{materializedIndexIdList,jdbcType=VARCHAR}" +
-            "where partition_id = #{partitionId,jdbcType=BIGINT}")
+            "materialized_index_id_list = #{materializedIndexIdList,jdbcType=VARCHAR} ," +
+            "base_index_id = #{baseIndexId,jdbcType=BIGINT} " +
+            "where partition_id = #{partitionId,jdbcType=BIGINT} ")
     int updateByPrimaryKey(MetaPartition record);
 }

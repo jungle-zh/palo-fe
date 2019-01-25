@@ -23,18 +23,12 @@ package com.baidu.palo.analysis;
 import com.baidu.palo.catalog.Table;
 import com.baidu.palo.common.IdGenerator;
 import com.baidu.palo.thrift.TDescriptorTable;
-
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Repository for tuple (and slot) descriptors.
@@ -58,6 +52,7 @@ public class DescriptorTable {
     }
 
     public TupleDescriptor createTupleDescriptor() {
+        LOG.debug("createTupleDescriptor");
         TupleDescriptor d = new TupleDescriptor(tupleIdGenerator_.getNextId());
         tupleDescs.put(d.getId(), d);
         return d;
@@ -70,6 +65,8 @@ public class DescriptorTable {
     }
 
     public SlotDescriptor addSlotDescriptor(TupleDescriptor d) {
+        LOG.debug("addSlotDescriptor");
+        //Util.printStack();
         SlotDescriptor result = new SlotDescriptor(slotIdGenerator_.getNextId(), d);
         d.addSlot(result);
         slotDescs.put(result.getId(), result);
@@ -123,6 +120,7 @@ public class DescriptorTable {
      */
     public void markSlotsMaterialized(List<SlotId> ids) {
         for (SlotId id: ids) {
+            LOG.debug("mark slot Materialized , id :" + id.asInt());
             getSlotDesc(id).setIsMaterialized(true);
         }
     }
@@ -141,7 +139,7 @@ public class DescriptorTable {
         for (TupleDescriptor tupleD : tupleDescs.values()) {
             // inline view of a non-constant select has a non-materialized tuple descriptor
             // in the descriptor table just for type checking, which we need to skip
-            if (tupleD.getIsMaterialized()) {
+            if (tupleD.getIsMaterialized()) {  //jungle comment:only meterialzed column
                 result.addToTupleDescriptors(tupleD.toThrift());
                 // an inline view of a constant select has a materialized tuple
                 // but its table has no id

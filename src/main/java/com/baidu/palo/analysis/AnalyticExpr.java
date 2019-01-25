@@ -204,6 +204,7 @@ public class AnalyticExpr extends Expr {
     @Override
     public String debugString() {
         return Objects.toStringHelper(this)
+               .addValue("AnalyticExpr")
                .add("fn", getFnCall())
                .add("window", window)
                .addValue(super.debugString())

@@ -25,7 +25,6 @@ import com.baidu.palo.common.*;
 import com.baidu.palo.common.util.ListComparator;
 import com.baidu.palo.common.util.OrderByPair;
 import com.baidu.palo.common.util.TimeUtils;
-import com.baidu.palo.common.util.Util;
 import com.baidu.palo.load.AsyncDeleteJob.DeleteState;
 import com.baidu.palo.load.FailMsg.CancelType;
 import com.baidu.palo.load.LoadJob.EtlJobType;
@@ -1899,7 +1898,7 @@ public class Load {
    
     public boolean updateLoadJobState(LoadJob job, JobState destState, CancelType cancelType, String msg) {
         LOG.info("updateLoadJobState to  " + destState.name() + " and write edit log  , job id:" + job.getId());
-        Util.printStack();
+        //Util.printStack();
         boolean result = true;
         JobState srcState = null;
 

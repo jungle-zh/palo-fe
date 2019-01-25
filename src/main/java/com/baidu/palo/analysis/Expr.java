@@ -345,7 +345,7 @@ abstract public class Expr extends TreeNode<Expr> implements ParseNode, Cloneabl
         }
 
         for (Expr child: children) {
-            child.analyze(analyzer);
+            child.analyze(analyzer);  //jungle comment  go deeper , child analyze first
         }
         if (analyzer != null) analyzer.decrementCallDepth();
         computeNumDistinctValues();
@@ -426,7 +426,7 @@ abstract public class Expr extends TreeNode<Expr> implements ParseNode, Cloneabl
         }
         List<String> strings = Lists.newArrayList();
         for (Expr expr : exprs) {
-            strings.add(expr.debugString());
+            strings.add(expr.toSql());
         }
         return "(" + Joiner.on(" ").join(strings) + ")";
     }
@@ -649,10 +649,18 @@ abstract public class Expr extends TreeNode<Expr> implements ParseNode, Cloneabl
      */
     protected Expr substituteImpl(ExprSubstitutionMap smap, Analyzer analyzer)
             throws AnalysisException {
-        if (isImplicitCast()) return getChild(0).substituteImpl(smap, analyzer);
+        //LOG.debug("current expr :" + this.toSql() + " substituteImpl");
+        if (isImplicitCast()) {
+            //LOG.debug("is ImplicitCast ");
+            return getChild(0).substituteImpl(smap, analyzer);
+        }
         if (smap != null) {
             Expr substExpr = smap.get(this);
-            if (substExpr != null) return substExpr.clone();
+            if (substExpr != null) {
+                //LOG.debug("find current expr key:" + this.toSql() + " -> " + substExpr.toSql() );
+                return substExpr.clone();
+
+            }
         }
         for (int i = 0; i < children.size(); ++i) {
             children.set(i, children.get(i).substituteImpl(smap, analyzer));
@@ -817,7 +825,7 @@ abstract public class Expr extends TreeNode<Expr> implements ParseNode, Cloneabl
         msg.type = type.toThrift();
         msg.num_children = children.size();
         if (fn != null) {
-            msg.setFn(fn.toThrift());
+            msg.setFn(fn.toThrift()); // jungle comment  set function
             if (fn.hasVarArgs()) {
                 msg.setVararg_start_idx(fn.getNumArgs() - 1);
             }

@@ -3,6 +3,7 @@ package com.baidu.palo.metadata;
 import com.baidu.palo.catalog.*;
 import com.baidu.palo.metadata.dao.*;
 import com.baidu.palo.metadata.pojo.*;
+import com.baidu.palo.system.Backend;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,11 +15,307 @@ import java.util.Map;
 
 public class FeMetadataService {
 
+    public FeMetadataService(){
+
+    }
+
     private static final Logger LOG = LogManager.getLogger(FeMetadataService.class);
 
-    public void save(OlapTable olapTable) {
 
-        MetaOlapTable metaOlapTable = toMetaOlapTable(olapTable);
+    public Replica loadReplica(Long replicaId,SqlSession session){
+        MetaReplicaMapper metaReplicaMapper = session.getMapper(MetaReplicaMapper.class);
+        MetaReplica metaReplica = metaReplicaMapper.selectByPrimaryKey(replicaId);
+        LOG.info("load replica:" + metaReplica.getReplicaId() + " ,version :" + metaReplica.getVersion());
+        Replica replica = new Replica(metaReplica.getReplicaId(),metaReplica.getBackendId(),
+                metaReplica.getVersion(),metaReplica.getVersionHash(),metaReplica.getDataSize(),
+                metaReplica.getRowCount(),JsonHelper.fromJson(metaReplica.getReplicaState(), Replica.ReplicaState.class));
+
+        return  replica;
+
+    }
+
+
+    public Tablet loadTablet(Long tabletId ,SqlSession session){
+        MetaTabletMapper metaTabletMapper = session.getMapper(MetaTabletMapper.class);
+        MetaTablet metaTablet = metaTabletMapper.selectByPrimaryKey(tabletId);
+
+        Tablet tablet = new Tablet(metaTablet.getTabletId());
+        tablet.setCheckedVersion(metaTablet.getCheckedVersion(),metaTablet.getCheckedVersionHash());
+        LOG.info("load tablet:" + tablet.getId() );
+        List<Long> replicaIdList =  JsonHelper.fromJsonArray(metaTablet.getReplicaIdList(),Long.class);
+        for(Long replicaId : replicaIdList){
+            Replica replica = loadReplica(replicaId,session);
+            tablet.addReplicaWhenLoad(replica);
+        }
+        return  tablet;
+
+    }
+
+    public MaterializedIndex loadMaterializedIndex(Long partitionId,Long key ,SqlSession session){
+
+        MetaMaterializedIndexMapper  metaMaterializedIndexMapper = session.getMapper(MetaMaterializedIndexMapper.class);
+        LOG.info("loadMaterializedIndex : materializedIndexId:" + key  + " ,partitionId :" + partitionId);
+        MetaMaterializedIndex metaMaterializedIndex = metaMaterializedIndexMapper.selectByPrimaryKey(key,partitionId);
+        MaterializedIndex  materializedIndex = new MaterializedIndex(metaMaterializedIndex.getMaterializedIndexId(),
+                JsonHelper.fromJson(metaMaterializedIndex.getMaterializedIndexState(), MaterializedIndex.IndexState.class));
+
+
+        materializedIndex.setRollupIndexInfo(metaMaterializedIndex.getRollupIndexId(),metaMaterializedIndex.getRollupFinishedVersion());
+        materializedIndex.setRowCount(metaMaterializedIndex.getRowCount());
+
+
+        List<Long>  tabletIdList = JsonHelper.fromJsonArray(metaMaterializedIndex.getTabletIdList(),Long.class);
+
+        for(Long tabletId : tabletIdList){
+
+            Tablet tablet = loadTablet(tabletId,session);
+            materializedIndex.addTablet(tablet);
+
+        }
+
+        return materializedIndex;
+
+    }
+
+    public Partition loadPartition(Long partitionId,SqlSession session){
+
+        MetaPartitionMapper metaPartitionMapper =  session.getMapper(MetaPartitionMapper.class);
+        MetaPartition metaPartition = metaPartitionMapper.selectByPrimaryKey(partitionId);
+
+        //todo
+        long baseIndexId = metaPartition.getBaseIndexId();
+
+        LOG.info("loadPartition ,partitionId :" + partitionId);
+        MaterializedIndex  materializedIndex = loadMaterializedIndex(metaPartition.getPartitionId(),baseIndexId,session);
+        LOG.info("load partition baseIndexId  :" + baseIndexId);
+        Partition partition = new Partition(metaPartition.getPartitionId(),
+                metaPartition.getPartitionName(),
+                materializedIndex,
+                metaPartition.getDistributionInfo().contains("HASH") ?
+                JsonHelper.fromJson(metaPartition.getDistributionInfo(),HashDistributionInfo.class):
+                JsonHelper.fromJson(metaPartition.getDistributionInfo(),RandomDistributionInfo.class));
+
+        partition.setName(metaPartition.getPartitionName());
+        partition.setCommittedVersion(metaPartition.getCommittedVersion());
+        partition.setCommittedVersionHash(metaPartition.getCommittedVersionHash());
+        partition.setState(JsonHelper.fromJson(metaPartition.getPartitionState(), Partition.PartitionState.class));
+        List<Long> mIndexIdList  = JsonHelper.fromJsonArray(metaPartition.getMaterializedIndexIdList(),Long.class);
+
+        for(long mIndexId : mIndexIdList){
+            if(mIndexId == baseIndexId){
+                LOG.info("mIndexId == baseIndexId :" + mIndexId);
+                continue;
+            }
+            LOG.info("create mIndexId: " + mIndexId ) ;
+            MaterializedIndex  mIndex = loadMaterializedIndex(metaPartition.getPartitionId(),mIndexId,session);
+            partition.createRollupIndex(mIndex);
+        }
+
+        return partition;
+
+    }
+
+
+
+    public OlapTable loadTable(Long tableId,SqlSession session){
+
+
+            //session =  MybatisConfig.getInstance().getSessionFactory();
+            MetaOlapTableMapper olapTablePojoMapper = session.getMapper(MetaOlapTableMapper.class);
+
+            MetaOlapTable metaOlapTable = olapTablePojoMapper.selectByPrimaryKey(tableId);
+
+            //todo add baseScheme and tableName
+            OlapTable olapTable = new OlapTable(metaOlapTable.getTableId(),metaOlapTable.getTableName(),JsonHelper.fromJsonArray(metaOlapTable.getBaseSchema(),Column.class),
+                    JsonHelper.fromJson(metaOlapTable.getKeysType(),KeysType.class),
+                    JsonHelper.fromJson(metaOlapTable.getPartitionInfo(),PartitionInfo.class),
+                    metaOlapTable.getDistributionInfo().contains("HASH") ?
+                    JsonHelper.fromJson(metaOlapTable.getDistributionInfo(), HashDistributionInfo.class ):
+                    JsonHelper.fromJson(metaOlapTable.getDistributionInfo(), RandomDistributionInfo.class ));
+
+            List<Long> indexs = JsonHelper.fromJsonArray(metaOlapTable.getSchemaIndexIdList(), Long.class);
+            MetaSchemaIndexMapper metaSchemaIndexMapper = session.getMapper(MetaSchemaIndexMapper.class);
+
+
+            for(Long index : indexs){
+                MetaSchemaIndex metaSchemaIndex = metaSchemaIndexMapper.selectByPrimaryKey(index);
+                List<Column> columns = JsonHelper.fromJsonArray(metaSchemaIndex.getSchemaColumn(),Column.class);
+                //todo add indexNmae
+                olapTable.setIndexSchemaInfo(metaSchemaIndex.getId(),metaSchemaIndex.getName(),columns, metaSchemaIndex.getSchemaVersion(),
+                metaSchemaIndex.getSchemaHash(),metaSchemaIndex.getShortKeyColumnCount());
+
+                LOG.info("load table schema index :" + metaSchemaIndex.getId() + " ,schema version :" + metaSchemaIndex.getSchemaVersion() + " ,schema hash:" + metaSchemaIndex.getSchemaHash());
+            }
+
+            List<Long> partitioIdList = JsonHelper.fromJsonArray(metaOlapTable.getPartitionIdList(),Long.class);
+
+            for(Long partitionId : partitioIdList){
+                Partition partition  =  loadPartition(partitionId,session);
+                olapTable.addPartition(partition);
+            }
+
+
+
+            return  olapTable;
+    }
+
+    public List<Backend> loadBackends(){
+
+        List<Backend> res = new ArrayList<>();
+        SqlSession session = null;
+        try {
+
+            session = MybatisConfig.getInstance().getSessionFactory();
+            MetaBackendMapper metaBackendMapper = session.getMapper(MetaBackendMapper.class);
+            List<MetaBackend> backends = metaBackendMapper.selectByClusterName("default_cluster");
+
+            for(MetaBackend metaBackend:backends){
+                Backend backend = metaBackend.toBackend();
+                res.add(backend);
+            }
+
+
+
+        }catch (Exception e){
+            session.rollback();
+        } finally {
+            if (null != session) {
+                session.close();
+            }
+        }
+        return  res;
+
+    }
+    public List<Database> loaddb(){
+
+
+        List<Database> res = new ArrayList<>();
+        SqlSession session = null;
+        try {
+
+            session = MybatisConfig.getInstance().getSessionFactory();
+
+            MetaDbMapper dbmapper = session.getMapper(MetaDbMapper.class);
+            List<String> dbNames = dbmapper.selectAllDbName();
+
+            MetaOlapTableMapper olapTablePojoMapper = session.getMapper(MetaOlapTableMapper.class);
+
+            for(String dbName :dbNames ){
+
+
+                MetaDb metaDb = dbmapper.selectByDbName(dbName);
+                Database db = new Database(metaDb.getDbId(),metaDb.getDbName());
+                db.setClusterName(metaDb.getClusterName());
+                db.setDbState(JsonHelper.fromJson(metaDb.getDbState(), Database.DbState.class));
+                db.setAttachDb(metaDb.getAttachDbName());
+
+                List<Long> ids  =  olapTablePojoMapper.selectTableIdsByDbName(dbName);
+                for(Long id : ids){
+                    OlapTable table =  loadTable(id,session);
+                    db.createTable(table);
+                }
+                res.add(db);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+            session.rollback();
+        } finally {
+            if (null != session) {
+                session.close();
+            }
+        }
+
+        return  res;
+
+    }
+
+    public Long loadNextId(){
+
+        Long id = -1L;
+
+        SqlSession session = null;
+        try {
+
+            session = MybatisConfig.getInstance().getSessionFactory();
+            MetaInstanceIdMapper metaInstanceIdMapper = session.getMapper(MetaInstanceIdMapper.class);
+
+            id = metaInstanceIdMapper.selectId();
+
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+            session.rollback();
+        } finally {
+            if (null != session) {
+                session.close();
+            }
+        }
+
+        return  id ;
+
+
+    }
+    public void saveBackEnd(Backend backend){
+        LOG.info("savaBackEnd");
+
+      MetaBackend metaBackend =  toMetaBackend(backend);
+
+        SqlSession session = null;
+        try {
+            session = MybatisConfig.getInstance().getSessionFactory();
+            MetaBackendMapper metaBackendMapper = session.getMapper(MetaBackendMapper.class);
+            MetaBackend metaBackend1 = metaBackendMapper.selectByPrimaryKey(metaBackend.getBackendId());
+            if(metaBackend1 == null){
+                metaBackendMapper.insert(metaBackend);
+            }else {
+                metaBackendMapper.updateByPrimaryKey(metaBackend);
+            }
+
+            session.commit();
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            session.rollback();
+        } finally {
+            if (null != session) {
+                session.close();
+            }
+        }
+
+
+
+    }
+    public void saveDb(Database db){
+
+        LOG.info("saveDb ");
+        MetaDb metaDb = toMetaDb(db);
+
+        SqlSession session = null;
+        try {
+            session = MybatisConfig.getInstance().getSessionFactory();
+            MetaDbMapper metaDbMapper = session.getMapper(MetaDbMapper.class);
+            LOG.info(" dbName:" + metaDb.getDbName());
+            metaDbMapper.insert(metaDb);
+
+
+            session.commit();
+        }catch (Exception e) {
+            e.printStackTrace();
+            session.rollback();
+            LOG.error("fe meta data save to mysql error : " + e.getMessage());
+        } finally {
+            if (null != session) {
+                session.close();
+            }
+        }
+
+
+    }
+    public void saveTable(OlapTable olapTable,Database db) {
+
+        MetaOlapTable metaOlapTable = toMetaOlapTable(olapTable,db);
         List<MetaSchemaIndex> metaSchemaIndexList = toMetaSchemaIndexList(olapTable);
         List<MetaPartition> metaPartitionList = toMetaPartitionList(olapTable);
         List<MetaMaterializedIndex> metaMaterializedIndexList = toMaterializedIndex(olapTable);
@@ -71,7 +368,36 @@ public class FeMetadataService {
         LOG.info("fe meta data save to mysql sucessful, table[{}].", olapTable.getName());
     }
 
-    private MetaOlapTable toMetaOlapTable(OlapTable olapTable) {
+
+    private MetaBackend toMetaBackend(Backend backend){
+        MetaBackend metaBackend = new MetaBackend();
+        metaBackend.setOwnerClusterName(backend.getOwnerClusterName());
+        metaBackend.setBePort(backend.getBePort());
+        metaBackend.setBeRpcPort(backend.getBeRpcPort());
+        metaBackend.setDecommissionType(JsonHelper.toJson(backend.getDecommissionType()));
+        metaBackend.setHeartbeatPort(backend.getHeartbeatPort());
+        metaBackend.setHost(backend.getHost());
+        metaBackend.setHttpPort(backend.getHttpPort());
+        metaBackend.setBackendId(backend.getId());
+        metaBackend.setLastStartTime(backend.getLastStartTime());
+        metaBackend.setLastUpdateMs(backend.getLastUpdateMs());
+
+        return metaBackend;
+
+    }
+    private MetaDb toMetaDb(Database db){
+        MetaDb metaDb = new MetaDb() ;
+        metaDb.setDbId(db.getId());
+        metaDb.setDbName(db.getFullName());
+        metaDb.setDbState(JsonHelper.toJson(db.getDbState()));
+        metaDb.setClusterName(db.getClusterName());
+        metaDb.setAttachDbName(db.getAttachDb());
+
+        return  metaDb;
+
+
+    }
+    private MetaOlapTable toMetaOlapTable(OlapTable olapTable,Database db) {
         MetaOlapTable metaOlapTable = new MetaOlapTable();
         metaOlapTable.setTableId(olapTable.getId());
         metaOlapTable.setTableName(olapTable.getName());
@@ -98,6 +424,9 @@ public class FeMetadataService {
         metaOlapTable.setBfColumns(JsonHelper.toJson(olapTable.getCopiedBfColumns()));
         metaOlapTable.setBfFpp(olapTable.getBfFpp());
 
+        metaOlapTable.setBaseSchema(JsonHelper.toJson(olapTable.getBaseSchema()));
+        metaOlapTable.setDbName(db.getFullName());
+
         return metaOlapTable;
     }
 
@@ -114,7 +443,9 @@ public class FeMetadataService {
             metaSchemaIndex.setStorageType(olapTable.getStorageTypeByIndexId(indexId).getValue());
             // 把List<Column>转换为String
             metaSchemaIndex.setSchemaColumn(JsonHelper.toJson(entry.getValue()));
+            metaSchemaIndex.setName(olapTable.getIndexNameById(indexId));
 
+            LOG.info("metaSchemaIndexList add metaSchemaIndex:" + indexId);
             metaSchemaIndexList.add(metaSchemaIndex);
 
         }
@@ -132,7 +463,9 @@ public class FeMetadataService {
             metaPartition.setPartitionState(partition.getState().toString());
 
             metaPartition.setCommittedVersion(partition.getCommittedVersion());
-            metaPartition.setCommittedVersionHash(metaPartition.getCommittedVersionHash());
+            metaPartition.setCommittedVersionHash(partition.getCommittedVersionHash());
+            metaPartition.setBaseIndexId(partition.getBaseIndex().getId());
+
 
             // 类转换
             metaPartition.setDistributionInfo(JsonHelper.toJson(partition.getDistributionInfo()));
@@ -144,6 +477,7 @@ public class FeMetadataService {
             }
             metaPartition.setMaterializedIndexIdList(JsonHelper.toJson(materializedIndexIdList));
 
+            LOG.info("metaPartitionList add metaPartition:" + metaPartition.getPartitionId());
             metaPartitionList.add(metaPartition);
         }
         return metaPartitionList;
@@ -174,6 +508,7 @@ public class FeMetadataService {
 
                 metaMaterializedIndex.setTabletIdList(JsonHelper.toJson(materializedIndex.getTabletIdsInOrder()));
 
+                LOG.info("materializedIndexList add metaMaterializedIndex,materializedIndexId:partitionId " + metaMaterializedIndex.getMaterializedIndexId() +":"+ metaMaterializedIndex.getPartitionId() );
                 materializedIndexList.add(metaMaterializedIndex);
             }
         }
@@ -202,6 +537,7 @@ public class FeMetadataService {
                         replicaIdList.add(replica.getId());
                     }
                     metaTablet.setReplicaIdList(JsonHelper.toJson(replicaIdList));
+                    LOG.info("metaTabletList add metaTablet: " + metaTablet.getTabletId());
                     metaTabletList.add(metaTablet);
                 }
             }
@@ -226,6 +562,7 @@ public class FeMetadataService {
                         metaReplica.setDataSize(replica.getRowCount());
                         // 集中类型： NORMAL, ROLLUP, SCHEMA_CHANGE, CLONE
                         metaReplica.setReplicaState(replica.getState().toString());
+                        LOG.info("metaReplicaList add metaReplica:" + metaReplica.getReplicaId());
                         metaReplicaList.add(metaReplica);
                     }
                 }
@@ -233,6 +570,28 @@ public class FeMetadataService {
         }
 
         return metaReplicaList;
+    }
+    public void deleteBackend(Backend backend){
+
+        SqlSession session = null;
+        try {
+
+            session =  MybatisConfig.getInstance().getSessionFactory();
+            MetaBackendMapper metaBackendMapper = session.getMapper(MetaBackendMapper.class);
+
+            metaBackendMapper.deleteByPrimaryKey(backend.getId());
+
+            session.commit();
+        } catch (Exception e) {
+            session.rollback();
+            LOG.error("fe meta data delete error : " + e.getMessage());
+        } finally {
+            if (null != session) {
+                session.close();
+            }
+        }
+
+
     }
 
 
@@ -345,7 +704,7 @@ public class FeMetadataService {
     }
 
 
-    public void updateRollupTable(OlapTable olapTable) {
+    public void updateRollupTable(OlapTable olapTable,Database db) {
         SqlSession session = null;
 
         try {
@@ -403,7 +762,7 @@ public class FeMetadataService {
             metaTabletMapper.batchInsert(metaTabletList);
 
             metaOlapTableMapper.deleteByPrimaryKey(olapTable.getId());
-            MetaOlapTable newMetaOlapTable = toMetaOlapTable(olapTable);
+            MetaOlapTable newMetaOlapTable = toMetaOlapTable(olapTable,db);
             metaOlapTableMapper.insert(newMetaOlapTable);
 
             // replica的信息已经更新结束，不需要再更新了。
@@ -434,7 +793,9 @@ public class FeMetadataService {
 
             MetaReplica metaReplica = metaReplicaMapper.selectByPrimaryKey(replica.getId());
 
+            boolean isNew = false;
             if (metaReplica == null) {
+                isNew = true;
                 metaReplica = new MetaReplica();
                 metaReplica.setReplicaId(replica.getId());
                 metaReplica.setBackendId(replica.getBackendId());
@@ -447,10 +808,15 @@ public class FeMetadataService {
             metaReplica.setRowCount(replica.getRowCount());
 
             // 先删除，后更新：
-            metaReplicaMapper.deleteByPrimaryKey(replica.getId());
-            metaReplicaMapper.insert(metaReplica);
+            //metaReplicaMapper.deleteByPrimaryKey(replica.getId());
+            if(isNew){
+                metaReplicaMapper.insert(metaReplica);
+            }else {
+                metaReplicaMapper.updateByPrimaryKey(metaReplica);
+            }
 
-//            metaReplicaMapper.updateByPrimaryKey(metaReplica);
+
+         //  metaReplicaMapper.updateByPrimaryKey(metaReplica);
 
             session.commit();
 
@@ -547,47 +913,60 @@ public class FeMetadataService {
 
 
     public void updatePartition(Partition partition) {
+        LOG.info("updatePartition");
         SqlSession session = null;
         try {
             session = MybatisConfig.getInstance().getSessionFactory();
 
             MetaPartitionMapper metaPartitionMapper = session.getMapper(MetaPartitionMapper.class);
 
+
             MetaPartition metaPartition = metaPartitionMapper.selectByPrimaryKey(partition.getId());
 
             if (metaPartition != null) {
                 metaPartition.setCommittedVersion(partition.getCommittedVersion());
                 metaPartition.setCommittedVersionHash(partition.getCommittedVersionHash());
+                LOG.info("setCommittedVersion  :" + partition.getCommittedVersion());
             }
 
-            session.commit();
-            LOG.info("update meta partition table sucessful. ");
+            metaPartitionMapper.updateByPrimaryKey(metaPartition);
 
-        } finally {
+            session.commit();
+            LOG.info("update meta partition table sucessful, version:  {} ,version hash : {}" , metaPartition.getCommittedVersion(),metaPartition.getCommittedVersionHash());
+
+        }
+        catch (Exception e){
+            session.rollback();
+            e.printStackTrace();
+        }
+        finally {
             if (null != session) {
                 session.close();
             }
         }
     }
 
-    public void updateMaterializedIndex(MaterializedIndex materializedIndex, long partitiooId) {
+    public void updateMaterializedIndex(MaterializedIndex materializedIndex,Long partitionId) {
 
         SqlSession session = null;
         try {
             session = MybatisConfig.getInstance().getSessionFactory();
 
             MetaMaterializedIndexMapper metaMaterializedIndexMapper = session.getMapper(MetaMaterializedIndexMapper.class);
-            MetaMaterializedIndex metaMaterializedIndex = metaMaterializedIndexMapper.selectByPrimaryKey(materializedIndex.getId(), partitiooId);
+            MetaMaterializedIndex metaMaterializedIndex = metaMaterializedIndexMapper.selectByPrimaryKey(materializedIndex.getId(), partitionId);
 
-            if (materializedIndex != null) {
-                materializedIndex.setRowCount(materializedIndex.getRowCount());
+            if (metaMaterializedIndex != null) {
+                metaMaterializedIndex.setRowCount(materializedIndex.getRowCount());
+                metaMaterializedIndexMapper.updateCountByPrimaryKey(metaMaterializedIndex);
             }
-
 
             session.commit();
             LOG.info("update meta MaterializedIndex table sucessful. ");
 
-        } finally {
+        } catch (Exception e){
+            session.rollback();
+            e.printStackTrace();
+        }finally {
             if (null != session) {
                 session.close();
             }
@@ -619,4 +998,33 @@ public class FeMetadataService {
     }
 
 
+    public void saveNextId(Long nextId) {
+
+
+        SqlSession session = null;
+
+        try {
+            session = MybatisConfig.getInstance().getSessionFactory();
+            MetaInstanceIdMapper metaInstanceIdMapper = session.getMapper(MetaInstanceIdMapper.class);
+
+            Long currentId = metaInstanceIdMapper.selectId();
+            if(currentId == null || currentId < 10000){
+                metaInstanceIdMapper.insertId(nextId);
+            }else {
+                metaInstanceIdMapper.updateId(nextId);
+            }
+
+            session.commit();
+
+        } catch (Exception e) {
+            session.rollback();
+            LOG.error("fe meta data delete error : " + e.getMessage());
+        } finally {
+            if (null != session) {
+                session.close();
+            }
+        }
+
+
+    }
 }

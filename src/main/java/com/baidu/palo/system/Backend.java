@@ -15,6 +15,22 @@
 
 package com.baidu.palo.system;
 
+import com.baidu.palo.alter.DecommissionBackendJob.DecommissionType;
+import com.baidu.palo.catalog.Catalog;
+import com.baidu.palo.catalog.DiskInfo;
+import com.baidu.palo.catalog.DiskInfo.DiskState;
+import com.baidu.palo.common.FeMetaVersion;
+import com.baidu.palo.common.io.Text;
+import com.baidu.palo.common.io.Writable;
+import com.baidu.palo.metadata.FeMetadataService;
+import com.baidu.palo.system.BackendEvent.BackendEventType;
+import com.baidu.palo.thrift.TDisk;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.eventbus.EventBus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -25,22 +41,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.baidu.palo.alter.DecommissionBackendJob.DecommissionType;
-import com.baidu.palo.catalog.Catalog;
-import com.baidu.palo.catalog.DiskInfo;
-import com.baidu.palo.catalog.DiskInfo.DiskState;
-import com.baidu.palo.common.FeMetaVersion;
-import com.baidu.palo.common.io.Text;
-import com.baidu.palo.common.io.Writable;
-import com.baidu.palo.system.BackendEvent.BackendEventType;
-import com.baidu.palo.thrift.TDisk;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.eventbus.EventBus;
 
 /**
  * This class extends the primary identifier of a Backend with ephemeral state,
@@ -166,7 +166,9 @@ public class Backend implements Writable {
         }
 
         if (isChanged) {
-            Catalog.getInstance().getEditLog().logBackendStateChange(this);
+          //  Catalog.getInstance().getEditLog().logBackendStateChange(this);
+            FeMetadataService service = new FeMetadataService();
+            service.saveBackEnd(this);
         }
     }
 

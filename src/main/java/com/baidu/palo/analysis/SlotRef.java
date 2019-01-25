@@ -26,11 +26,9 @@ import com.baidu.palo.common.io.Text;
 import com.baidu.palo.thrift.TExprNode;
 import com.baidu.palo.thrift.TExprNodeType;
 import com.baidu.palo.thrift.TSlotRef;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Preconditions;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -125,6 +123,8 @@ public class SlotRef extends Expr {
 
     @Override
     public void analyzeImpl(Analyzer analyzer) throws AnalysisException {
+        LOG.debug("analyzeImpl :" + this.toSql());
+        //Util.printStack();
         desc = analyzer.registerColumnRef(tblName, col);
         type = desc.getType();
         if (this.type == Type.CHAR) {
@@ -162,11 +162,17 @@ public class SlotRef extends Expr {
         //     sb.append("]");
         // }
         if (tblName != null) {
-            return tblName.toSql() + "." + label + sb.toString();
+            return "(slotId:" + ( desc == null ? "null" :  desc.getId().asInt() ) + ", " + tblName.toSql() + "." + label +")";
         } else if (label != null) {
-            return label + sb.toString();
+            String res = "(slotId:" +  ( desc == null ? "null" :  desc.getId().asInt() )  + ", " +label + ")";
+            return res;
         } else {
-            return "<slot " + Integer.toString(desc.getId().asInt()) + ">" + sb.toString();
+            String  colName = "";
+            if(desc.getColumn() != null ){
+                colName = desc.getColumn().getName();
+            }
+            return "(slotId:" + desc.getId().asInt() + ")";
+            //return "<slot " + Integer.toString(desc.getId().asInt()) + ">: " +   desc.getColumn().getName()  + sb.toString();
         }
     }
 

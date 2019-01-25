@@ -102,7 +102,8 @@ public class Log4jConfig extends XmlConfiguration {
         if (!(sysLogLevel.equalsIgnoreCase("INFO") || 
                 sysLogLevel.equalsIgnoreCase("WARN") ||
                 sysLogLevel.equalsIgnoreCase("ERROR") || 
-                sysLogLevel.equalsIgnoreCase("FATAL"))) {
+                sysLogLevel.equalsIgnoreCase("FATAL") ||
+                sysLogLevel.equalsIgnoreCase("DEBUG")))  {
             throw new IOException("sys_log_level config error");
         }
         

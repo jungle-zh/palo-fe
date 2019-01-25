@@ -20,45 +20,23 @@
 
 package com.baidu.palo.analysis;
 
-import com.baidu.palo.catalog.AccessPrivilege;
-import com.baidu.palo.catalog.Column;
-import com.baidu.palo.catalog.Database;
-import com.baidu.palo.catalog.OlapTable;
-import com.baidu.palo.catalog.PrimitiveType;
+import com.baidu.palo.catalog.*;
 import com.baidu.palo.catalog.Table.TableType;
-import com.baidu.palo.catalog.Type;
 import com.baidu.palo.cluster.ClusterNamespace;
-import com.baidu.palo.common.AnalysisException;
-import com.baidu.palo.common.ColumnAliasGenerator;
-import com.baidu.palo.common.ErrorCode;
-import com.baidu.palo.common.ErrorReport;
-import com.baidu.palo.common.InternalException;
-import com.baidu.palo.common.Pair;
-import com.baidu.palo.common.TableAliasGenerator;
-import com.baidu.palo.common.TreeNode;
+import com.baidu.palo.common.*;
 import com.baidu.palo.common.util.SqlUtils;
 import com.baidu.palo.rewrite.ExprRewriter;
-
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import com.google.common.collect.Sets;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Representation of a single select block, including GROUP BY, ORDER BY and HAVING
@@ -262,18 +240,21 @@ public class SelectStmt extends QueryStmt {
     }
 
     public void analyze(Analyzer analyzer) throws AnalysisException, InternalException {
+        LOG.debug("##### selectStmt analyze start : \n " + this.toSql());
         if (isAnalyzed()) return;
         super.analyze(analyzer);
 
+        LOG.debug("11 fromClause_ analyze start  ");
         fromClause_.setNeedToSql(needToSql);
         fromClause_.analyze(analyzer);
-
+        LOG.debug("11 fromClause_ analyze end  ,selectStmt sql is: \n " + this.toSql());
         // Generate !empty() predicates to filter out empty collections.
         // Skip this step when analyzing a WITH-clause because CollectionTableRefs
         // do not register collection slots in their parent in that context
         // (see CollectionTableRef.analyze()).
         if (!analyzer.isWithClause()) registerIsNotEmptyPredicates(analyzer);
 
+        LOG.debug("22 selectList analyze start  ,sql is :\n " + this.toSql());
         // populate selectListExprs, aliasSMap, and colNames
         for (SelectListItem item : selectList.getItems()) {
             if (item.isStar()) {
@@ -286,12 +267,15 @@ public class SelectStmt extends QueryStmt {
             } else {
                 // Analyze the resultExpr before generating a label to ensure enforcement
                 // of expr child and depth limits (toColumn() label may call toSql()).
+                LOG.debug(" SelectListItem " + item.getExpr().toSql() + " start analyze");
+                //jungle comment: will put select item to global descTbl and father inlineViewAnalyzer (really need ?)
+                // or  find  slotRefMap from analyzer register in registerColumnRef of sub InlineViewRef () or BaseTableRef
                 item.getExpr().analyze(analyzer);
                 if (item.getExpr().contains(Predicates.instanceOf(Subquery.class))) {
                     throw new AnalysisException(
                             "Subqueries are not supported in the select list.");
                 }
-
+                LOG.debug(" SelectListItem " + item.getExpr().toSql() + " add to resultExprs");
                 resultExprs.add(item.getExpr());
                 SlotRef aliasRef = new SlotRef(null, item.toColumnLabel());
                 Expr existingAliasExpr = aliasSMap.get(aliasRef);
@@ -304,10 +288,12 @@ public class SelectStmt extends QueryStmt {
                 colLabels.add(item.toColumnLabel());
             }
         }
+        LOG.debug("22 selectList analyze end  ,sql is :\n " + this.toSql());
         if (needToSql) {
             originalExpr = Expr.cloneList(resultExprs);
         }
 
+        LOG.debug("33 resultExprs analyze start  ,sql is :\n " + this.toSql());
         // analyze selectListExprs
         Expr.analyze(resultExprs, analyzer);
         if (TreeNode.contains(resultExprs, AnalyticExpr.class)) {
@@ -322,10 +308,14 @@ public class SelectStmt extends QueryStmt {
                         "cannot combine SELECT DISTINCT with analytic functions");
             }
         }
+        LOG.debug("33 resultExprs analyze end  ,sql is :\n" + this.toSql());
 
+        LOG.debug("44 whereClause analyze start  ,sql is :\n" + this.toSql());
         if (whereClause != null) {
             whereClauseRewrite();
+            LOG.debug("before whereClause analyze:"+whereClause.toSql());
             whereClause.analyze(analyzer);
+            LOG.debug("after whereClause analyze:"+whereClause.toSql());
             if (whereClause.containsAggregate()) {
                 ErrorReport.reportAnalysisException(ErrorCode.ERR_INVALID_GROUP_FUNC_USE);
             }
@@ -336,12 +326,19 @@ public class SelectStmt extends QueryStmt {
                 throw new AnalysisException(
                         "WHERE clause must not contain analytic expressions: " + e.toSql());
             }
+            LOG.debug("registerConjuncts for whereClause");
             analyzer.registerConjuncts(whereClause, false);
         }
-
+        LOG.debug("44 whereClause analyze end  ,sql is :\n " + this.toSql());
+        LOG.debug("55 createSortInfo  start, sql is :\n" + this.toSql());
         createSortInfo(analyzer);
+        LOG.debug("55 createSortInfo  end, sql is :\n" + this.toSql());
+        LOG.debug("66 Aggregation analyze start, sql is :\n" + this.toSql());
         analyzeAggregation(analyzer);
+        LOG.debug("66 Aggregation analyze end, sql is :\n" + this.toSql());
+        LOG.debug("77 AnalyticInfo start , sql is :\n" + this.toSql());
         createAnalyticInfo(analyzer);
+        LOG.debug("77 AnalyticInfo end , sql is :\n" + this.toSql());
         if (evaluateOrderBy) {
             createSortTupleInfo(analyzer);
         }
@@ -349,13 +346,16 @@ public class SelectStmt extends QueryStmt {
         if (needToSql) {
             sqlString_ = toSql();
         }
+        LOG.debug("88 reorderTable start ,sql is :\n" + toSql());
         reorderTable(analyzer);
-
+        LOG.debug("88 reorderTable end ,sql is :\n" + toSql());
+        LOG.debug("99 resolveInlineViewRefs , cur SelectStmt query is :" + toSql());
         resolveInlineViewRefs(analyzer);
 
         if (aggInfo != null) {
             if (LOG.isDebugEnabled()) LOG.debug("post-analysis " + aggInfo.debugString());
         }
+        LOG.debug("##### selectStmt analyze end :" + this.toSql());
     }
 
     public List<TupleId> getTableRefIds() {
@@ -431,6 +431,12 @@ public class SelectStmt extends QueryStmt {
         // Mark unassigned join predicates. Some predicates that must be evaluated by a join
         // can also be safely evaluated below the join (picked up by getBoundPredicates()).
         // Such predicates will be marked twice and that is ok.
+        String  sub_ref_id  = "";
+        for(TupleId id : getTableRefIds()){
+            sub_ref_id += id.asInt();
+            sub_ref_id +=  " ";
+        }
+        LOG.debug("start materializeRequiredSlots  for subquery tuples id  : " + sub_ref_id);
         List<Expr> unassigned =
             analyzer.getUnassignedConjuncts(getTableRefIds(), true);
         List<Expr> unassignedJoinConjuncts = Lists.newArrayList();
@@ -481,11 +487,22 @@ public class SelectStmt extends QueryStmt {
             // ArrayList<Expr> bindingPredicates =
             //         analyzer.getBoundPredicates(aggInfo.getResultTupleId(), groupBySlots, false);
             // havingConjuncts.addAll(bindingPredicates);
+
+            String  agg_res_tuple_id  = "";
+            for(TupleId id : aggInfo.getResultTupleId().asList()){
+                agg_res_tuple_id += id.asInt();
+                agg_res_tuple_id +=  " ";
+            }
+            LOG.debug("agginfo  ResultTupleId :" + agg_res_tuple_id);
+
             havingConjuncts.addAll(
                     analyzer.getUnassignedConjuncts(aggInfo.getResultTupleId().asList()));
             materializeSlots(analyzer, havingConjuncts);
+            LOG.debug("aggInfo materializeRequiredSlots ");
             aggInfo.materializeRequiredSlots(analyzer, baseTblSmap);
         }
+
+        LOG.debug("finish materializeRequiredSlots");
     }
 
     protected void reorderTable(Analyzer analyzer) throws AnalysisException {
@@ -609,6 +626,7 @@ public class SelectStmt extends QueryStmt {
      * baseTblResultExprs.
      */
     protected void resolveInlineViewRefs(Analyzer analyzer) throws AnalysisException {
+
         // Gather the inline view substitution maps from the enclosed inline views
         for (TableRef tblRef : fromClause_) {
             if (tblRef instanceof InlineViewRef) {
@@ -618,8 +636,9 @@ public class SelectStmt extends QueryStmt {
         }
 
         baseTblResultExprs = Expr.trySubstituteList(resultExprs, baseTblSmap, analyzer, false);
+        //jungle comment : baseTblResultExprs maybe after agg slot
         if (LOG.isDebugEnabled()) {
-            LOG.debug("baseTblSmap_: " + baseTblSmap.debugString());
+            LOG.debug("baseTblSmap: " + baseTblSmap.debugString());
             LOG.debug("resultExprs: " + Expr.debugString(resultExprs));
             LOG.debug("baseTblResultExprs: " + Expr.debugString(baseTblResultExprs));
         }
@@ -849,7 +868,16 @@ public class SelectStmt extends QueryStmt {
         List<Expr> substitutedAggs =
                 Expr.substituteList(aggExprs, countAllMap, analyzer, false);
         aggExprs.clear();
+        LOG.debug("substitutedAggs ");
         TreeNode.collect(substitutedAggs, Expr.isAggregatePredicate(), aggExprs);
+
+        for(FunctionCallExpr expr :aggExprs ){
+            LOG.debug("agg FunctionCallExpr:" + expr.toSql());
+        }
+        for(Expr expr :groupingExprsCopy ){
+            LOG.debug("agg groupingExprs:" + expr.toSql());
+        }
+
         createAggInfo(groupingExprsCopy, aggExprs, analyzer);
 
         // combine avg smap with the one that produces the final agg output
@@ -863,6 +891,7 @@ public class SelectStmt extends QueryStmt {
 
         // change select list, having and ordering exprs to point to agg output. We need
         // to reanalyze the exprs at this point.
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("combined smap: " + combinedSmap.debugString());
             LOG.debug("desctbl: " + analyzer.getDescTbl().debugString());

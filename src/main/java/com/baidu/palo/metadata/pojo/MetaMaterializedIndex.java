@@ -7,11 +7,11 @@ public class MetaMaterializedIndex {
 
     private String materializedIndexState;
 
-    private Long rowCount;
+    private long rowCount;
 
-    private Long rollupIndexId;
+    private long rollupIndexId;
 
-    private Long rollupFinishedVersion;
+    private long rollupFinishedVersion;
 
     private String tabletIdList;
 
@@ -39,7 +39,7 @@ public class MetaMaterializedIndex {
         this.materializedIndexState = materializedIndexState == null ? null : materializedIndexState.trim();
     }
 
-    public Long getRowCount() {
+    public long getRowCount() {
         return rowCount;
     }
 
@@ -47,7 +47,7 @@ public class MetaMaterializedIndex {
         this.rowCount = rowCount;
     }
 
-    public Long getRollupIndexId() {
+    public long getRollupIndexId() {
         return rollupIndexId;
     }
 
@@ -55,7 +55,7 @@ public class MetaMaterializedIndex {
         this.rollupIndexId = rollupIndexId;
     }
 
-    public Long getRollupFinishedVersion() {
+    public long getRollupFinishedVersion() {
         return rollupFinishedVersion;
     }
 

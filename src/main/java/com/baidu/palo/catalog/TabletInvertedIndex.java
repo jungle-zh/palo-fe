@@ -105,7 +105,14 @@ public class TabletInvertedIndex {
         try {
             LOG.info("begin to do tablet diff with backend[{}]. num: {}", backendId, backendTablets.size());
             start = System.currentTimeMillis();
+            LOG.info("replicaMetaWithBackend info:");
             Map<Long, Replica> replicaMetaWithBackend = replicaMetaTable.column(backendId);
+
+            for(Long tabletId:replicaMetaWithBackend.keySet()){
+                LOG.info( "backendId:" + backendId );
+                LOG.info( "tabletId:" + tabletId );
+                LOG.info("replica:" + replicaMetaWithBackend.get(tabletId).toString() );
+            }
             if (replicaMetaWithBackend != null) {
                 // traverse replicas in meta with this backend
                 for (Map.Entry<Long, Replica> entry : replicaMetaWithBackend.entrySet()) {
@@ -113,11 +120,17 @@ public class TabletInvertedIndex {
                     Preconditions.checkState(tabletMetaMap.containsKey(tabletId));
                     TabletMeta tabletMeta = tabletMetaMap.get(tabletId);
 
+                    LOG.info("tabletMetaMap info :");
+                    LOG.info("tabletId:" + tabletId);
+                    LOG.info("tabletMeta:" + tabletMeta.toString());
+
                     if (backendTablets.containsKey(tabletId)) {
                         TTablet backendTablet = backendTablets.get(tabletId);
                         Replica replica = entry.getValue();
                         for (TTabletInfo backendTabletInfo : backendTablet.getTablet_infos()) {
+                            LOG.info("backendTabletInfo schema_hash:" + backendTabletInfo.getSchema_hash() );
                             if (tabletMeta.containsSchemaHash(backendTabletInfo.getSchema_hash())) {
+                                LOG.info("foundTabletsWithValidSchema add tabletId:" + tabletId);
                                 foundTabletsWithValidSchema.add(tabletId);
                                 // 1. (intersection)
                                 if (checkSync(replica, backendTabletInfo.getVersion(),
@@ -136,13 +149,15 @@ public class TabletInvertedIndex {
                                 }
                             } else {
                                 // tablet with invalid schemahash
+                                LOG.info("invalid backendTabletInfo:" + backendTabletInfo.toString() );
+
                                 foundTabletsWithInvalidSchema.put(tabletId, backendTabletInfo);
                             }
                         } // end for be tablet info
                     } else {
                         // 2. (meta - be)
                         // may need delete from meta
-                        LOG.debug("backend[{}] does not report tablet[{}-{}]", backendId, tabletId, tabletMeta);
+                        LOG.info("backend[{}] does not report tablet[{}-{}]", backendId, tabletId, tabletMeta);
                         tabletDeleteFromMeta.put(tabletMeta.getDbId(), tabletId);
                     }
                 } // end for replicaMetaWithBackend
@@ -248,6 +263,7 @@ public class TabletInvertedIndex {
                 return;
             }
             tabletMetaMap.put(tabletId, tabletMeta);
+            LOG.info("addTablet , tabletId :" + tabletId + ", tabletMeta:" + tabletMeta.toString());
             if (!tabletMetaTable.contains(tabletMeta.getPartitionId(), tabletMeta.getIndexId())) {
                 tabletMetaTable.put(tabletMeta.getPartitionId(), tabletMeta.getIndexId(), tabletMeta);
             }
@@ -279,6 +295,7 @@ public class TabletInvertedIndex {
         writeLock();
         try {
             Preconditions.checkState(tabletMetaMap.containsKey(tabletId));
+            LOG.info("addReplica , tabletId :" + tabletId + ",replica info:" + replica.toString());
             replicaMetaTable.put(tabletId, replica.getBackendId(), replica);
         } finally {
             writeUnlock();

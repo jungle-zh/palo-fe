@@ -119,6 +119,7 @@ public class SingleNodePlanner {
      *   re-maps its input, set a substitution map to be applied by parents.
      */
     public PlanNode createSingleNodePlan() throws InternalException, AnalysisException {
+        LOG.info("createSingleNodePlan");
         QueryStmt queryStmt = ctx_.getQueryStmt();
         // Use the stmt's analyzer which is not necessarily the root analyzer
         // to detect empty result sets.
@@ -140,12 +141,14 @@ public class SingleNodePlanner {
             analyzer.materializeSlots(queryStmt.getBaseTblResultExprs());
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("desctbl: " + analyzer.getDescTbl().debugString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("global desctbl: " + analyzer.getDescTbl().debugString());
         }
         PlanNode singleNodePlan = createQueryPlan(queryStmt, analyzer,
                 ctx_.getQueryOptions().getDefault_order_by_limit());
         Preconditions.checkNotNull(singleNodePlan);
+
+        LOG.info("createSingleNodePlan result:\n" + singleNodePlan.getExplainString());
         return singleNodePlan;
     }
 
@@ -201,6 +204,7 @@ public class SingleNodePlanner {
      */
     private PlanNode createQueryPlan(QueryStmt stmt, Analyzer analyzer, long defaultOrderByLimit)
             throws InternalException, AnalysisException {
+        LOG.info("createQueryPlan start   ");
         if (analyzer.hasEmptyResultSet()) return createEmptyNode(stmt, analyzer);
 
         long newDefaultOrderByLimit = defaultOrderByLimit;
@@ -264,6 +268,8 @@ public class SingleNodePlanner {
             root.setLimit(stmt.getLimit());
             root.computeStats(analyzer);
         }
+        LOG.info("createQueryPlan finish  ");
+
 
         return root;
     }
@@ -285,6 +291,7 @@ public class SingleNodePlanner {
             return root;
         }
         // evaluate conjuncts in SelectNode
+        LOG.debug("create selectNode to evaluate conjuncts");
         SelectNode selectNode = new SelectNode(ctx_.getNextNodeId(), root, conjuncts);
         selectNode.init(analyzer);
         Preconditions.checkState(selectNode.hasValidStats());
@@ -586,6 +593,7 @@ public class SingleNodePlanner {
             OlapScanNode olapNode = (OlapScanNode) root;
             if (olapNode.getCanTurnOnPreAggr()) {
                 ((OlapScanNode) root).setIsPreAggregation(true);
+                LOG.info("setIsPreAggregation true ");
             } else {
                 LOG.info("this olap-scan-node[{}] has already been turned off pre-aggregation. ",
                         olapNode.debugString());
@@ -599,6 +607,13 @@ public class SingleNodePlanner {
      */
     private PlanNode createSelectPlan(SelectStmt selectStmt, Analyzer analyzer, long defaultOrderByLimit)
             throws InternalException, AnalysisException {
+
+        String subTupleId = "";
+        for(TupleId id :selectStmt.getTableRefIds()){
+            subTupleId += id ;
+            subTupleId += " ";
+        }
+        LOG.info("createSelectPlan start ,query is : " + selectStmt.toSql() +  " ,sub query ids:" + subTupleId);
         // no from clause -> nothing to plan
         if (selectStmt.getTableRefs().isEmpty()) {
             return createConstantSelectPlan(selectStmt, analyzer);
@@ -626,8 +641,13 @@ public class SingleNodePlanner {
         }
         
         // create left-deep sequence of binary hash joins; assign node ids as we go along
+
+
         TableRef tblRef = selectStmt.getTableRefs().get(0);
+        LOG.info("1 start create PlanNode for  fromClause_ table ref ,tblRef :  " + tblRef.toSql() + "\n father sql:" + selectStmt.toSql() );
+
         PlanNode root = createTableRefNode(analyzer, tblRef);
+        LOG.info("1 finish create PlanNode for  fromClause_ table ref ,tblRef :  " + tblRef.toSql() + "\n father sql:" + selectStmt.toSql());
         // to change the inner contains analytic function
         // selectStmt.seondSubstituteInlineViewExprs(analyzer.getChangeResSmap());
 
@@ -652,8 +672,9 @@ public class SingleNodePlanner {
         // add aggregate node here
         AggregateInfo aggInfo = selectStmt.getAggInfo();
 
+        LOG.info("2 turnOffPreAgg start ,selectStmt sql : " + selectStmt.toSql());
         turnOffPreAgg(aggInfo, selectStmt, analyzer, root);
-
+        LOG.info("2 turnOffPreAgg end ,selectStmt sql : " + selectStmt.toSql());
         if (root instanceof OlapScanNode) {
             OlapScanNode olapNode = (OlapScanNode) root;
             // this olap scan node has been turn off pre-aggregation, should not be turned on again.
@@ -663,10 +684,17 @@ public class SingleNodePlanner {
             }
         }
 
-        for (int i = 1; i < selectStmt.getTableRefs().size(); ++i) {
+
+        for (int i = 1; i < selectStmt.getTableRefs().size(); ++i) { //jungle comment:if there is no join after from clause , selectStmt.getTableRefs().size() = 1
             TableRef outerRef = selectStmt.getTableRefs().get(i - 1);
             TableRef innerRef = selectStmt.getTableRefs().get(i);
+
+            LOG.info("3 create join  start : \n  outerRef: " + outerRef.toSql() + " \n innerRef: " + innerRef.toSql()  );
+
             root = createJoinNode(analyzer, root, outerRef, innerRef);
+
+            LOG.info("3 create join  end  : \n outerRef: " + outerRef.toSql() + " \n innerRef: " + innerRef.toSql()  );
+
             // Have the build side of a join copy data to a compact representation
             // in the tuple buffer.
             root.getChildren().get(1).setCompactData(true);
@@ -690,8 +718,12 @@ public class SingleNodePlanner {
         }
 
         // add aggregation, if required
+        LOG.debug("4 create agg node start , selectStmt sql : " +  selectStmt.toSql() +  " ,sub query ids:" + subTupleId);
         if (aggInfo != null) root = createAggregationPlan(selectStmt, analyzer, root);
+        LOG.debug("4 create agg node end , selectStmt sql : " + selectStmt.toSql() +  " ,sub query ids:" + subTupleId);
 
+
+        LOG.info(" finish createSelectPlan  ,query is : " + selectStmt.toSql() +  " ,sub query ids:" + subTupleId);
         return root;
     }
 
@@ -706,6 +738,8 @@ public class SingleNodePlanner {
         Preconditions.checkState(selectStmt.getAggInfo() != null);
         // add aggregation, if required
         AggregateInfo aggInfo = selectStmt.getAggInfo();
+
+        LOG.debug("agg node output tuple id :" +  aggInfo.getOutputTupleId());
         PlanNode newRoot = new AggregationNode(ctx_.getNextNodeId(), root, aggInfo);
         newRoot.init(analyzer);
         Preconditions.checkState(newRoot.hasValidStats());
@@ -755,6 +789,7 @@ public class SingleNodePlanner {
      */
     private TupleDescriptor createResultTupleDescriptor(SelectStmt selectStmt,
                                                         String debugName, Analyzer analyzer) {
+        LOG.debug("createResultTupleDescriptor for selectStmt"  + selectStmt.toSql());
         TupleDescriptor tupleDesc = analyzer.getDescTbl().createTupleDescriptor(
                 debugName);
         tupleDesc.setIsMaterialized(true);
@@ -915,6 +950,7 @@ public class SingleNodePlanner {
      */
     private PlanNode createInlineViewPlan(Analyzer analyzer, InlineViewRef inlineViewRef)
             throws InternalException, AnalysisException {
+        LOG.info("createInlineViewPlan start  ,id :" + inlineViewRef.getId()  );
         // If possible, "push down" view predicates; this is needed in order to ensure
         // that predicates such as "x + y = 10" are evaluated in the view's plan tree
         // rather than a SelectNode grafted on top of that plan tree.
@@ -955,7 +991,7 @@ public class SingleNodePlanner {
             }
         }
 
-        PlanNode rootNode = createQueryPlan(inlineViewRef.getViewStmt(), inlineViewRef.getAnalyzer(), -1);
+        PlanNode rootNode = createQueryPlan(inlineViewRef.getViewStmt(), inlineViewRef.getAnalyzer(), -1); //jungle comment : subquery planNode root
         // TODO: we should compute the "physical layout" of the view's descriptor, so that
         // the avg row size is available during optimization; however, that means we need to
         // select references to its resultExprs from the enclosing scope(s)
@@ -966,7 +1002,11 @@ public class SingleNodePlanner {
         // the inline view are replaced with exprs referencing the physical output of the
         // inline view's plan.
         ExprSubstitutionMap outputSmap = ExprSubstitutionMap.compose(
-                inlineViewRef.getSmap(), rootNode.getOutputSmap(), analyzer);
+                inlineViewRef.getSmap(), rootNode.getOutputSmap(), analyzer); //jungle comment : (t1 -> t2 .. t2 -> tn) -> (t1 -> tn) ,see  AggregationNode aggInfo.substitute
+
+        LOG.debug("inlineViewRef sMap :" + inlineViewRef.getSmap().debugString() );
+        LOG.debug("before rootNode outputSmap:" + rootNode.getOutputSmap().debugString());
+
         if (analyzer.isOuterJoined(inlineViewRef.getId())) {
             rootNode.setWithoutTupleIsNullOutputSmap(outputSmap);
             // Exprs against non-matched rows of an outer join should always return NULL.
@@ -980,6 +1020,7 @@ public class SingleNodePlanner {
         }
         // Set output smap of rootNode *before* creating a SelectNode for proper resolution.
         rootNode.setOutputSmap(outputSmap);
+        LOG.debug("after compose ,rootNode outputSmap:" + rootNode.getOutputSmap().debugString());
 
         // rootNode.setOutputSmap(ExprSubstitutionMap.compose(inlineViewRef.getBaseTblSmap(),
         //         rootNode.getOutputSmap(), analyzer));
@@ -1016,6 +1057,8 @@ public class SingleNodePlanner {
             rootNode = addUnassignedConjuncts(
                     analyzer, inlineViewRef.getDesc().getId().asList(), rootNode);
         }
+
+        LOG.info(" createInlineViewPlan rootNode  \n" + rootNode.getExplainString());
         return rootNode;
     }
 
@@ -1031,6 +1074,7 @@ public class SingleNodePlanner {
      */
     public void migrateConjunctsToInlineView(Analyzer analyzer,
                                              InlineViewRef inlineViewRef) throws AnalysisException {
+        LOG.debug("start migrateConjunctsToInlineView   ,tuple id :" + inlineViewRef.getId().asInt() );
         List<Expr> unassignedConjuncts = analyzer.getUnassignedConjuncts(inlineViewRef.getId().asList(), true);
         if (!canMigrateConjuncts(inlineViewRef)) {
             // mark (fully resolve) slots referenced by unassigned conjuncts as
@@ -1041,10 +1085,14 @@ public class SingleNodePlanner {
             return;
         }
 
+
         List<Expr> preds = Lists.newArrayList();
         for (Expr e: unassignedConjuncts) {
             if (analyzer.canEvalPredicate(inlineViewRef.getId().asList(), e)) {
                 preds.add(e);
+                LOG.debug(" expr  can be EvalPredicated:" + e.toSql());
+            }else {
+                LOG.debug(" expr  can not be EvalPredicated:" + e.toSql());
             }
         }
         unassignedConjuncts.removeAll(preds);
@@ -1086,6 +1134,8 @@ public class SingleNodePlanner {
         List<Expr> substUnassigned = Expr.substituteList(unassignedConjuncts,
                 inlineViewRef.getBaseTblSmap(), analyzer, false);
         analyzer.materializeSlots(substUnassigned);
+
+        LOG.debug("finish migrateConjunctsToInlineView  id : " + inlineViewRef.getId().asInt());
     }
 
     /**
@@ -1124,6 +1174,14 @@ public class SingleNodePlanner {
         }
         if (scanNode instanceof OlapScanNode) {
             Map<String, PartitionColumnFilter> columnFilters = Maps.newHashMap();
+
+            String ref_ids = "";
+
+            for(TupleId id :scanNode.getTblRefIds()){
+                ref_ids += id.asInt();
+                ref_ids += " ";
+            }
+            LOG.debug("getUnassignedConjuncts for scanNode , node tblRefIds : " + ref_ids);
             List<Expr> conjuncts = analyzer.getUnassignedConjuncts(scanNode);
             for (Column column : tblRef.getTable().getBaseSchema()) {
                 SlotDescriptor slotDesc = analyzer.getColumnSlot(tblRef.getDesc(), column);
@@ -1156,6 +1214,8 @@ public class SingleNodePlanner {
     private void getHashLookupJoinConjuncts(Analyzer analyzer, List<TupleId> lhsIds, TableRef rhs,
                                             List<Pair<Expr, Expr>> joinConjuncts, List<Expr> joinPredicates,
                                             Reference<String> errMsg) {
+
+        LOG.debug("start getHashLookupJoinConjuncts ");
         joinConjuncts.clear();
         joinPredicates.clear();
         TupleId rhsId = rhs.getId();
@@ -1208,6 +1268,8 @@ public class SingleNodePlanner {
             Pair<Expr, Expr> entry = Pair.create(lhsExpr, rhsExpr);
             joinConjuncts.add(entry);
         }
+
+        LOG.debug("finish  getHashLookupJoinConjuncts ");
     }
 
     /**
@@ -1219,7 +1281,9 @@ public class SingleNodePlanner {
             throws InternalException, AnalysisException {
         // the rows coming from the build node only need to have space for the tuple
         // materialized by that node
+        LOG.debug("start createTableRefNode for innerRef  ,id:" + innerRef.getId().asInt());
         PlanNode inner = createTableRefNode(analyzer, innerRef);
+        LOG.debug("finish createTableRefNode for innerRef ,id:" + innerRef.getId().asInt());
 
         // if (((outerRef instanceof InlineViewRef) || (innerRef instanceof InlineViewRef))
         //         && (analyzer.getWindowBool())) {
@@ -1274,6 +1338,12 @@ public class SingleNodePlanner {
             result.init(analyzer);
             return result;
         }
+        String eqJoinPredicates_s = "";
+        for(Expr e: eqJoinPredicates){
+            eqJoinPredicates_s += e.toSql();
+            eqJoinPredicates_s += " ";
+        }
+        LOG.debug("eqJoinPredicates:" + eqJoinPredicates_s);
         analyzer.markConjunctsAssigned(eqJoinPredicates);
 
         List<Expr> ojConjuncts = Lists.newArrayList();
@@ -1281,6 +1351,15 @@ public class SingleNodePlanner {
             // Also assign conjuncts from On clause. All remaining unassigned conjuncts
             // that can be evaluated by this join are assigned in createSelectPlan().
             ojConjuncts = analyzer.getUnassignedOjConjuncts(innerRef);
+
+
+            String ojConjuncts_s = "";
+            for(Expr e: ojConjuncts){
+                ojConjuncts_s += e.toSql();
+                ojConjuncts_s += " ";
+            }
+            LOG.debug("ojConjuncts:" + ojConjuncts_s);
+
             analyzer.markConjunctsAssigned(ojConjuncts);
         }  else if (innerRef.getJoinOp().isSemiAntiJoin()){
             final List<TupleId> tupleIds = innerRef.getAllTupleIds();
@@ -1309,9 +1388,11 @@ public class SingleNodePlanner {
     private PlanNode createTableRefNode(Analyzer analyzer, TableRef tblRef)
             throws InternalException,  AnalysisException {
         if (tblRef instanceof BaseTableRef) {
+            LOG.info("subquery  is base table");
             return createScanNode(analyzer, tblRef);
         }
         if (tblRef instanceof InlineViewRef) {
+            LOG.info("subquery is InlineViewRef");
             return createInlineViewPlan(analyzer, (InlineViewRef) tblRef);
         }
         throw new InternalException("unknown TableRef node");

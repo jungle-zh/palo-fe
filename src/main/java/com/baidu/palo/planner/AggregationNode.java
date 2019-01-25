@@ -20,29 +20,21 @@
 
 package com.baidu.palo.planner;
 
-import com.baidu.palo.analysis.AggregateInfo;
-import com.baidu.palo.analysis.Analyzer;
-import com.baidu.palo.analysis.Expr;
-import com.baidu.palo.analysis.FunctionCallExpr;
-import com.baidu.palo.analysis.SlotId;
-//import com.baidu.palo.thrift.TAggregateFunctionCall;
-import com.baidu.palo.thrift.TExpr;
-import com.baidu.palo.thrift.TAggregationNode;
-import com.baidu.palo.thrift.TExplainLevel;
-import com.baidu.palo.thrift.TPlanNode;
-import com.baidu.palo.thrift.TPlanNodeType;
+import com.baidu.palo.analysis.*;
 import com.baidu.palo.common.InternalException;
-
+import com.baidu.palo.thrift.*;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+//import com.baidu.palo.thrift.TAggregateFunctionCall;
 
 /**
  * Aggregation computation.
@@ -106,11 +98,14 @@ public class AggregationNode extends PlanNode {
 
     @Override
     public void init(Analyzer analyzer) throws InternalException {
+        LOG.debug("agg node init , analyzer belone view id :" + (analyzer.beLoneTupleId == null ? "null" : analyzer.beLoneTupleId.asInt()) );
         // Assign predicates to the top-most agg in the single-node plan that can evaluate
         // them, as follows: For non-distinct aggs place them in the 1st phase agg node. For
         // distinct aggs place them in the 2nd phase agg node. The conjuncts are
         // transferred to the proper place in the multi-node plan via transferConjuncts().
         if (tupleIds.get(0).equals(aggInfo.getResultTupleId()) && !aggInfo.isMerge()) {
+
+            LOG.debug(" first tuple id is "+ tupleIds.get(0) + " equal to  out put tuple :" + aggInfo.getOutputTupleDesc().debugString());
             // Ignore predicates bound by a grouping slot produced by a SlotRef grouping expr.
             // Those predicates are already evaluated below this agg node (e.g., in a scan),
             // because the grouping slot must be in the same equivalence class as another slot
@@ -129,6 +124,10 @@ public class AggregationNode extends PlanNode {
             conjuncts.addAll(bindingPredicates);
 
             // also add remaining unassigned conjuncts_
+
+
+            LOG.debug("analyzer all conjuncts:" + analyzer.getAllConjuntForDbg());
+            LOG.debug("analyzer AssignedConjuncts :" + analyzer.getAssignedConjunctsForDbg());
             assignConjuncts(analyzer);
 
             // TODO(zc)
@@ -148,7 +147,7 @@ public class AggregationNode extends PlanNode {
         // to our input; our conjuncts don't get substituted because they already
         // refer to our output
         outputSmap = getCombinedChildSmap();
-        aggInfo.substitute(outputSmap, analyzer);
+        aggInfo.substitute(outputSmap, analyzer); //jungle comment : substitute to the physical expr ,see createInlineViewPlan ExprSubstitutionMap.compose
 
         // assert consistent aggregate expr and slot materialization
         // aggInfo.checkConsistency();

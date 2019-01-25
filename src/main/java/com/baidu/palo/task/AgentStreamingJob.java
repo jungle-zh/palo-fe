@@ -72,7 +72,7 @@ public class AgentStreamingJob {
 
     }
     public void  init(){
-        etlbackendId = 10002;
+        etlbackendId = 10180;
         etl = new AgentStreamingEtl(db,table,idToPartitionLoadInfo,id,etlbackendId,deltaFileQueue);
         push  = new AgentStreamingPush(db,table,id,deltaFileQueue);
     }

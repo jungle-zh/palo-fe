@@ -81,10 +81,14 @@ public class PaloFe {
             // Http server must be started before setup and start feServer
             // Because the frontend need to download image file using http server from other frontends.
             FeServer feServer = new FeServer(Config.rpc_port);
+
+            LOG.info("create feServer");
             feServer.setup(args);
 
             // start qe server and fe server
+            LOG.info("start qeService");
             qeService.start();
+            LOG.info("start feServer");
             feServer.start();
 
             while (true) {

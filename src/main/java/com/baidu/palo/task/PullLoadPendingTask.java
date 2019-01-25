@@ -20,7 +20,6 @@ import com.baidu.palo.catalog.OlapTable;
 import com.baidu.palo.common.DdlException;
 import com.baidu.palo.common.InternalException;
 import com.baidu.palo.common.util.BrokerUtil;
-import com.baidu.palo.common.util.Util;
 import com.baidu.palo.load.BrokerFileGroup;
 import com.baidu.palo.load.EtlSubmitResult;
 import com.baidu.palo.load.LoadJob;
@@ -29,10 +28,8 @@ import com.baidu.palo.thrift.TBrokerFileStatus;
 import com.baidu.palo.thrift.TExplainLevel;
 import com.baidu.palo.thrift.TStatus;
 import com.baidu.palo.thrift.TStatusCode;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,7 +49,7 @@ public class PullLoadPendingTask extends LoadPendingTask {
     @Override
     protected void createEtlRequest() throws Exception {
         LOG.info("PullLoadPendingTask::createEtlRequest()");
-        Util.printStack();
+        //Util.printStack();
         long jobDeadlineMs = -1;
         if (job.getTimeoutSecond() > 0) {
             jobDeadlineMs = job.getCreateTimeMs() + job.getTimeoutSecond() * 1000;

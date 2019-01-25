@@ -303,7 +303,7 @@ public class Util {
         PrintWriter pw = new PrintWriter(sw);
         e1.printStackTrace(pw);
         String msg=sw.toString();
-        LOG.info("================================> " + msg);
+        LOG.debug("================================> " + msg);
     }
 }
 

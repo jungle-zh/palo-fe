@@ -20,24 +20,6 @@
 
 package com.baidu.palo.catalog;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.zip.Adler32;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.baidu.palo.catalog.MaterializedIndex.IndexState;
 import com.baidu.palo.catalog.Replica.ReplicaState;
 import com.baidu.palo.catalog.Table.TableType;
@@ -49,9 +31,20 @@ import com.baidu.palo.common.Pair;
 import com.baidu.palo.common.io.Text;
 import com.baidu.palo.common.io.Writable;
 import com.baidu.palo.common.util.DebugUtil;
-import com.baidu.palo.persist.CreateTableInfo;
 import com.baidu.palo.system.SystemInfoService;
 import com.google.common.base.Preconditions;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.zip.Adler32;
 
 /**
  * Internal representation of db-related metadata. Owned by Catalog instance.
@@ -248,8 +241,8 @@ public class Database extends MetaObject implements Writable {
 
                 if (!isReplay) {
                     // Write edit log
-                    CreateTableInfo info = new CreateTableInfo(fullQualifiedName, table);
-                    Catalog.getInstance().getEditLog().logCreateTable(info);
+                    //CreateTableInfo info = new CreateTableInfo(fullQualifiedName, table);
+                    //Catalog.getInstance().getEditLog().logCreateTable(info);
                 }
             }
             return result;

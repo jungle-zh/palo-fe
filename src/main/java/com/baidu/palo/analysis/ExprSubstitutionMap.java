@@ -20,14 +20,13 @@
 
 package com.baidu.palo.analysis;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * Map of expression substitutions: lhs[i] gets substituted with rhs[i].
@@ -153,8 +152,8 @@ public final class ExprSubstitutionMap {
         Preconditions.checkState(lhs_.size() == rhs_.size());
         List<String> output = Lists.newArrayList();
         for (int i = 0; i < lhs_.size(); ++i) {
-            output.add(lhs_.get(i).toSql() + ":" + rhs_.get(i).toSql());
-            output.add("(" + lhs_.get(i).debugString() + ":" + rhs_.get(i).debugString() + ")");
+            output.add(lhs_.get(i).toSql() + "-->" + rhs_.get(i).toSql());
+            //output.add("(" + lhs_.get(i).debugString() + "==>" + rhs_.get(i).debugString() + ")");
         }
         return "smap(" + Joiner.on(" ").join(output) + ")";
     }

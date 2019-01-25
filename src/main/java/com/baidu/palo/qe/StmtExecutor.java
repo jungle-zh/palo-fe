@@ -148,6 +148,12 @@ public class StmtExecutor {
             analyze();   //jungle comment : after analyze , PlanFragments is build
             if(planner != null){
                 LOG.info( "#### explain : \n" + planner.getExplainString(planner.getFragments(),TExplainLevel.VERBOSE));
+
+                for(int i =0 ;i< planner.getFragments().size();++i){
+
+                    LOG.info( "#### fragment " + i  + " toThrift result :" +  planner.getFragments().get(i).toThrift().toString());
+
+                }
             }
 
 
@@ -344,6 +350,8 @@ public class StmtExecutor {
                     if (analyzer.containSubquery()) {
                         StmtRewriter.rewrite(analyzer, parsedStmt);
                         reAnalyze = true;
+
+                        LOG.debug("containSubquery ");
                     }
 
                     if (reAnalyze) {
@@ -358,6 +366,7 @@ public class StmtExecutor {
                                 Lists.newArrayList(queryStmt1.getColLabels());
 
                         // Re-analyze the stmt with a new analyzer.
+                        LOG.debug(" @@ start  reAnalyze ....");
                         analyzer = new Analyzer(context.getCatalog(), context);
                         parsedStmt.reset();
                         parsedStmt.analyze(analyzer);
@@ -372,6 +381,7 @@ public class StmtExecutor {
                     }
                 }
                 // create plan
+                LOG.info("###############################   all analyze done , start to plan now ");
                 planner = new Planner();
                 if (parsedStmt instanceof QueryStmt || parsedStmt instanceof InsertStmt) {
                     planner.plan(parsedStmt, analyzer, new TQueryOptions());
@@ -379,6 +389,7 @@ public class StmtExecutor {
                     planner.plan(((CreateTableAsSelectStmt) parsedStmt).getInsertStmt(),
                             analyzer, new TQueryOptions());
                 }
+
                 // TODO(zc):
                 // Preconditions.checkState(!analyzer.hasUnassignedConjuncts());
             } catch (AnalysisException e) {

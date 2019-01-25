@@ -20,12 +20,16 @@
 
 package com.baidu.palo.rewrite;
 
-import java.util.List;
-
 import com.baidu.palo.analysis.Analyzer;
 import com.baidu.palo.analysis.Expr;
 import com.baidu.palo.common.AnalysisException;
+import com.baidu.palo.common.util.Util;
+import com.baidu.palo.qe.StmtExecutor;
 import com.google.common.collect.Lists;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 
 /**
  * Helper class that drives the transformation of Exprs according to a given list of
@@ -37,6 +41,8 @@ import com.google.common.collect.Lists;
  * Keeps track of how many transformations were applied.
  */
 public class ExprRewriter {
+
+    private static final Logger LOG = LogManager.getLogger(StmtExecutor.class);
     private int numChanges_ = 0;
     private final List<ExprRewriteRule> rules_;
 
@@ -86,7 +92,12 @@ public class ExprRewriter {
             expr.setChild(i, applyRuleBottomUp(expr.getChild(i), rule, analyzer));
         }
         Expr rewrittenExpr = rule.apply(expr, analyzer);
-        if (rewrittenExpr != expr) ++numChanges_;
+        if (rewrittenExpr != expr) {
+
+            LOG.debug("before rewrite , expr: " + expr.toSql()  + " after rewrite :" + rewrittenExpr.toSql() );
+            Util.printStack();
+            ++numChanges_;
+        }
         return rewrittenExpr;
     }
 

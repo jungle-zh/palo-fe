@@ -15,65 +15,24 @@
 
 package com.baidu.palo.planner;
 
-import com.baidu.palo.analysis.Analyzer;
-import com.baidu.palo.analysis.BinaryPredicate;
-import com.baidu.palo.analysis.BrokerDesc;
-import com.baidu.palo.analysis.CastExpr;
-import com.baidu.palo.analysis.Expr;
-import com.baidu.palo.analysis.ExprSubstitutionMap;
-import com.baidu.palo.analysis.FunctionCallExpr;
-import com.baidu.palo.analysis.FunctionName;
-import com.baidu.palo.analysis.FunctionParams;
-import com.baidu.palo.analysis.NullLiteral;
-import com.baidu.palo.analysis.SlotDescriptor;
-import com.baidu.palo.analysis.SlotRef;
-import com.baidu.palo.analysis.StringLiteral;
-import com.baidu.palo.analysis.TupleDescriptor;
-import com.baidu.palo.catalog.BrokerMgr;
-import com.baidu.palo.catalog.BrokerTable;
-import com.baidu.palo.catalog.Catalog;
-import com.baidu.palo.catalog.Column;
-import com.baidu.palo.catalog.OlapTable;
-import com.baidu.palo.catalog.PrimitiveType;
-import com.baidu.palo.catalog.ScalarType;
-import com.baidu.palo.catalog.Table;
-import com.baidu.palo.catalog.Type;
+import com.baidu.palo.analysis.*;
+import com.baidu.palo.catalog.*;
 import com.baidu.palo.common.AnalysisException;
 import com.baidu.palo.common.Config;
 import com.baidu.palo.common.InternalException;
 import com.baidu.palo.common.util.BrokerUtil;
-import com.baidu.palo.common.util.Util;
 import com.baidu.palo.load.BrokerFileGroup;
 import com.baidu.palo.system.Backend;
-import com.baidu.palo.thrift.TBrokerFileStatus;
-import com.baidu.palo.thrift.TBrokerRangeDesc;
-import com.baidu.palo.thrift.TBrokerScanNode;
-import com.baidu.palo.thrift.TBrokerScanRange;
-import com.baidu.palo.thrift.TBrokerScanRangeParams;
-import com.baidu.palo.thrift.TExplainLevel;
-import com.baidu.palo.thrift.TFileFormatType;
-import com.baidu.palo.thrift.TFileType;
-import com.baidu.palo.thrift.TNetworkAddress;
-import com.baidu.palo.thrift.TPlanNode;
-import com.baidu.palo.thrift.TPlanNodeType;
-import com.baidu.palo.thrift.TScanRange;
-import com.baidu.palo.thrift.TScanRangeLocation;
-import com.baidu.palo.thrift.TScanRangeLocations;
-
+import com.baidu.palo.thrift.*;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 // Broker scan node
 public class BrokerScanNode extends ScanNode {
@@ -632,7 +591,7 @@ public class BrokerScanNode extends ScanNode {
     public void finalize(Analyzer analyzer) throws InternalException {
 
         LOG.info("BrokerScanNode::finalize");
-        Util.printStack();
+        //Util.printStack();
         locationsList = Lists.newArrayList();
 
         for (int i = 0; i < fileGroups.size(); ++i) {   //jungle comment : fileGroup correspond to one DataDescription of input

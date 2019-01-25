@@ -161,6 +161,7 @@ public class ConnectScheduler {
 
                 context.setStartTime();
                 ConnectProcessor processor = new ConnectProcessor(context);
+                LOG.info(" # ConnectProcessor start loop");
                 processor.loop();
             } catch (Exception e) {
                 LOG.warn("connect processor exception because ", e);

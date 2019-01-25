@@ -20,17 +20,16 @@
 
 package com.baidu.palo.analysis;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.baidu.palo.catalog.AggregateFunction;
 import com.baidu.palo.catalog.Type;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base class for AggregateInfo and AnalyticInfo containing the intermediate and output
@@ -130,6 +129,7 @@ public abstract class AggregateInfoBase {
             Expr expr = exprs.get(i);
             SlotDescriptor slotDesc = analyzer.addSlotDescriptor(result);
             slotDesc.initFromExpr(expr);
+            LOG.debug("add slotDesc : " +slotDesc.debugString());
             if (i < aggregateExprStartIndex) {
                 // register equivalence between grouping slot and grouping expr;
                 // do this only when the grouping expr isn't a constant, otherwise
@@ -146,7 +146,7 @@ public abstract class AggregateInfoBase {
                     slotDesc.setSourceExpr(aggExpr.getChild(0));
                 } else {
                     slotDesc.setLabel(aggExpr.toSql());
-                    slotDesc.setSourceExpr(aggExpr);
+                    slotDesc.setSourceExpr(aggExpr);  //jungle comment :aggExpr is function wrap expr
                 }
 
                 // COUNT(), NDV() and NDV_NO_FINALIZE() are non-nullable. The latter two are used
@@ -172,9 +172,10 @@ public abstract class AggregateInfoBase {
             }
         }
 
-        if (LOG.isTraceEnabled()) {
+
+        if (LOG.isDebugEnabled()) {
             String prefix = (isOutputTuple ? "result " : "intermediate ");
-            LOG.trace(prefix + " tuple=" + result.debugString());
+            LOG.debug(prefix + " tuple=" + result.debugString());
         }
         return result;
     }

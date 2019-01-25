@@ -26,14 +26,16 @@ import com.baidu.palo.common.ErrorCode;
 import com.baidu.palo.common.ErrorReport;
 import com.baidu.palo.common.InternalException;
 import com.baidu.palo.rewrite.ExprRewriter;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collections;
 import java.util.List;
 
 public abstract class StatementBase implements ParseNode {
+    private final static Logger LOG = LogManager.getLogger(StatementBase.class);
 
     private String clusterName;
 

@@ -11,7 +11,7 @@ public class MetaReplica {
 
     private Long dataSize;
 
-    private Long rowCount;
+    private long rowCount;
 
     private String replicaState;
 
@@ -55,7 +55,7 @@ public class MetaReplica {
         this.dataSize = dataSize;
     }
 
-    public Long getRowCount() {
+    public long getRowCount() {
         return rowCount;
     }
 

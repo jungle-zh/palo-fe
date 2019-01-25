@@ -20,23 +20,21 @@
 
 package com.baidu.palo.analysis;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.baidu.palo.catalog.ArrayType;
 import com.baidu.palo.catalog.StructField;
 import com.baidu.palo.catalog.StructType;
 import com.baidu.palo.common.AnalysisException;
 import com.baidu.palo.common.InternalException;
-
-
+import com.baidu.palo.common.util.Util;
 import com.baidu.palo.thrift.TExprNode;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class representing a subquery. A Subquery consists of a QueryStmt and has
@@ -61,6 +59,8 @@ public class Subquery extends Expr {
      */
     public Subquery(QueryStmt queryStmt) {
         super();
+        Util.printStack();
+        LOG.debug("create subquery ");
         Preconditions.checkNotNull(queryStmt);
         stmt = queryStmt;
         stmt.setNeedToSql(true);
@@ -86,6 +86,7 @@ public class Subquery extends Expr {
         }
         // The subquery is analyzed with its own analyzer.
         analyzer = new Analyzer(parentAnalyzer);
+        LOG.debug("set is subquery ");
         analyzer.setIsSubquery();
         try {
             stmt.analyze(analyzer);

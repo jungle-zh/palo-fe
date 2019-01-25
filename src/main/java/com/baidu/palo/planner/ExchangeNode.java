@@ -36,8 +36,6 @@ import com.google.common.collect.Lists;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static com.baidu.palo.common.util.Util.printStack;
-
 /**
  * Receiver side of a 1:n data stream. Logically, an ExchangeNode consumes the data
  * produced by its children. For each of the sending child nodes the actual data
@@ -69,7 +67,7 @@ public class ExchangeNode extends PlanNode {
     public ExchangeNode(PlanNodeId id, PlanNode inputNode, boolean copyConjuncts) {
         super(id, inputNode, "EXCHANGE");
         LOG.info("create exchange node");
-        printStack();
+        //printStack();
         offset = 0;
         children.add(inputNode);
         if (!copyConjuncts) {

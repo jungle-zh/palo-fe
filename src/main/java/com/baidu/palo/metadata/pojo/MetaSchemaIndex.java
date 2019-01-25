@@ -13,6 +13,8 @@ public class MetaSchemaIndex {
 
     private String schemaColumn;
 
+    private String name ;
+
     public Long getId() {
         return id;
     }
@@ -59,5 +61,13 @@ public class MetaSchemaIndex {
 
     public void setSchemaColumn(String schemaColumn) {
         this.schemaColumn = schemaColumn == null ? null : schemaColumn.trim();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

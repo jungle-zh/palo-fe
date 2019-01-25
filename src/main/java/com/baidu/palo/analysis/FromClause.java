@@ -20,17 +20,14 @@
 
 package com.baidu.palo.analysis;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-
 import com.baidu.palo.common.AnalysisException;
 import com.baidu.palo.common.InternalException;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.*;
 
 /**
  * Wraps a list of TableRef instances that form a FROM clause, allowing them to be
@@ -38,6 +35,8 @@ import com.google.common.collect.Lists;
  * the class it implements the Iterable interface.
  */
 public class FromClause implements ParseNode, Iterable<TableRef> {
+
+    private final static Logger LOG = LogManager.getLogger(FromClause.class);
 
     private final ArrayList<TableRef> tableRefs_;
 
@@ -91,11 +90,17 @@ public class FromClause implements ParseNode, Iterable<TableRef> {
         for (int i = 0; i < tableRefs_.size(); ++i) {
             // Resolve and replace non-InlineViewRef table refs with a BaseTableRef or ViewRef.
             TableRef tblRef = tableRefs_.get(i);
+
             tblRef = analyzer.resolveTableRef(tblRef);
             tableRefs_.set(i, Preconditions.checkNotNull(tblRef));
             tblRef.setLeftTblRef(leftTblRef);
             if (tblRef instanceof InlineViewRef) {
                 ((InlineViewRef) tblRef).setNeedToSql(needToSql);
+            }
+            if(tblRef instanceof InlineViewRef){
+                LOG.debug( "number " + i  + " tblRef  is InlineViewRef :" + tblRef.toSql() );
+            }else  if( tblRef instanceof  BaseTableRef){
+                LOG.debug( "number " + i  + " tblRef  is BaseTableRef :" + tblRef.toSql() );
             }
             tblRef.analyze(analyzer);
             leftTblRef = tblRef;
@@ -137,6 +142,7 @@ public class FromClause implements ParseNode, Iterable<TableRef> {
         if (!tableRefs_.isEmpty()) {
             builder.append(" FROM ");
             for (int i = 0; i < tableRefs_.size(); ++i) {
+                builder.append( " && ");
                 builder.append(tableRefs_.get(i).toSql());
             }
         }

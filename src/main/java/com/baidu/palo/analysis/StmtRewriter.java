@@ -20,19 +20,18 @@
 
 package com.baidu.palo.analysis;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.common.collect.Iterables;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.baidu.palo.catalog.Type;
 import com.baidu.palo.common.AnalysisException;
 import com.baidu.palo.common.InternalException;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class representing a statement rewriter. A statement rewriter performs subquery
@@ -76,6 +75,7 @@ public class StmtRewriter {
 
     private static void rewriteSelectStatement(SelectStmt stmt, Analyzer analyzer)
             throws AnalysisException {
+        LOG.debug("rewriteSelectStatement");
         // Rewrite all the subqueries in the FROM clause.
         for (TableRef tblRef: stmt.fromClause_) {
             if (!(tblRef instanceof InlineViewRef)) continue;
